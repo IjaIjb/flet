@@ -39,6 +39,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import localfont from "next/font/local";
 import Head from "next/head";
+import StoreProvider from "@/store/redux/storeProvider";
 
 // const inter = Inter({ subsets: ["latin"] });
 
@@ -105,7 +106,7 @@ export default function RootLayout({
           rel="stylesheet"
         ></link>
       </Head>
-      <body className={creatoDisplay.className}>{children}</body>
+      <body className={creatoDisplay.className}><StoreProvider>{children}</StoreProvider></body>
     </html>
   );
 }

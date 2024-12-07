@@ -33,11 +33,11 @@ function EachNotification({ text, date }: EachNotificationProps)  {
                     height={45}
                   />
             </div>
-            <h4 className="text-[14px] lg:text-[18px] text-blackText">{text}</h4>
+            <h4 className="text-[14px] lg:text-[20px] text-blackText">{text}</h4>
           </div>
           <div className="">
-            <h5 className="text-[10px] lg:text-[12px] text-blackText font-[300] ">{date}</h5>
-            <h5 className="text-[10px] lg:text-[12px] text-blackText font-bold">Just Now</h5>
+            <h5 className="text-[10px] lg:text-[14px] text-blackText font-[300] ">{date}</h5>
+            <h5 className="text-[10px] lg:text-[14px] text-blackText font-bold">Just Now</h5>
           </div>
         </div>
       </div>

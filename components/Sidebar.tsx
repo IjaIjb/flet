@@ -30,7 +30,7 @@ const SidebarPage = (props: Props) => {
     <aside
       className={`${
         props.DrawerOpen ? "" : ""
-      } relative w-[300px] z-[100] bg-primary px-8 border-r border-[#ECEDEF] h-full`}
+      } relative w-[305px] z-[100] bg-primary px-8 border-r border-[#ECEDEF] h-full`}
     >
       <div className="flex items-center justify-between px-2 md:px-4">
         <div></div>
@@ -38,10 +38,10 @@ const SidebarPage = (props: Props) => {
           <Link href={"/dashboard/home"}>
             <Image
               aria-hidden
-              src="/urban 1.svg"
+              src="/urban 1.png"
               alt="Window icon"
-              width={100}
-              height={100}
+              width={140}
+              height={140}
             />
             {/* <img src={logo} alt="Logo" className="w-[100px] h-[37px]" /> */}
           </Link>
@@ -70,7 +70,7 @@ const SidebarPage = (props: Props) => {
                   ["dashboard", "home"].every((ai) => pathnames.includes(ai))
                     ? "bg-[#FFFFFF] text-[#1A1A1A]"
                     : "bg-[#9F9F9F33] text-white"
-                } gap-x-3 flex items-center px-6  rounded-[15px] py-[16px] `}
+                } gap-x-3 flex items-center px-6  rounded-[15px] py-[20px] `}
               >
                 <Image
                   aria-hidden
@@ -83,7 +83,7 @@ const SidebarPage = (props: Props) => {
                   width={16}
                   height={16}
                 />
-                <h5 className="text-[16px] font-[350]  ">Dashboard</h5>
+                <h5 className="text-[16px] font-[500]  ">Dashboard</h5>
               </div>
             </Link>
           </div>
@@ -97,7 +97,7 @@ const SidebarPage = (props: Props) => {
                   ["dashboard", "fleet"].every((ai) => pathnames.includes(ai))
                     ? "bg-[#FFFFFF] text-[#1A1A1A]"
                     : "bg-[#9F9F9F33] text-white"
-                } gap-x-3 flex items-center px-6  rounded-[15px] py-[16px] `}
+                } gap-x-3 flex items-center px-6  rounded-[15px] py-[20px] `}
               >
                 <Image
                   aria-hidden
@@ -110,7 +110,7 @@ const SidebarPage = (props: Props) => {
                   width={16}
                   height={16}
                 />
-                <h5 className="text-[16px] font-[350]  ">Fleet</h5>
+                <h5 className="text-[16px] font-[500]  ">Fleet</h5>
               </div>
             </Link>
           </div>
@@ -126,7 +126,7 @@ const SidebarPage = (props: Props) => {
                   )
                     ? "bg-[#FFFFFF] text-[#1A1A1A]"
                     : "bg-[#9F9F9F33] text-white"
-                } gap-x-3 flex items-center px-6  rounded-[15px] py-[16px] `}
+                } gap-x-3 flex items-center px-6  rounded-[15px] py-[20px] `}
               >
                 <Image
                   aria-hidden
@@ -141,7 +141,7 @@ const SidebarPage = (props: Props) => {
                   width={16}
                   height={16}
                 />
-                <h5 className="text-[16px] font-[350]  ">Manage Trips</h5>
+                <h5 className="text-[16px] font-[500]  ">Trips</h5>
               </div>
             </Link>
           </div>
@@ -157,7 +157,7 @@ const SidebarPage = (props: Props) => {
                   )
                     ? "bg-[#FFFFFF] text-[#1A1A1A]"
                     : "bg-[#9F9F9F33] text-white"
-                } gap-x-3 flex items-center px-6  rounded-[15px] py-[16px] `}
+                } gap-x-3 flex items-center px-6  rounded-[15px] py-[20px] `}
               >
                 <Image
                   aria-hidden
@@ -172,7 +172,7 @@ const SidebarPage = (props: Props) => {
                   width={16}
                   height={16}
                 />
-                <h5 className="text-[16px] font-[350]  ">Notifications</h5>
+                <h5 className="text-[16px] font-[500]  ">Notifications</h5>
               </div>
             </Link>
           </div>
@@ -188,7 +188,7 @@ const SidebarPage = (props: Props) => {
                   )
                     ? "bg-[#FFFFFF] text-[#1A1A1A]"
                     : "bg-[#9F9F9F33] text-white"
-                } gap-x-3 flex items-center px-6  rounded-[15px] py-[16px] `}
+                } gap-x-3 flex items-center px-6  rounded-[15px] py-[20px] `}
               >
                 <Image
                   aria-hidden
@@ -203,7 +203,7 @@ const SidebarPage = (props: Props) => {
                   width={16}
                   height={16}
                 />
-                <h5 className="text-[16px] font-[350]  ">Settings</h5>
+                <h5 className="text-[16px] font-[500]  ">Settings</h5>
               </div>
             </Link>
           </div>

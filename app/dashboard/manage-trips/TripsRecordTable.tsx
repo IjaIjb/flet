@@ -79,7 +79,7 @@ const TripsRecordTable = () => {
   ];
   return (
     <div>
-      <table className="w-full text-sm text-left rtl:text-right  ">
+      <table className="w-full text-sm text-center  ">
         <thead className="text-xs text-primary bg-gray-50 ">
           <tr>
             {/* <th scope="col" className="px-3 py-3">
@@ -141,10 +141,12 @@ const TripsRecordTable = () => {
               <td className="px-3 py-4">{datas?.status}</td>
               <td className="px-2 py-4">
                 <div className="relative text-center">
+                <div className="flex justify-center">
                   <SlOptions
                     className="cursor-pointer"
                     onClick={() => toggleDropdown(index)}
                   />
+                  </div>
                   {dropdownIndex === index && (
                     <div className="absolute right-0 mt-2 w-48 bg-white border rounded-md shadow-lg z-10">
                       <ul className="py-1">
@@ -197,8 +199,12 @@ const TripsRecordTable = () => {
         </div>
       </div>
 
-      <Modal open={openDetails} onClose={onCloseDetailsModal} center>
-        <div className="px-2 md:px-5 pb-4">
+      <Modal
+        classNames={{
+          modal: "rounded-[10px] overflow-visible relative",
+        }}
+         open={openDetails} onClose={onCloseDetailsModal} center>
+        <div className="px-2 md:pt-4 md:px-8 pb-4">
           <div className=" flex justify-center pt-4 pb-4">
             <h4 className="text-primary text-[18px] md:text-[20px]">
               Trip Details
@@ -283,8 +289,12 @@ const TripsRecordTable = () => {
         </div>
       </Modal>
 
-      <Modal open={openEarnings} onClose={onCloseEarningsModal} center>
-        <div className="px-2 md:px-5 pb-4">
+      <Modal
+        classNames={{
+          modal: "rounded-[10px] overflow-visible relative",
+        }}
+         open={openEarnings} onClose={onCloseEarningsModal} center>
+        <div className="px-2 md:pt-4 md:px-8 pb-6">
           <div className=" flex justify-center pt-4 pb-4">
             <h4 className="text-primary text-[18px] md:text-[20px]">
               Earnings
@@ -316,7 +326,7 @@ const TripsRecordTable = () => {
                   Revenue Generated
                 </h4>
                 <h4 className="text-primary text-[12px] md:text-[14px]">
-                  N14,000
+                  N14,000.00
                 </h4>
               </div>
 
@@ -325,7 +335,7 @@ const TripsRecordTable = () => {
                   Fleet Owner Commision 60%
                 </h4>
                 <h4 className="text-primary text-[12px] md:text-[14px]">
-                  N8,400
+                  N8,400.00
                 </h4>
               </div>
             </div>

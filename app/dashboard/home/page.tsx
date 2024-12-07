@@ -5,6 +5,7 @@ import BreadcrumbsDisplay from "../BreadscrumbsDisplay";
 import Image from "next/image";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import * as Yup from "yup";
+import ActiveFleet from "../fleet/ActiveFleet";
 
 const page = () => {
   const initialData = {
@@ -40,7 +41,7 @@ const page = () => {
     <DashboardLayout>
       <div className="bg-white overflow-hidden rounded-[8px] px-3 md:px-8 py-7 md:py-9">
         <BreadcrumbsDisplay />
-        <h5 className="text-[16px] font-light mb-4">
+        <h5 className="md:text-[20px] text-[16px] font-light mb-4">
           Account Type: <span className="font-[500]">Corporate</span>
         </h5>
 
@@ -69,12 +70,12 @@ const page = () => {
                   />
                 </div>
           
-                  <h4 className=" text-[18px] md:text-[20px] font-light leading-[25px]">
+                  <h4 className=" text-[18px] md:text-[24px] font-light leading-[25px]">
                     Total Revenue Generated
                   </h4>
                 </div>
 
-                <h4 className=" text-[35px] md:text-[40px] font-[500]">N345,000</h4>
+                <h4 className=" text-[35px] md:text-[48px] font-[700]">N345,000.00</h4>
               </div>
             </div>
             <div className="md:block hidden">
@@ -105,12 +106,12 @@ const page = () => {
                   width={40}
                   height={40}
                 />
-                <h4 className="text-[18px]  md:text-[20px]  text-[#274871] font-light leading-[25px]">
+                <h4 className="text-[18px]  md:text-[24px]  text-[#274871] font-light leading-[25px]">
                   Total Fleets
                 </h4>
               </div>
 
-              <h4 className="text-[35px] md:text-[40px] text-[#274871] font-[500]">234</h4>
+              <h4 className="text-[35px] md:text-[48px] text-[#274871] font-[500]">234</h4>
             </div>
 
             {/* <div className="md:block hidden"> */}
@@ -128,7 +129,7 @@ const page = () => {
                   width={40}
                   height={40}
                 />
-                <h4 className="text-[18px] md:text-[20px] text-[#C05406] font-light leading-[25px]">
+                <h4 className="text-[18px] md:text-[24px] text-[#C05406] font-light leading-[25px]">
                   Total Trips
                 </h4>
               </div>
@@ -260,19 +261,7 @@ const page = () => {
             </Formik>
           </div>
           <div>
-            <div className="flex justify-center text-center">
-              <Image
-                aria-hidden
-                src="/dashboard/stars.svg"
-                alt="Window icon"
-                className="fklex justify-center text-center"
-                width={45}
-                height={45}
-              />
-            </div>
-            <h4 className="text-center text-[#141313] ">
-              Sorry, No information yet, Select Vehicle Type to start{" "}
-            </h4>
+         <ActiveFleet />
           </div>
         </section>
       </div>

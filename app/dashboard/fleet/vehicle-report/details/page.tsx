@@ -39,7 +39,7 @@ function Details() {
             <div className="grid md:grid-cols-12">
               <h5 className="text-[14px] col-span-2 text-primary ">Cost</h5>
               <h5 className="text-[14px] col-span-10 text-blackText ">
-                N80,000
+                N80,000.00
               </h5>
             </div>
 

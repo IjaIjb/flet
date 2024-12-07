@@ -69,7 +69,7 @@ function StatementTable() {
   ];
   return (
     <div>
-      <table className="w-full text-sm text-left rtl:text-right  ">
+      <table className="w-full text-sm text-center  ">
         <thead className="text-xs text-primary bg-gray-50 ">
           <tr>
             {/* <th scope="col" className="px-6 py-3">
@@ -188,7 +188,11 @@ function StatementTable() {
         </div>
       </div>
 
-      <Modal open={open} onClose={onCloseModal} center>
+      <Modal 
+        classNames={{
+          modal: "rounded-[10px] overflow-visible relative",
+        }}
+        open={open} onClose={onCloseModal} center>
         <div className="px-4 pb-2">
           <div className=" flex justify-center pt-2">
             <h4 className="text-primary text-[15px] md:text-[18px]">

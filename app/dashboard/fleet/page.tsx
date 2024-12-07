@@ -304,7 +304,7 @@ const Page = () => {
             />
           </div>
         </div>
-        <h5 className="text-blackText text-[16px] py-4 ">
+        <h5 className="text-blackText text-[20px] py-4 ">
           This is where you see all your fleets info
         </h5>
 
@@ -349,7 +349,11 @@ const Page = () => {
         Thank you for getting back to KwickMall,
       </h5> */}
         </div>
-        <Modal open={open} onClose={onCloseModal} center>
+        <Modal 
+          classNames={{
+            modal: "rounded-[10px] overflow-visible relative",
+          }}
+          open={open} onClose={onCloseModal} center>
           <div className="px-2 md:px-5 pb-4">
             <div className=" flex justify-between pt-2 ">
               {showScreen === 1 ? (
@@ -390,7 +394,7 @@ const Page = () => {
                             <Field
                               className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
                               name="engine"
-                              type="number"
+                              type="text"
                               id=""
                               placeholder=""
                             />

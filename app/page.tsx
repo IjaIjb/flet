@@ -4,6 +4,7 @@ import CorporateLogin from "../components/login/CorporateLogin";
 import IndividualLogin from "../components/login/IndividualLogin";
 import Image from "next/image";
 import React, { useState } from "react";
+import bg from "../public/onboarding/pattern png 3.svg";
 
 export default function Home() {
   const initialAccountState = {
@@ -59,75 +60,84 @@ export default function Home() {
     <div className="w-full">
       <div className="grid lg:grid-cols-2 items-center gap-14 w-full h-full ">
         {/* Left Section */}
-        <div className="w-full z-10 h-screen lg:block hidden relative">
-          <div className="absolute h-screen z-10 object-cover w-full rounded-xl">
+        <div className="w-full z-10 h-full lg:block hidden relative">
+          <div className="absolute h-full z-10 object-cover w-full rounded-xl">
             {/* <img
               className="h-full z-10 object-cover w-full"
               src="/onboarding/transport-concept-parked-vehicles 1.svg"
               alt=""
             /> */}
 
-             <Image
-     className="h-full z-10 object-cover w-full"
-                  src="/onboarding/transport-concept-parked-vehicles 1.svg"
-    alt="Descriptive alt text"
-    layout="fill"
-    // objectFit="cover"
-  />
-</div>
-<div className="flex items-center justify-center relative z-20 h-full">
+            <Image
+              className="h-full z-10 object-cover w-full"
+              src="/onboarding/transport-concept-parked-vehicles 1.svg"
+              alt="Descriptive alt text"
+              layout="fill"
+              // objectFit="cover"
+            />
+          </div>
+          <div className="flex items-center justify-center relative z-20 h-full">
             <div className="">
               <div className="bg-[#036E03]/[30%] rounded-t-[25px]">
                 <div className="flex justify-center pt-14 pb-8">
-                  {/* <img src="/urban 1.svg" alt="" /> */}
+          
 
-                  {/* <div className="relative w-full h-64"> */}
-  {/* <Image
-   src="/urban 1.svg"
-    alt="Descriptive alt text"
-    layout="fill"
-    objectFit="cover"
-  /> */}
-
-<Image
-            className=""
-            src="/urban 1.svg"
-            alt="image"
-            width={100}
-            height={100}
-            priority
-          />
-{/* </div> */}
+                  <Image
+                    className=""
+                    src="/urban 1.png"
+                    alt="image"
+                    width={140}
+                    height={140}
+                    priority
+                  />
+                  {/* </div> */}
                 </div>
               </div>
-              <div className="bg-[#036E03] md:pl-7 lg:pl-10 md:pr-6 lg:pr-10 md:pt-4 lg:pt-6 md:pb-10 lg:pb-14 rounded-b-[25px]">
-                <h4 className="text-white text-[36px] font-[700] leading-[45.2px] max-w-[330px]">
-                  Manage your park at one glance!
-                </h4>
-                <div className="text-white mt-8">
-                  <ul className="flex flex-col gap-1">
-                    <li className="text-[18px] font-[500]">- Manage Trips</li>
-                    <li className="text-[18px] font-[500]">
-                      - Bookings & Records
-                    </li>
-                    <li className="text-[18px] font-[500]">
-                      - Add Park Managers
-                    </li>
-                    <li className="text-[18px] font-[500]">
-                      - Add Dispatch Officers
-                    </li>
-                    <li className="text-[18px] font-[500]">
-                      - Assign Trips & Drivers
-                    </li>
-                  </ul>
+            
+              <div className="relative">
+                <div className="bg-[#036E03] md:pl-7 md:pr-6 md:pt-4 lg:pt-6 md:pb-10 lg:pb-14 rounded-b-[25px]">
+                  <Image
+                    className="h-full object-cover w-full"
+                    src="/pattern.png"
+                    alt="Descriptive alt text"
+                    layout="fill"
+                    // objectFit="cover"
+                  />
+                  <h4 className="text-white text-center md:text-[48px] font-[700] text-[36px] leading-[55px] max-w-[400px]">
+                    Urban Experience Centre (UEC)
+                  </h4>
+                  <div className="flex py-8 justify-center">
+                    <Image
+                      className=""
+                      src="/urban single logo.svg"
+                      alt="image"
+                      width={80}
+                      height={80}
+                      priority
+                    />
+                  </div>
+
+                  <div className="flex items-center gap-4 justify-center">
+                    <Image
+                      className=""
+                      src="/onboarding/blip.svg"
+                      alt="image"
+                      width={40}
+                      height={40}
+                      priority
+                    />
+                    <h5 className="text-[19.85px] text-white font-[200]">
+                      Powered by <span className="font-[700]">BLIP LLC</span>
+                    </h5>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-          </div>
-      
-            {/* Right Section */}
-            <div className="w-full lg:w-[85%]">
+        </div>
+
+        {/* Right Section */}
+        <div className="w-full lg:w-[85%]">
           <div className="lg:hidden block">
             <div className="w-full   relative">
               <div className="absolute h-full  object-cover w-full rounded-xl">
@@ -136,30 +146,28 @@ export default function Home() {
                   src="/onboarding/transport-concept-parked-vehicles 1.svg"
                   alt=""
                 /> */}
-                              
-  {/* <Image
-     className="h-full object-cover w-full"
+
+                <Image
+                  className="h-full object-cover w-full"
                   src="/onboarding/transport-concept-parked-vehicles 1.svg"
-    alt="Descriptive alt text"
-    layout="fill"
-    // objectFit="cover"
-  /> */}
+                  alt="Descriptive alt text"
+                  layout="fill"
+                  // objectFit="cover"
+                />
 
                 <div className="overlay h-full absolute inset-0 bg-primary/[50%] "></div>
               </div>
               <div className="flex relative z-20 h-full justify-center text-center">
                 <div className="flex justify-center text-center pt-14 pb-14">
-                  {/* <img src="/urban 1.svg" alt="" /> */}
-               
- 
-  <Image
-            className=""
-            src="/urban 1.svg"
-            alt="image"
-            width={100}
-            height={100}
-            priority
-          />
+          
+                  <Image
+                    className=""
+                    src="/urban 1.png"
+                    alt="image"
+                    width={140}
+                    height={140}
+                    priority
+                  />
                 </div>
               </div>
             </div>
@@ -200,10 +208,7 @@ export default function Home() {
       </h5> */}
           </div>
         </div>
-        </div>
-
-  
-   
+      </div>
 
       {/* <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">

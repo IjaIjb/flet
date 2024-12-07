@@ -98,10 +98,10 @@ const Profile = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <TbUserEdit className="text-primary w-6 h-6"/>
-            <h5 className="text-primary text-[18px]">My Profile</h5>
+            <h5 className="text-primary md:text-[20px] text-[18px]">My Profile</h5>
           </div>
 
-          <h5 className="text-primary text-[18px] underline">Edit</h5>
+          <h5 className="text-primary  md:text-[20px] text-[18px] underline">Edit</h5>
         </div>
 
         <div className="flex mt-6 items-center justify-between">

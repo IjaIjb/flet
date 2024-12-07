@@ -42,16 +42,16 @@ function VehicleStatement() {
       <DashboardLayout>
         <div className="bg-white overflow-hidden rounded-[8px] px-3 md:px-8 py-7 md:py-9">
           <BreadcrumbsDisplay />
-          <h5 className="text-[16px] pt-8 font-light mb-1">
+          <h5 className="text-[16px] md:text-[20px] pt-8 font-light mb-3">
             Vehicle Type: <span className="text-[18px] md:text-[20px] font-bold">Bus</span>
           </h5>
-          <h5 className="text-[16px] font-light mb-1">
+          <h5 className="text-[16px] md:text-[20px] font-light mb-3">
             Number Plate:{" "}
             <span className="text-[18px] md:text-[20px] font-bold text-primary">
               3547859499399FA
             </span>
           </h5>
-          <h5 className="text-[16px] font-light mb-4">
+          <h5 className="text-[16px] md:text-[20px] font-light mb-4">
             Provider Agency:{" "}
             <span className="text-[18px] md:text-[20px] font-bold text-primary">
               Shodipe Plc
@@ -74,7 +74,7 @@ function VehicleStatement() {
                   </h4>
                 </div>
 
-                <h4 className="text-[35px] md:text-[40px] text-[#274871] font-[500]">
+                <h4 className="text-[35px] md:text-[48px] text-[#274871] font-[500]">
                   N234,000.00
                 </h4>
               </div>
@@ -99,7 +99,7 @@ function VehicleStatement() {
                   </h4>
                 </div>
 
-                <h4 className="text-[35px] md:text-[40px] text-[#C05406] font-[500]">109</h4>
+                <h4 className="text-[35px] md:text-[48px] text-[#C05406] font-[500]">109</h4>
               </div>
             </div>
           </section>

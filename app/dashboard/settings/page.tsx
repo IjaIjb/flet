@@ -19,7 +19,7 @@ const Settingspage = () => {
             <div className="border-[#D9D9D9] border rounded-[10px] px-5 py-4">
               <div className="flex items-center gap-2">
                 <MdOutlinePhoneInTalk className="text-primary w-6 h-6" />
-                <h5 className="text-primary text-[18px]">Request Help</h5>
+                <h5 className="text-primary  md:text-[20px] text-[18px]">Request Help</h5>
               </div>
             </div>
           </div>
@@ -30,7 +30,7 @@ const Settingspage = () => {
             <div className="border-[#D9D9D9] border rounded-[10px] px-5 py-4">
               <div className="flex items-center gap-2">
                 <BsChatRightText className="text-primary w-6 h-6" />
-                <h5 className="text-primary text-[18px]">Terms And Condition</h5>
+                <h5 className="text-primary  md:text-[20px] text-[18px]">Terms And Condition</h5>
               </div>
             </div>
           </div>

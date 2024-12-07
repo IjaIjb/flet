@@ -7,21 +7,21 @@ function Repair() {
       id: 1,
       title: "Engine",
       description: "One of the engine vessel bad",
-      cost: "80,000",
+      cost: "80,000.00",
       date: "21/05/2024",
     },
     {
       id: 1,
       title: "Windscreen",
       description: "Windscreen was replaced",
-      cost: "120,000",
+      cost: "120,000.00",
       date: "23/05/2024",
     },
     {
       id: 1,
       title: "Engine",
       description: "One of the engine vessel bad",
-      cost: "80,000",
+      cost: "80,000.00",
       date: "21/05/2024",
     },
     {
@@ -34,7 +34,7 @@ function Repair() {
   ];
   return (
     <div className="overflow-hidden overflow-x-scroll">
-      <table className="w-full text-sm text-left rtl:text-right  ">
+      <table className="w-full text-sm text-center  ">
         <thead className="text-xs text-primary bg-gray-50 ">
           <tr>
             <th scope="col" className="px-6 py-3">

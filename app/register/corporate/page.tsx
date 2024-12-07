@@ -70,41 +70,56 @@ const Page = () => {
   />
           </div>
           <div className="flex items-center justify-center relative z-20 h-full">
-            <div className="">
+          <div className="">
               <div className="bg-[#036E03]/[30%] rounded-t-[25px]">
                 <div className="flex justify-center pt-14 pb-8">
-                  {/* <img src="/urban 1.svg" alt="" /> */}
-
+       
                   <Image
             className=""
-            src="/urban 1.svg"
+            src="/urban 1.png"
             alt="image"
-            width={100}
-            height={100}
+            width={140}
+            height={140}
             priority
           />
                 </div>
               </div>
-              <div className="bg-[#036E03] md:pl-7 lg:pl-10 md:pr-6 lg:pr-10 md:pt-4 lg:pt-6 md:pb-10 lg:pb-14 rounded-b-[25px]">
-                <h4 className="text-white text-[36px] font-[700] leading-[45.2px] max-w-[330px]">
-                  Manage your park at one glance!
-                </h4>
-                <div className="text-white mt-8">
-                  <ul className="flex flex-col gap-1">
-                    <li className="text-[18px] font-[500]">- Manage Trips</li>
-                    <li className="text-[18px] font-[500]">
-                      - Bookings & Records
-                    </li>
-                    <li className="text-[18px] font-[500]">
-                      - Add Park Managers
-                    </li>
-                    <li className="text-[18px] font-[500]">
-                      - Add Dispatch Officers
-                    </li>
-                    <li className="text-[18px] font-[500]">
-                      - Assign Trips & Drivers
-                    </li>
-                  </ul>
+              <div className="relative">
+                <div className="bg-[#036E03] md:pl-7 md:pr-6 md:pt-4 lg:pt-6 md:pb-10 lg:pb-14 rounded-b-[25px]">
+                  <Image
+                    className="h-full object-cover w-full"
+                    src="/pattern.png"
+                    alt="Descriptive alt text"
+                    layout="fill"
+                    // objectFit="cover"
+                  />
+                  <h4 className="text-white text-center md:text-[48px] font-[700] text-[36px] leading-[55px] max-w-[400px]">
+                    Urban Experience Centre (UEC)
+                  </h4>
+                  <div className="flex py-8 justify-center">
+                    <Image
+                      className=""
+                      src="/urban single logo.svg"
+                      alt="image"
+                      width={80}
+                      height={80}
+                      priority
+                    />
+                  </div>
+
+                  <div className="flex items-center gap-4 justify-center">
+                    <Image
+                      className=""
+                      src="/onboarding/blip.svg"
+                      alt="image"
+                      width={40}
+                      height={40}
+                      priority
+                    />
+                    <h5 className="text-[19.85px] text-white font-[200]">
+                      Powered by <span className="font-[700]">BLIP LLC</span>
+                    </h5>
+                  </div>
                 </div>
               </div>
             </div>
@@ -133,14 +148,13 @@ const Page = () => {
               </div>
               <div className="flex relative z-20 h-full justify-center text-center">
                 <div className="flex justify-center text-center pt-14 pb-14">
-                  {/* <img src="/urban 1.svg" alt="" /> */}
-
+             
                   <Image
             className=""
-            src="/urban 1.svg"
+            src="/urban 1.png"
             alt="image"
-            width={100}
-            height={100}
+            width={140}
+            height={140}
             priority
           />
                 </div>
@@ -172,7 +186,7 @@ const Page = () => {
 
             <div className="md:h-full h-full scrollbar-hide overflow-y-scroll">
               <div className="flex flex-col">
-                <h5 className="text-[#121212] text-[26px] md:text-[34px] lg:text-[36px] font-[800]">
+                <h5 className="text-[#121212] text-[26px] md:text-[34px] lg:text-[40px] font-[800]">
                   Sign up as Corporate Organization
                 </h5>
                 {/* <h3 className="text-[#1A1A1A] text-[15px] lg:text-[18px] font-[300]">
@@ -191,13 +205,13 @@ const Page = () => {
                       <div>
                         <div className=" mb-5 relative">
                           <label
-                            className=" text-[#2B2C2B] text-[16px] font-[500] "
+                            className=" text-[#2B2C2B] text-[16px] md:text-[20px] font-[500] "
                             htmlFor="first_name"
                           >
                             Company Name
                           </label>
                           <Field
-                            className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
+                            className="mt-1 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
                             name="first_name"
                             type="text"
                             id="first_name"
@@ -209,13 +223,13 @@ const Page = () => {
                         </div>
                         <div className=" mb-5 relative">
                           <label
-                            className=" text-[#2B2C2B] text-[16px] font-[500] "
+                            className=" text-[#2B2C2B] text-[16px] md:text-[20px] font-[500] "
                             htmlFor="last_name"
                           >
                             Company Address
                           </label>
                           <Field
-                            className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
+                            className="mt-1 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
                             name="last_name"
                             type="text"
                             id="last_name"
@@ -228,13 +242,13 @@ const Page = () => {
 
                         <div className=" mb-5 relative">
                           <label
-                            className=" text-[#2B2C2B] text-[16px] font-[500] "
+                            className=" text-[#2B2C2B] text-[16px] md:text-[20px] font-[500] "
                             htmlFor="last_name"
                           >
                             Company RC
                           </label>
                           <Field
-                            className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
+                            className="mt-1 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
                             name="last_name"
                             type="text"
                             id="last_name"
@@ -247,13 +261,13 @@ const Page = () => {
 
                         <div className=" mb-5 relative">
                           <label
-                            className=" text-[#2B2C2B] text-[16px] font-[500] "
+                            className=" text-[#2B2C2B] text-[16px] md:text-[20px] font-[500] "
                             htmlFor="email"
                           >
                             Email Address
                           </label>
                           <Field
-                            className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
+                            className="mt-1 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
                             name="email"
                             type="email"
                             id="email"
@@ -266,13 +280,13 @@ const Page = () => {
 
                         <div className=" mb-5 relative">
                           <label
-                            className=" text-[#2B2C2B] text-[16px] font-[500] "
+                            className=" text-[#2B2C2B] text-[16px] md:text-[20px] font-[500] "
                             htmlFor="phone"
                           >
                             Phone Number
                           </label>
                           <Field
-                            className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
+                            className="mt-1 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
                             name="phone"
                             type="number"
                             id="phone"
@@ -285,14 +299,14 @@ const Page = () => {
 
                         <div className=" mb-5 relative">
                           <label
-                            className=" text-[#2B2C2B] text-[16px] font-[500] "
+                            className=" text-[#2B2C2B] text-[16px] md:text-[20px] font-[500] "
                             htmlFor="password"
                           >
                             Password
                           </label>
                           <div>
                             <Field
-                              className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
+                              className="mt-1 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
                               name="password"
                               id="password"
                               type={!showPassword ? "password" : "text"}
@@ -321,14 +335,14 @@ const Page = () => {
                         </div>
                         <div className=" mb-5 relative">
                           <label
-                            className=" text-[#2B2C2B] text-[16px] font-[500] "
+                            className=" text-[#2B2C2B] text-[16px] md:text-[20px] font-[500] "
                             htmlFor="confirmPassword"
                           >
                             Retype Password
                           </label>
                           <div>
                             <Field
-                              className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
+                              className="mt-1 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
                               name="confirmPassword"
                               id="confirmPassword"
                               type={

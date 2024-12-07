@@ -42,7 +42,7 @@ const page = () => {
       <div className="bg-white overflow-hidden rounded-[8px] px-3 md:px-8 py-7 md:py-9">
         <BreadcrumbsDisplay />
 
-        <h5 className="text-blackText text-[16px] py-4 ">
+        <h5 className="text-blackText text-[20px] py-4 ">
           These are all your Trips records
         </h5>
         <section className="overflow-hidden overflow-x-scroll">

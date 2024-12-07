@@ -46,7 +46,7 @@ const ResetPassword = () => {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
         <AiFillLock className="text-primary w-6 h-6"/>
-          <h5 className="text-primary text-[18px]">Reset Password</h5>
+          <h5 className="text-primary  md:text-[20px] text-[18px]">Reset Password</h5>
         </div>
 
         <h5 className="text-primary text-[18px] underline">Edit</h5>

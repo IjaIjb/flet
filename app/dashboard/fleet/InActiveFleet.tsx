@@ -105,10 +105,12 @@ function InActiveFleet()  {
               <td className="px-6 py-4">{datas?.date}</td>
               <td className="px-6 py-4">
                 <div className="relative">
+                <div className="flex justify-center">
                   <SlOptions
                     className="cursor-pointer"
                     onClick={() => toggleDropdown(index)}
                   />
+                  </div>
                   {dropdownIndex === index && (
                     <div className="absolute right-0 mt-2 w-48 bg-white border rounded-md shadow-lg z-10">
                       <ul className="py-1">

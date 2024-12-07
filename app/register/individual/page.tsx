@@ -11,6 +11,7 @@ import Image from "next/image";
 
 import "react-responsive-modal/styles.css";
 import { Modal } from "react-responsive-modal";
+import nigeriaData from "../../../components/assets/states.json"; // Adjust path to your JSON file
 
 // ImageUpload component definition with proper types
 interface ImageUploadProps {
@@ -34,8 +35,6 @@ interface DocumentUploadProps {
   image: string | null; // image can be a string (URL) or null
   setImage: (image: string | null) => void; // setImage is a function that updates the image state
 }
-
-
 
 const RegisterIndividual = () => {
   const router = useRouter();
@@ -90,44 +89,44 @@ const RegisterIndividual = () => {
 
   const ImageUpload: React.FC<ImageUploadProps> = ({ image, setImage }) => (
     <div className="flex justify-center text-center">
-    <label className="flex w-[200px] bg-white dotted-border flex-col items-center justify-center rounded-[5px] cursor-pointer relative">
-      <div className="flex flex-col items-center justify-center h-[150px]">
-        {image ? (
-          <Image
-            className=""
-            src={image}
-            alt="Uploaded image"
-            width={100}
-            height={100}
-          />
-        ) : (
-          <Image
-            className=""
-            src="/onboarding/Icon.svg" // Replace with your default image path
-            alt="Default placeholder"
-            width={100}
-            height={100}
-          />
-        )}
-      </div>
-      <input
-        id="dropzone1"
-        type="file"
-        accept="image/x-png,image/gif,image/jpeg"
-        className="hidden mb-2 text-sm text-[#6C757D] font-medium"
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-          const file = e.target.files?.[0];
-          if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-              setImage(reader.result as string);
-            };
-            reader.readAsDataURL(file);
-          }
-        }}
-      />
-    </label>
-  </div>
+      <label className="flex w-[200px] bg-white dotted-border flex-col items-center justify-center rounded-[5px] cursor-pointer relative">
+        <div className="flex flex-col items-center justify-center h-[150px]">
+          {image ? (
+            <Image
+              className=""
+              src={image}
+              alt="Uploaded image"
+              width={100}
+              height={100}
+            />
+          ) : (
+            <Image
+              className=""
+              src="/onboarding/Icon.svg" // Replace with your default image path
+              alt="Default placeholder"
+              width={100}
+              height={100}
+            />
+          )}
+        </div>
+        <input
+          id="dropzone1"
+          type="file"
+          accept="image/x-png,image/gif,image/jpeg"
+          className="hidden mb-2 text-sm text-[#6C757D] font-medium"
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            const file = e.target.files?.[0];
+            if (file) {
+              const reader = new FileReader();
+              reader.onloadend = () => {
+                setImage(reader.result as string);
+              };
+              reader.readAsDataURL(file);
+            }
+          }}
+        />
+      </label>
+    </div>
   );
 
   const BusSideUpload: React.FC<BusSideUploadProps> = ({ image, setImage }) => (
@@ -142,17 +141,17 @@ const RegisterIndividual = () => {
             // />
 
             <Image
-            className=""
-            src={image}
-            alt="image"
-            width={100}
-            height={100}
-            priority
-          />
+              className=""
+              src={image}
+              alt="image"
+              width={100}
+              height={100}
+              priority
+            />
           ) : (
             <div className="flex items-center gap-2">
               <FiUpload />
-              <h4 className="text-[16px] text-[#9F9F9F]">
+              <h4 className="text-[16px] md:text-[20px] text-[#9F9F9F]">
                 Upload Side bus Image
               </h4>
             </div>
@@ -160,26 +159,29 @@ const RegisterIndividual = () => {
         </div>
 
         <input
-  id="dropzone22"
-  type="file"
-  accept="image/x-png,image/gif,image/jpeg"
-  className="hidden mb-2 text-sm text-[#6C757D] font-medium"
-  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]; // Optional chaining in case files is undefined
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImage(reader.result as string); // Cast reader.result as string
-      };
-      reader.readAsDataURL(file);
-    }
-  }}
-/>
+          id="dropzone22"
+          type="file"
+          accept="image/x-png,image/gif,image/jpeg"
+          className="hidden mb-2 text-sm text-[#6C757D] font-medium"
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            const file = e.target.files?.[0]; // Optional chaining in case files is undefined
+            if (file) {
+              const reader = new FileReader();
+              reader.onloadend = () => {
+                setImage(reader.result as string); // Cast reader.result as string
+              };
+              reader.readAsDataURL(file);
+            }
+          }}
+        />
       </label>
     </div>
   );
 
-  const BusFrontUpload: React.FC<BusFrontUploadProps> = ({ image, setImage }) => (
+  const BusFrontUpload: React.FC<BusFrontUploadProps> = ({
+    image,
+    setImage,
+  }) => (
     <div className="flex justify-center w-full mt-2 text-center">
       <label className="flex w-full  bg-white dotted-border flex-col items-center justify-center rounded-[5px] cursor-pointer relative">
         <div className="flex flex-col items-center justify-center h-[150px]">
@@ -191,17 +193,17 @@ const RegisterIndividual = () => {
             // />
 
             <Image
-            className=""
-            src={image}
-            alt="image"
-            width={100}
-            height={100}
-            priority
-          />
+              className=""
+              src={image}
+              alt="image"
+              width={100}
+              height={100}
+              priority
+            />
           ) : (
             <div className="flex items-center gap-2">
               <FiUpload />
-              <h4 className="text-[16px] text-[#9F9F9F]">
+              <h4 className="text-[16px] md:text-[20px] text-[#9F9F9F]">
                 Upload Side bus Image
               </h4>
             </div>
@@ -227,7 +229,10 @@ const RegisterIndividual = () => {
     </div>
   );
 
-  const DocumentUpload: React.FC<DocumentUploadProps> = ({ image, setImage }) => (
+  const DocumentUpload: React.FC<DocumentUploadProps> = ({
+    image,
+    setImage,
+  }) => (
     <div className="flex justify-center w-full mt-2 text-center h-4">
       <label className="flex w-full bg-white dotted-border flex-col  items-center justify-center rounded-[5px] cursor-pointer relative">
         <div className="flex flex-col items-center  justify-center ">
@@ -239,13 +244,13 @@ const RegisterIndividual = () => {
             //   // style={{ minHeight: "50px", maxHeight: "50px", }}
             // />
             <div className="relative w-full h-64">
-  <Image
-    src={image}
-    alt="Descriptive alt text"
-    layout="fill"
-    objectFit="cover"
-  />
-</div>
+              <Image
+                src={image}
+                alt="Descriptive alt text"
+                layout="fill"
+                objectFit="cover"
+              />
+            </div>
           ) : (
             <div className="flex items-center gap-2">
               <FiUpload />
@@ -331,50 +336,65 @@ const RegisterIndividual = () => {
               alt=""
             /> */}
 
-<Image
-     className="h-full z-10 object-cover w-full"
-                  src="/onboarding/transport-concept-parked-vehicles 1.svg"
-    alt="Descriptive alt text"
-    layout="fill"
-    // objectFit="cover"
-  />
+            <Image
+              className="h-full z-10 object-cover w-full"
+              src="/onboarding/transport-concept-parked-vehicles 1.svg"
+              alt="Descriptive alt text"
+              layout="fill"
+              // objectFit="cover"
+            />
           </div>
           <div className="flex items-center justify-center relative z-20 h-full">
-            <div className="">
+          <div className="">
               <div className="bg-[#036E03]/[30%] rounded-t-[25px]">
                 <div className="flex justify-center pt-14 pb-8">
-                  {/* <img src="/urban 1.svg" alt="" /> */}
-
+             
                   <Image
             className=""
-            src="/urban 1.svg"
+            src="/urban 1.png"
             alt="image"
-            width={100}
-            height={100}
+            width={140}
+            height={140}
             priority
           />
                 </div>
               </div>
-              <div className="bg-[#036E03] md:pl-7 lg:pl-10 md:pr-6 lg:pr-10 md:pt-4 lg:pt-6 md:pb-10 lg:pb-14 rounded-b-[25px]">
-                <h4 className="text-white text-[36px] font-[700] leading-[45.2px] max-w-[330px]">
-                  Manage your park at one glance!
-                </h4>
-                <div className="text-white mt-8">
-                  <ul className="flex flex-col gap-1">
-                    <li className="text-[18px] font-[500]">- Manage Trips</li>
-                    <li className="text-[18px] font-[500]">
-                      - Bookings & Records
-                    </li>
-                    <li className="text-[18px] font-[500]">
-                      - Add Park Managers
-                    </li>
-                    <li className="text-[18px] font-[500]">
-                      - Add Dispatch Officers
-                    </li>
-                    <li className="text-[18px] font-[500]">
-                      - Assign Trips & Drivers
-                    </li>
-                  </ul>
+              <div className="relative">
+                <div className="bg-[#036E03] md:pl-7 md:pr-6 md:pt-4 lg:pt-6 md:pb-10 lg:pb-14 rounded-b-[25px]">
+                  <Image
+                    className="h-full object-cover w-full"
+                    src="/pattern.png"
+                    alt="Descriptive alt text"
+                    layout="fill"
+                    // objectFit="cover"
+                  />
+                  <h4 className="text-white text-center md:text-[48px] font-[700] text-[36px] leading-[55px] max-w-[400px]">
+                    Urban Experience Centre (UEC)
+                  </h4>
+                  <div className="flex py-8 justify-center">
+                    <Image
+                      className=""
+                      src="/urban single logo.svg"
+                      alt="image"
+                      width={80}
+                      height={80}
+                      priority
+                    />
+                  </div>
+
+                  <div className="flex items-center gap-4 justify-center">
+                    <Image
+                      className=""
+                      src="/onboarding/blip.svg"
+                      alt="image"
+                      width={40}
+                      height={40}
+                      priority
+                    />
+                    <h5 className="text-[19.85px] text-white font-[200]">
+                      Powered by <span className="font-[700]">BLIP LLC</span>
+                    </h5>
+                  </div>
                 </div>
               </div>
             </div>
@@ -392,119 +412,117 @@ const RegisterIndividual = () => {
                   alt=""
                 /> */}
 
-<Image
-     className="h-full  object-cover w-full"
+                <Image
+                  className="h-full  object-cover w-full"
                   src="/onboarding/transport-concept-parked-vehicles 1.svg"
-    alt="Descriptive alt text"
-    layout="fill"
-    objectFit="cover"
-  />
+                  alt="Descriptive alt text"
+                  layout="fill"
+                  objectFit="cover"
+                />
                 <div className="overlay h-full absolute inset-0 bg-primary/[50%] "></div>
               </div>
               <div className="flex relative z-20 h-full justify-center text-center">
                 <div className="flex justify-center text-center pt-14 pb-14">
-                  {/* <img src="/urban 1.svg" alt="" /> */}
-
-
+          
                   <Image
-            className=""
-            src="/urban 1.svg"
-            alt="image"
-            width={100}
-            height={100}
-            priority
-          />
+                    className=""
+                    src="/urban 1.png"
+                    alt="image"
+                    width={100}
+                    height={100}
+                    priority
+                  />
                 </div>
               </div>
             </div>
           </div>
           <div className="px-8   ">
-           <div className="sticky top-0 pt-[40px] z-20 bg-white">
-            {showScreen === 1 ? (
-              <div className="flex justify-between">
-                <button
-                  type="button"
-                  onClick={handleBackClick}
-                  className="flex items-center text-gray-600 mb-4"
-                >
-                  <FaArrowLeft className="" />
-                </button>
+            <div className="sticky top-0 pt-[40px] z-20 bg-white">
+              {showScreen === 1 ? (
+                <div className="flex justify-between">
+                  <button
+                    type="button"
+                    onClick={handleBackClick}
+                    className="flex items-center text-gray-600 mb-4"
+                  >
+                    <FaArrowLeft className="" />
+                  </button>
 
-                <div className="flex items-center gap-2">
-                  <h6>Step 1</h6>
-                  <div className="flex items-center gap-1">
-                    <div className="h-3 w-3 rounded-full bg-[#6CC56C]"></div>
-                    <div className="h-3 w-3 rounded-full bg-[#D9D9D9]"></div>
-                    <div className="h-3 w-3 rounded-full bg-[#D9D9D9]"></div>
+                  <div className="flex items-center gap-2">
+                    <h6>Step 1</h6>
+                    <div className="flex items-center gap-1">
+                      <div className="h-3 w-3 rounded-full bg-[#6CC56C]"></div>
+                      <div className="h-3 w-3 rounded-full bg-[#D9D9D9]"></div>
+                      <div className="h-3 w-3 rounded-full bg-[#D9D9D9]"></div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ) : showScreen === 2 ? (
-              <div className="flex justify-between">
-                <button
-                  type="button"
-                  onClick={() => setShowScreen(1)}
-                  className="flex items-center text-gray-600 mb-4"
-                >
-                  <FaArrowLeft className="" />
-                </button>
+              ) : showScreen === 2 ? (
+                <div className="flex justify-between">
+                  <button
+                    type="button"
+                    onClick={() => setShowScreen(1)}
+                    className="flex items-center text-gray-600 mb-4"
+                  >
+                    <FaArrowLeft className="" />
+                  </button>
 
-                <div className="flex items-center gap-2">
-                  <h6>Step 2</h6>
-                  <div className="flex items-center gap-1">
-                    <div className="h-3 w-3 rounded-full bg-[#6CC56C]"></div>
-                    <div className="h-3 w-3 rounded-full bg-[#6CC56C]"></div>
-                    <div className="h-3 w-3 rounded-full bg-[#D9D9D9]"></div>
+                  <div className="flex items-center gap-2">
+                    <h6>Step 2</h6>
+                    <div className="flex items-center gap-1">
+                      <div className="h-3 w-3 rounded-full bg-[#6CC56C]"></div>
+                      <div className="h-3 w-3 rounded-full bg-[#6CC56C]"></div>
+                      <div className="h-3 w-3 rounded-full bg-[#D9D9D9]"></div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ) : showScreen === 3 ? (
-              <div className="flex justify-between">
-                <button
-                  type="button"
-                  onClick={() => setShowScreen(2)}
-                  className="flex items-center text-gray-600 mb-4"
-                >
-                  <FaArrowLeft className="" />
-                </button>
+              ) : showScreen === 3 ? (
+                <div className="flex justify-between">
+                  <button
+                    type="button"
+                    onClick={() => setShowScreen(2)}
+                    className="flex items-center text-gray-600 mb-4"
+                  >
+                    <FaArrowLeft className="" />
+                  </button>
 
-                <div className="flex items-center gap-2">
-                  <h6>Step 3</h6>
-                  <div className="flex items-center gap-1">
-                    <div className="h-3 w-3 rounded-full bg-[#6CC56C]"></div>
-                    <div className="h-3 w-3 rounded-full bg-[#6CC56C]"></div>
-                    <div className="h-3 w-3 rounded-full bg-[#6CC56C]"></div>
+                  <div className="flex items-center gap-2">
+                    <h6>Step 3</h6>
+                    <div className="flex items-center gap-1">
+                      <div className="h-3 w-3 rounded-full bg-[#6CC56C]"></div>
+                      <div className="h-3 w-3 rounded-full bg-[#6CC56C]"></div>
+                      <div className="h-3 w-3 rounded-full bg-[#6CC56C]"></div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ) : (
-              <div className="flex items-center justify-between w-full lg:w-[40%]">
-                <button
-                  type="button"
-                  onClick={() => setShowScreen(3)}
-                  className="flex items-center text-gray-600 mb-4"
-                >
-                  <FaArrowLeft className="" />
-                </button>
+              ) : (
+                <div className="flex items-center justify-between w-full lg:w-[40%]">
+                  <button
+                    type="button"
+                    onClick={() => setShowScreen(3)}
+                    className="flex items-center text-gray-600 mb-4"
+                  >
+                    <FaArrowLeft className="" />
+                  </button>
 
-                <div className="flex items-center gap-2">
-                  <h6>Step 3</h6>
-                  <div className="flex items-center gap-1">
-                    <div className="h-3 w-3 rounded-full bg-[#6CC56C]"></div>
-                    <div className="h-3 w-3 rounded-full bg-[#6CC56C]"></div>
-                    <div className="h-3 w-3 rounded-full bg-[#6CC56C]"></div>
+                  <div className="flex items-center gap-2">
+                    <h6>Step 3</h6>
+                    <div className="flex items-center gap-1">
+                      <div className="h-3 w-3 rounded-full bg-[#6CC56C]"></div>
+                      <div className="h-3 w-3 rounded-full bg-[#6CC56C]"></div>
+                      <div className="h-3 w-3 rounded-full bg-[#6CC56C]"></div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
-</div>
+              )}
+            </div>
             <div className="md:h-full h-full scrollbar-hide overflow-y-scroll">
               {showScreen === 1 ? (
                 <div className="flex flex-col">
-                  <h5 className="text-[#121212] text-[26px] md:text-[34px] lg:text-[36px] font-[800]">
+                  <h5 className="text-[#121212] text-[26px] md:text-[34px] lg:text-[40px] font-[800]">
                     Sign up as an Individual
                   </h5>
-                  <h3 className="text-[#1A1A1A] text-[15px] lg:text-[18px] font-[300]">
+                  <h3 className="text-[#1A1A1A] text-[15px] lg:text-[20px] font-[400]">
                     Register in three easy steps
                   </h3>
                 </div>
@@ -513,7 +531,7 @@ const RegisterIndividual = () => {
                   <h5 className="text-[#121212] text-[26px] md:text-[34px] lg:text-[36px] font-[800]">
                     Upload Profile Picture
                   </h5>
-                  <h3 className="text-[#1A1A1A] text-[15px] lg:text-[17px] font-[300]">
+                  <h3 className="text-[#1A1A1A] text-[15px] lg:text-[20px] font-[300]">
                     Upload a cleer picture of yourself
                   </h3>
                 </div>
@@ -522,7 +540,7 @@ const RegisterIndividual = () => {
                   <h5 className="text-[#121212] text-[26px] md:text-[34px] lg:text-[36px] font-[800]">
                     Add a Vehicle
                   </h5>
-                  <h3 className="text-[#1A1A1A] text-[15px] lg:text-[17px] font-[300]">
+                  <h3 className="text-[#1A1A1A] text-[15px] lg:text-[20px] font-[300]">
                     Add at least one vehicle from your fleet
                   </h3>
                 </div>
@@ -531,7 +549,7 @@ const RegisterIndividual = () => {
                   <h5 className="text-[#121212] text-[26px] md:text-[34px] lg:text-[36px] font-[800]">
                     Upload Vehicle Documents
                   </h5>
-                  <h3 className="text-[#1A1A1A] text-[15px] lg:text-[17px] font-[300]">
+                  <h3 className="text-[#1A1A1A] text-[15px] lg:text-[20px] font-[300]">
                     Add at least one vehicle document for your fleet
                   </h3>
                 </div>
@@ -543,18 +561,18 @@ const RegisterIndividual = () => {
                   validationSchema={validation}
                   onSubmit={onSubmit}
                 >
-                  {({  values, setFieldValue }) => (
+                  {({ values, setFieldValue }) => (
                     <Form className="w-full  mt-10 lg:mt-10 mb-6 flex flex-col justify-between">
                       <div className={showScreen === 1 ? "block " : "hidden"}>
                         <div className=" mb-5 relative">
                           <label
-                            className=" text-[#2B2C2B] text-[16px] font-[500] "
+                            className=" text-[#2B2C2B] text-[16px] md:text-[20px] font-[500] "
                             htmlFor="first_name"
                           >
                             First Name
                           </label>
                           <Field
-                            className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
+                            className="mt-1 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
                             name="first_name"
                             type="text"
                             id="first_name"
@@ -566,13 +584,13 @@ const RegisterIndividual = () => {
                         </div>
                         <div className=" mb-5 relative">
                           <label
-                            className=" text-[#2B2C2B] text-[16px] font-[500] "
+                            className=" text-[#2B2C2B] text-[16px] md:text-[20px] font-[500] "
                             htmlFor="last_name"
                           >
                             Last Name
                           </label>
                           <Field
-                            className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
+                            className="mt-1 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
                             name="last_name"
                             type="text"
                             id="last_name"
@@ -584,13 +602,13 @@ const RegisterIndividual = () => {
                         </div>
                         <div className=" mb-5 relative">
                           <label
-                            className=" text-[#2B2C2B] text-[16px] font-[500] "
+                            className=" text-[#2B2C2B] text-[16px] md:text-[20px] font-[500] "
                             htmlFor="phone"
                           >
                             Phone Number
                           </label>
                           <Field
-                            className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
+                            className="mt-1 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
                             name="phone"
                             type="number"
                             id="phone"
@@ -602,13 +620,13 @@ const RegisterIndividual = () => {
                         </div>
                         <div className=" mb-5 relative">
                           <label
-                            className=" text-[#2B2C2B] text-[16px] font-[500] "
+                            className=" text-[#2B2C2B] text-[16px] md:text-[20px] font-[500] "
                             htmlFor="email"
                           >
                             E-mail
                           </label>
                           <Field
-                            className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
+                            className="mt-1 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
                             name="email"
                             type="email"
                             id="email"
@@ -620,13 +638,13 @@ const RegisterIndividual = () => {
                         </div>
                         <div className=" mb-5 relative">
                           <label
-                            className=" text-[#2B2C2B] text-[16px] font-[500] "
+                            className=" text-[#2B2C2B] text-[16px] md:text-[20px] font-[500] "
                             htmlFor="address"
                           >
                             Address
                           </label>
                           <Field
-                            className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
+                            className="mt-1 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
                             name="address"
                             type="text"
                             id="address"
@@ -638,13 +656,13 @@ const RegisterIndividual = () => {
                         </div>
                         <div className=" mb-5 relative">
                           <label
-                            className=" text-[#2B2C2B] text-[16px] font-[500] "
+                            className=" text-[#2B2C2B] text-[16px] md:text-[20px] font-[500] "
                             htmlFor="city"
                           >
                             City
                           </label>
                           <Field
-                            className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
+                            className="mt-1 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
                             name="city"
                             type="text"
                             id="city"
@@ -656,14 +674,14 @@ const RegisterIndividual = () => {
                         </div>
                         <div className=" mb-5 relative">
                           <label
-                            className=" text-[#2B2C2B] text-[16px] font-[500] "
+                            className=" text-[#2B2C2B] text-[16px] md:text-[20px] font-[500] "
                             htmlFor="password"
                           >
                             Password
                           </label>
                           <div>
                             <Field
-                              className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
+                              className="mt-1 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
                               name="password"
                               id="password"
                               type={!showPassword ? "password" : "text"}
@@ -692,14 +710,14 @@ const RegisterIndividual = () => {
                         </div>
                         <div className=" mb-5 relative">
                           <label
-                            className=" text-[#2B2C2B] text-[16px] font-[500] "
+                            className=" text-[#2B2C2B] text-[16px] md:text-[20px] font-[500] "
                             htmlFor="confirmPassword"
                           >
                             Retype Password
                           </label>
                           <div>
                             <Field
-                              className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
+                              className="mt-1 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
                               name="confirmPassword"
                               id="confirmPassword"
                               type={
@@ -740,15 +758,15 @@ const RegisterIndividual = () => {
                         <div className="mb-7">
                           <div className=" mb-5 relative">
                             <label
-                              className=" text-[#2B2C2B] text-[16px] font-[500] "
+                              className=" text-[#2B2C2B] text-[16px] md:text-[20px] font-[500] "
                               htmlFor="first_name"
                             >
                               Engine Number
                             </label>
                             <Field
-                              className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
+                              className="mt-1 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
                               name="engine"
-                              type="number"
+                              type="text"
                               id=""
                               placeholder=""
                             />
@@ -758,13 +776,13 @@ const RegisterIndividual = () => {
                           </div>
                           <div className=" mb-5 relative">
                             <label
-                              className=" text-[#2B2C2B] text-[16px] font-[500] "
+                              className=" text-[#2B2C2B] text-[16px] md:text-[20px] font-[500] "
                               htmlFor="last_name"
                             >
                               Engine Type
                             </label>
                             <Field
-                              className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
+                              className="mt-1 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
                               name="last_name"
                               type="text"
                               id="last_name"
@@ -777,7 +795,7 @@ const RegisterIndividual = () => {
 
                           <div className=" mb-5 relative">
                             <label
-                              className=" text-[#2B2C2B] text-[16px] font-[500] "
+                              className=" text-[#2B2C2B] text-[16px] md:text-[20px] font-[500] "
                               htmlFor="last_name"
                             >
                               Vehicle Type
@@ -787,7 +805,9 @@ const RegisterIndividual = () => {
                               name="vehicle_type"
                               as="select"
                               // type="tel"
-                              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                              onChange={(
+                                event: React.ChangeEvent<HTMLInputElement>
+                              ) => {
                                 setFieldValue(
                                   "vehicle_type",
                                   event.target.value
@@ -813,13 +833,13 @@ const RegisterIndividual = () => {
 
                           <div className=" mb-5 relative">
                             <label
-                              className=" text-[#2B2C2B] text-[16px] font-[500] "
+                              className=" text-[#2B2C2B] text-[16px] md:text-[20px] font-[500] "
                               htmlFor="phone"
                             >
                               Number Plate
                             </label>
                             <Field
-                              className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
+                              className="mt-1 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
                               name="phone"
                               type="number"
                               id="phone"
@@ -832,7 +852,7 @@ const RegisterIndividual = () => {
 
                           <div className=" mb-5 relative">
                             <label
-                              className=" text-[#2B2C2B] text-[16px] font-[500] "
+                              className=" text-[#2B2C2B] text-[16px] md:text-[20px] font-[500] "
                               htmlFor="last_name"
                             >
                               Enrollment City
@@ -842,7 +862,9 @@ const RegisterIndividual = () => {
                               name="vehicle_type"
                               as="select"
                               // type="tel"
-                              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                              onChange={(
+                                event: React.ChangeEvent<HTMLInputElement>
+                              ) => {
                                 setFieldValue(
                                   "vehicle_type",
                                   event.target.value
@@ -851,15 +873,14 @@ const RegisterIndividual = () => {
                               placeholder=""
                             >
                               <option label="Select"></option>
-                              <option className="text-center" value="Bus (12)">
-                                Bus
-                              </option>
-                              <option className="text-center" value="M Bus (5)">
-                                M Bus (5)
-                              </option>
-                              <option className="text-center" value="Sedan (3)">
-                                Sedan (3)
-                              </option>
+                              {nigeriaData.states.map((state) => (
+                                <option
+                                  key={state.state_code}
+                                  value={state.name}
+                                >
+                                  {state.name}
+                                </option>
+                              ))}
                             </Field>
                             <p className="text-red-700 text-xs mt-1 ">
                               <ErrorMessage name="last_name" />
@@ -870,7 +891,7 @@ const RegisterIndividual = () => {
                             onClick={toggleBusArchitecture}
                             className="flex items-center justify-between"
                           >
-                            <p className=" text-[#2B2C2B] text-[16px] font-[500] ">
+                            <p className=" text-[#2B2C2B] text-[16px] md:text-[20px] font-[500] ">
                               See Bus Architecture
                             </p>
 
@@ -886,7 +907,7 @@ const RegisterIndividual = () => {
                           {!showBusArchitecture && (
                             <div className="mt-3">
                               {/*  content here */}
-                              <p className="text-primary text-[16px]">
+                              <p className="text-primary text-[16px] md:text-[20px]">
                                 Bus Architecture
                               </p>
 
@@ -1027,8 +1048,8 @@ const RegisterIndividual = () => {
                               Upload Rear bus image
                             </label>
                             <BusFrontUpload
-                            image={frontBusImage}
-                            setImage={setFrontBusImage}
+                              image={frontBusImage}
+                              setImage={setFrontBusImage}
                             />
                           </div>
                         </div>
@@ -1048,7 +1069,7 @@ const RegisterIndividual = () => {
                                       Name of Document
                                     </label>
                                     <Field
-                                      className="mt-2 block w-full h-12 border-[0.5px] pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9]"
+                                      className="mt-1 block w-full h-12 border-[0.5px] pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9]"
                                       name={`documents[${index}].name`}
                                       type="text"
                                       placeholder="Enter document name"
@@ -1089,7 +1110,7 @@ const RegisterIndividual = () => {
                                       Add Document Expiry Date
                                     </label>
                                     <Field
-                                      className="mt-2 block w-full h-12 border-[0.5px] pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9]"
+                                      className="mt-1 block w-full h-12 border-[0.5px] pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9]"
                                       name={`documents[${index}].expiryDate`}
                                       type="date"
                                     />
@@ -1146,14 +1167,16 @@ const RegisterIndividual = () => {
                       </div>
 
                       {showScreen === 4 ? (
-                        <button
-                          onClick={onSubmit}
-                          // disabled={!selectedOption} // Disable button if no option is selected
-                          className={`py-4 w-full px-6 bg-[#036E03] text-white rounded-lg  hover:bg-green-700
+                        <div className="block w-full md:w-[70%]">
+                          <button
+                            onClick={onSubmit}
+                            // disabled={!selectedOption} // Disable button if no option is selected
+                            className={`py-4 w-full px-6 bg-[#036E03] text-white rounded-lg  hover:bg-green-700
       }`}
-                        >
-                          Proceed
-                        </button>
+                          >
+                            Proceed
+                          </button>
+                        </div>
                       ) : (
                         <button
                           onClick={
@@ -1190,61 +1213,69 @@ const RegisterIndividual = () => {
           </div>
         </div>
       </div>
-      <Modal open={open} onClose={onCloseModal} center>
-        <div className=" flex justify-center pt-7">
-          <h4 className="tex-[#1A1A1A] text-[30px] font-[700]">
-            Agree Terms & Condition
+
+<div className="relative">
+{open && (
+
+    <button
+    onClick={onCloseModal}
+    className="absolute top-2 right-[-20px] bg-white text-gray-700 rounded-full shadow-md w-8 h-8 flex items-center justify-center hover:bg-gray-200 z-[100px]"
+  >
+    ✕
+  </button>
+)}
+<Modal
+  open={open}
+  onClose={onCloseModal}
+  center
+  classNames={{
+    modal: "rounded-[10px] overflow-visible relative",
+  }}
+>
+
+
+  {/* Modal Content */}
+  <div className="flex justify-center">
+    <div className="max-w-[653px] mb-7 mt-2 px-4">
+      <div className="flex justify-center pt-7">
+        <h4 className="text-[#1A1A1A] text-[30px] md:text-[40px] font-[700]">
+          Agree Terms & Condition
+        </h4>
+      </div>
+      <div className="body-font font-poppins">
+        <div className="flex md:max-w-[400px] mb-3 justify-center mt-2">
+          <h4 className="md:text-[20px] text-[16px] text-[#141313]">
+            By clicking Register, you agree to our{" "}
+            <span className="text-primary cursor-pointer underline">
+              Terms of use
+            </span>{" "}
+            and{" "}
+            <span className="text-primary cursor-pointer underline">
+              Privacy Policy
+            </span>
           </h4>
         </div>
-        <div className="md:w-[370px]  body-font font-poppins">
-          <div className="flex justify-center mt-2">
-            <h4 className=" text-[16px] text-[#141313] ">
-              By clicking Register, you agree to our{" "}
-              <span className="text-primary cursor-pointer underline">
-                Terms of use
-              </span>{" "}
-              and{" "}
-              <span className="text-primary cursor-pointer underline">
-                Privacy Policy
-              </span>
-            </h4>
-          </div>
-          <div className="flex space-x-2 justify-center  pt-7">
-            <button
-              onClick={() => onOpenCongratModal()}
-              // disabled={!selectedOption} // Disable button if no option is selected
-              className={`py-4 w-full px-6 bg-[#036E03] text-white rounded-lg  hover:bg-green-700
-      }`}
-            >
-              Complete Registration
-            </button>
-            {/* <button
-                onClick={(e: any) => handleSubmit3(e)}
-                className="text-white  bg-[#00B07B] flex justify-center items-center py-3 rounded-[10px] w-full"
-              >
-                {loader3 ? <LoadingSpinner /> : "Pay $250"}
-              </button> */}
-          </div>
-          {/* <div className="flex items-start mt-3 mb-2">
-              <input
-                id="default-checkbox"
-                type="checkbox"
-                value=""
-                className="w-5 h-5 accent-green-600 bg-[#D9D9D9] border-green-600 rounded"
-              />
-              <label
-                htmlFor="default-checkbox"
-                className="ml-2 text-[15px]  text-gray-900 "
-              >
-                <span className="text-red-700">NOTE</span> This payment is
-                non-refundable regardless of whether you pass or fail the credit
-                eligibility test.
-              </label>
-            </div> */}
+        <div className="flex space-x-2 justify-center pt-7">
+          <button
+            onClick={() => onOpenCongratModal()}
+            className="py-4 w-full px-6 bg-[#036E03] text-white rounded-lg hover:bg-green-700"
+          >
+            Complete Registration
+          </button>
         </div>
-      </Modal>
+      </div>
+    </div>
+  </div>
+</Modal>;
+</div>
 
-      <Modal open={openCongratModal} onClose={onCloseCongratModal} center>
+
+      <Modal
+        classNames={{
+          modal: "rounded-[10px]  overflow-visible relative",
+        }}
+         open={openCongratModal} onClose={onCloseCongratModal} center>
+       <div className="px-10 py-10">
         <div className=" flex flex-col gap-3 justify-center pt-7">
           <div className="flex justify-center">
             <Image
@@ -1259,18 +1290,21 @@ const RegisterIndividual = () => {
             Congratulations
           </h4>
         </div>
-        <div className="md:w-[280px]  body-font font-poppins">
+        <div className="  ">
           <div className="flex justify-center mt-2">
-            <h4 className="text-center text-[16px] text-[#141313] ">
+            <div className="md:max-w-[280px]">
+                          <h4 className="text-center text-[16px] text-[#141313] ">
               Your Registration requirements has been received. You will be
               notified on the progress soon.{" "}
             </h4>
+            </div>
+
           </div>
           <div className="flex space-x-2 justify-center  pt-7">
             <button
               onClick={onSubmit2}
               // disabled={!selectedOption} // Disable button if no option is selected
-              className={`py-4 w-full px-6 bg-[#036E03] text-white rounded-lg  hover:bg-green-700
+              className={`py-4 md:w-[350px] w-full px-6 bg-[#036E03] text-white rounded-lg  hover:bg-green-700
       }`}
             >
               Proceed to Dashboard
@@ -1298,6 +1332,7 @@ const RegisterIndividual = () => {
                 eligibility test.
               </label>
             </div> */}
+        </div>
         </div>
       </Modal>
       {/* <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">

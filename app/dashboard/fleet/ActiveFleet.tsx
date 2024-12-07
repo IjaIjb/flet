@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { SlOptions } from "react-icons/sl";
 import { useRouter } from "next/navigation";
+import { MdChevronLeft, MdChevronRight } from "react-icons/md";
 
 function ActiveFleet() {
   const router = useRouter();
@@ -54,7 +55,7 @@ function ActiveFleet() {
     },
   ];
   return (
-    <div className="overflow-hidden overflow-x-scroll">
+    <div className="">
       <table className="w-full text-sm text-center overflow-hidden overflow-x-scroll ">
         <thead className="text-xs text-primary bg-gray-50 ">
           <tr>
@@ -104,10 +105,12 @@ function ActiveFleet() {
               <td className="px-6 py-4">{datas?.date}</td>
               <td className="px-6 py-4">
                 <div className="relative">
+                  <div className="flex justify-center">
                   <SlOptions
                     className="cursor-pointer"
                     onClick={() => toggleDropdown(index)}
                   />
+                  </div>
                   {dropdownIndex === index && (
                     <div className="absolute right-0 mt-2 w-48 bg-white border rounded-md shadow-lg z-10">
                       <ul className="py-1">
@@ -140,9 +143,29 @@ function ActiveFleet() {
         </tbody>
       </table>
 
-      <h4 className="text-primary underline text-center text-sm pt-4">
-        View All
-      </h4>
+      <div className="flex gap-4 justify-center mt-7 mb-3 items-center">
+        <h4 className="text-blackText font-[500] text-[13px]">Page 1 of 30</h4>
+
+        <div className="flex items-center gap-1">
+          <div className="text-[#98A2B3] px-3 py-2 ">1</div>
+          <div className="text-[#98A2B3] px-3 py-2 ">2</div>
+          <div className=" px-3 py-2 bg-primary text-white rounded-[6px]">
+            3
+          </div>
+          <div className="text-[#98A2B3] px-3 py-2 ">4</div>
+          <div className="text-[#98A2B3] px-3 py-2 ">5</div>
+          <div className="text-[#98A2B3] px-3 py-2 ">6</div>
+        </div>
+
+        <div className="flex gap-2">
+          <div className="bg-[#D9D9D9] py-2 px-2 rounded-[6px]">
+            <MdChevronLeft className="text-white w-7 h-7 " />
+          </div>
+          <div className="bg-[#D9D9D9] py-2 px-2 rounded-[6px]">
+            <MdChevronRight className="text-white w-7 h-7 " />
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
