@@ -47,7 +47,7 @@ const IndividualLogin = () => {
           validationSchema={validation}
           onSubmit={onSubmit}
         >
-          {({ values, setFieldValue }) => (
+          {({  }) => (
             <Form className="w-full  mt-10 lg:mt-10 mb-6 flex flex-col justify-between">
               <div>
                 <div className=" mb-7 relative">
