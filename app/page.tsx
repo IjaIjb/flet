@@ -4,7 +4,6 @@ import CorporateLogin from "../components/login/CorporateLogin";
 import IndividualLogin from "../components/login/IndividualLogin";
 import Image from "next/image";
 import React, { useState } from "react";
-import bg from "../public/onboarding/pattern png 3.svg";
 
 export default function Home() {
   const initialAccountState = {
