@@ -20,6 +20,10 @@ function ActiveFleet() {
     router.push("fleet/vehicle-statement");
   };
 
+  const handleVehicleDocuments = () => {
+    router.push("fleet/vehicle-documents");
+  };
+
   const data = [
     {
       id: 1,
@@ -56,8 +60,8 @@ function ActiveFleet() {
   ];
   return (
     <div className="">
-      <table className="w-full text-sm text-center overflow-hidden overflow-x-scroll ">
-        <thead className="text-xs text-primary bg-gray-50 ">
+      <table className="w-full text-[18px] text-center overflow-hidden overflow-x-scroll ">
+        <thead className=" text-primary bg-gray-50 ">
           <tr>
             <th scope="col" className="px-6 py-3">
               S/N
@@ -130,8 +134,13 @@ function ActiveFleet() {
                             Vehicle Report
                           </div>
                         </li>
-                        <li className="px-4 py-2 text-sm text-primary hover:bg-[#9F9F9F33] text-center cursor-pointer">
-                          See Documents
+                        <li>
+                          <div
+                            onClick={handleVehicleDocuments}
+                            className="px-4 py-2 text-sm text-primary hover:bg-[#9F9F9F33] text-center cursor-pointer"
+                          >
+                           See Documents
+                          </div>
                         </li>
                       </ul>
                     </div>

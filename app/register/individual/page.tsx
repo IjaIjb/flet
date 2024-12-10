@@ -12,6 +12,7 @@ import Image from "next/image";
 import "react-responsive-modal/styles.css";
 import { Modal } from "react-responsive-modal";
 import nigeriaData from "../../../components/assets/states.json"; // Adjust path to your JSON file
+// import { useUserControllerCreateIndividualBodyMutation } from "@/store/api";
 
 // ImageUpload component definition with proper types
 interface ImageUploadProps {
@@ -43,6 +44,9 @@ const RegisterIndividual = () => {
   const [confirmPassword, setShowConfirmPassword] = useState(false);
   const [showScreen, setShowScreen] = useState(1);
   const [showBusArchitecture, setBusAchitecture] = useState(false);
+
+  // const [signup, { isLoading, data, isSuccess, isError }] =
+  //   useUserControllerCreateIndividualBodyMutation();
 
   // const [documents, setDocuments] = useState([
   //   { id: 1, name: "", expiryDate: "", image: null },
@@ -345,18 +349,17 @@ const RegisterIndividual = () => {
             />
           </div>
           <div className="flex items-center justify-center relative z-20 h-full">
-          <div className="">
+            <div className="">
               <div className="bg-[#036E03]/[30%] rounded-t-[25px]">
                 <div className="flex justify-center pt-14 pb-8">
-             
                   <Image
-            className=""
-            src="/urban 1.png"
-            alt="image"
-            width={140}
-            height={140}
-            priority
-          />
+                    className=""
+                    src="/urban 1.png"
+                    alt="image"
+                    width={140}
+                    height={140}
+                    priority
+                  />
                 </div>
               </div>
               <div className="relative">
@@ -371,7 +374,7 @@ const RegisterIndividual = () => {
                   <h4 className="text-white text-center md:text-[48px] font-[700] text-[36px] leading-[55px] max-w-[400px]">
                     Urban Experience Centre (UEC)
                   </h4>
-                  <div className="flex py-8 justify-center">
+                  <div className="flex py-10 justify-center">
                     <Image
                       className=""
                       src="/urban single logo.svg"
@@ -423,7 +426,6 @@ const RegisterIndividual = () => {
               </div>
               <div className="flex relative z-20 h-full justify-center text-center">
                 <div className="flex justify-center text-center pt-14 pb-14">
-          
                   <Image
                     className=""
                     src="/urban 1.png"
@@ -1214,109 +1216,108 @@ const RegisterIndividual = () => {
         </div>
       </div>
 
-<div className="relative">
-{open && (
-
-    <button
-    onClick={onCloseModal}
-    className="absolute top-2 right-[-20px] bg-white text-gray-700 rounded-full shadow-md w-8 h-8 flex items-center justify-center hover:bg-gray-200 z-[100px]"
-  >
-    ✕
-  </button>
-)}
-<Modal
-  open={open}
-  onClose={onCloseModal}
-  center
-  classNames={{
-    modal: "rounded-[10px] overflow-visible relative",
-  }}
->
-
-
-  {/* Modal Content */}
-  <div className="flex justify-center">
-    <div className="max-w-[653px] mb-7 mt-2 px-4">
-      <div className="flex justify-center pt-7">
-        <h4 className="text-[#1A1A1A] text-[30px] md:text-[40px] font-[700]">
-          Agree Terms & Condition
-        </h4>
-      </div>
-      <div className="body-font font-poppins">
-        <div className="flex md:max-w-[400px] mb-3 justify-center mt-2">
-          <h4 className="md:text-[20px] text-[16px] text-[#141313]">
-            By clicking Register, you agree to our{" "}
-            <span className="text-primary cursor-pointer underline">
-              Terms of use
-            </span>{" "}
-            and{" "}
-            <span className="text-primary cursor-pointer underline">
-              Privacy Policy
-            </span>
-          </h4>
-        </div>
-        <div className="flex space-x-2 justify-center pt-7">
+      <div className="relative">
+        {open && (
           <button
-            onClick={() => onOpenCongratModal()}
-            className="py-4 w-full px-6 bg-[#036E03] text-white rounded-lg hover:bg-green-700"
+            onClick={onCloseModal}
+            className="absolute top-2 right-[-20px] bg-white text-gray-700 rounded-full shadow-md w-8 h-8 flex items-center justify-center hover:bg-gray-200 z-[100px]"
           >
-            Complete Registration
+            ✕
           </button>
-        </div>
+        )}
+        <Modal
+          open={open}
+          onClose={onCloseModal}
+          center
+          classNames={{
+            modal: "rounded-[10px] overflow-visible relative",
+          }}
+        >
+          {/* Modal Content */}
+          <div className="flex justify-center">
+            <div className="max-w-[653px] mb-7 mt-2 px-4">
+              <div className="flex justify-center pt-7">
+                <h4 className="text-[#1A1A1A] text-[30px] md:text-[40px] font-[700]">
+                  Agree Terms & Condition
+                </h4>
+              </div>
+              <div className="body-font font-poppins">
+                <div className="flex md:max-w-[400px] mb-3 justify-center mt-2">
+                  <h4 className="md:text-[20px] text-[16px] text-[#141313]">
+                    By clicking Register, you agree to our{" "}
+                    <span className="text-primary cursor-pointer underline">
+                      Terms of use
+                    </span>{" "}
+                    and{" "}
+                    <span className="text-primary cursor-pointer underline">
+                      Privacy Policy
+                    </span>
+                  </h4>
+                </div>
+                <div className="flex space-x-2 justify-center pt-7">
+                  <button
+                    onClick={() => onOpenCongratModal()}
+                    className="py-4 w-full px-6 bg-[#036E03] text-white rounded-lg hover:bg-green-700"
+                  >
+                    Complete Registration
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Modal>
+        ;
       </div>
-    </div>
-  </div>
-</Modal>;
-</div>
-
 
       <Modal
         classNames={{
           modal: "rounded-[10px]  overflow-visible relative",
         }}
-         open={openCongratModal} onClose={onCloseCongratModal} center>
-       <div className="px-10 py-10">
-        <div className=" flex flex-col gap-3 justify-center pt-7">
-          <div className="flex justify-center">
-            <Image
-              className=""
-              src="/onboarding/party-horn.svg"
-              alt="congrats"
-              width={50}
-              height={50}
-            />
-          </div>
-          <h4 className="text-center text-primary text-[20px] font-[700]">
-            Congratulations
-          </h4>
-        </div>
-        <div className="  ">
-          <div className="flex justify-center mt-2">
-            <div className="md:max-w-[280px]">
-                          <h4 className="text-center text-[16px] text-[#141313] ">
-              Your Registration requirements has been received. You will be
-              notified on the progress soon.{" "}
-            </h4>
+        open={openCongratModal}
+        onClose={onCloseCongratModal}
+        center
+      >
+        <div className="px-10 py-10">
+          <div className=" flex flex-col gap-3 justify-center pt-7">
+            <div className="flex justify-center">
+              <Image
+                className=""
+                src="/onboarding/party-horn.svg"
+                alt="congrats"
+                width={50}
+                height={50}
+              />
             </div>
-
+            <h4 className="text-center text-primary text-[20px] font-[700]">
+              Congratulations
+            </h4>
           </div>
-          <div className="flex space-x-2 justify-center  pt-7">
-            <button
-              onClick={onSubmit2}
-              // disabled={!selectedOption} // Disable button if no option is selected
-              className={`py-4 md:w-[350px] w-full px-6 bg-[#036E03] text-white rounded-lg  hover:bg-green-700
+          <div className="  ">
+            <div className="flex justify-center mt-2">
+              <div className="md:max-w-[280px]">
+                <h4 className="text-center text-[16px] text-[#141313] ">
+                  Your Registration requirements has been received. You will be
+                  notified on the progress soon.{" "}
+                </h4>
+              </div>
+            </div>
+            <div className="flex space-x-2 justify-center  pt-7">
+              <button
+                onClick={onSubmit2}
+                // disabled={!selectedOption} // Disable button if no option is selected
+                className={`py-4 md:w-[350px] w-full px-6 bg-[#036E03] text-white rounded-lg  hover:bg-green-700
       }`}
-            >
-              Proceed to Dashboard
-            </button>
-            {/* <button
+              >
+                Proceed to Dashboard
+              </button>
+              {/* <button
                 onClick={(e: any) => handleSubmit3(e)}
                 className="text-white  bg-[#00B07B] flex justify-center items-center py-3 rounded-[10px] w-full"
               >
                 {loader3 ? <LoadingSpinner /> : "Pay $250"}
               </button> */}
-          </div>
-          {/* <div className="flex items-start mt-3 mb-2">
+            </div>
+            {/* <div className="flex items-start mt-3 mb-2">
               <input
                 id="default-checkbox"
                 type="checkbox"
@@ -1332,7 +1333,7 @@ const RegisterIndividual = () => {
                 eligibility test.
               </label>
             </div> */}
-        </div>
+          </div>
         </div>
       </Modal>
       {/* <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">

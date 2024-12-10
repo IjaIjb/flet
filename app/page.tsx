@@ -4,7 +4,6 @@ import CorporateLogin from "../components/login/CorporateLogin";
 import IndividualLogin from "../components/login/IndividualLogin";
 import Image from "next/image";
 import React, { useState } from "react";
-
 export default function Home() {
   const initialAccountState = {
     individualElement: true,
@@ -57,10 +56,10 @@ export default function Home() {
 
   return (
     <div className="w-full">
-      <div className="grid lg:grid-cols-2 items-center gap-14 w-full h-full ">
+      <div className="grid lg:grid-cols-2 gap-14 w-full h-full ">
         {/* Left Section */}
-        <div className="w-full z-10 h-full lg:block hidden relative">
-          <div className="absolute h-full z-10 object-cover w-full rounded-xl">
+        <div className="w-full z-10 h-screen lg:block hidden relative">
+          <div className="absolute h-screen z-10 object-cover w-full rounded-xl">
             {/* <img
               className="h-full z-10 object-cover w-full"
               src="/onboarding/transport-concept-parked-vehicles 1.svg"
@@ -105,7 +104,7 @@ export default function Home() {
                   <h4 className="text-white text-center md:text-[48px] font-[700] text-[36px] leading-[55px] max-w-[400px]">
                     Urban Experience Centre (UEC)
                   </h4>
-                  <div className="flex py-8 justify-center">
+                  <div className="flex py-10 justify-center">
                     <Image
                       className=""
                       src="/urban single logo.svg"
@@ -136,15 +135,11 @@ export default function Home() {
         </div>
 
         {/* Right Section */}
-        <div className="w-full lg:w-[85%]">
+        <div className="w-full h-screen scrollbar-hide lg:w-[85%] lg:overflow-y-auto">
           <div className="lg:hidden block">
             <div className="w-full   relative">
               <div className="absolute h-full  object-cover w-full rounded-xl">
-                {/* <img
-                  className="h-full z-10 object-cover w-full"
-                  src="/onboarding/transport-concept-parked-vehicles 1.svg"
-                  alt=""
-                /> */}
+            
 
                 <Image
                   className="h-full object-cover w-full"
@@ -171,7 +166,9 @@ export default function Home() {
               </div>
             </div>
           </div>
-          <div className="px-8  pt-[40px]">
+          <div className=" bg-white px-8 ">
+           <div className="sticky top-[40px] z-20 bg-white">
+
             <div className="bg-[#6CC56C2E]/[18%] w-full flex gap-4 rounded-full p-2">
               <div
                 className={`${
@@ -195,16 +192,11 @@ export default function Home() {
                 Corporate
               </div>
             </div>
+            </div>
 
-            <div>{showProfileConnector()}</div>
+            <div className="md:h-full h-full scrollbar-hide mt-[80px] overflow-y-scroll">{showProfileConnector()}</div>
 
-            {/* <h4 className="text-[#000] text-[35px] font-[600] pb-[60px]">Login</h4>
-      <h5 className="text-[#958F8F] text-[26px] font-[600]">
-        Login into your account
-      </h5>
-      <h5 className="text-[#958F8F] text-[15px] font-[500]">
-        Thank you for getting back to KwickMall,
-      </h5> */}
+     
           </div>
         </div>
       </div>
