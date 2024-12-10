@@ -24,11 +24,15 @@ const BreadcrumbsDisplay = () => {
       )}
 
       <div>
-        <h1 className="font-[400] text-[18px] leading-4 text-[#121212]">
+      <h1 className="font-[700] md:text-[24px] text-[18px] leading-4 text-[#121212]">
           {lastPathname
-            ? capitalizeFirstLetter(lastPathname.split("%20").join(" "))
-            : "Home"}{" "}
-          {/* Display the last segment of the path */}
+            ? capitalizeFirstLetter(
+                lastPathname.split("%20").join(" ").toLowerCase() === "home"
+                  ? "dashboard"
+                  : lastPathname.split("%20").join(" ")
+              )
+            : "Dashboard"}{" "}
+          {/* Replace "Home" with "Dashboard" */}
         </h1>
       </div>
     </div>

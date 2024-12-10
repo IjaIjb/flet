@@ -6,47 +6,75 @@ import { ErrorMessage, Field, Form, Formik } from "formik";
 import * as Yup from "yup";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import Image from "next/image";
+// import { useUserControllerCreateCorporateBodyMutation } from "@/store/api";
+import LoadingSpinner from "@/components/UI/LoadingSpinner";
+
+// interface SignupValues {
+//   email: string;
+//   password: string;
+//   confirmPassword: string;
+//   companyName: string;
+//   companyAddress: string;
+//   companyRC: string;
+//   phone: string;
+// }
+// type ResetForm = () => void;
 
 const Page = () => {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [confirmPassword, setShowConfirmPassword] = useState(false);
-  const handleBackClick = () => {
-    router.back(); // Navigate to the previous page
-  };
+
+
+  // const [signup, {  isSuccess}] = useUserControllerCreateCorporateBodyMutation();
 
   const initialData = {
     email: "",
-
     password: "",
-    remember: "",
-    documents: [
-      { name: "", expiryDate: "", image: null }, // Ensure a default document exists
-    ],
+    confirmPassword: "",
+    companyName: "",
+    companyAddress: "",
+    companyRC: "",
+    phone: "",
   };
 
   const validation = Yup.object({
     email: Yup.string().email("Invalid email address").required("Required"),
     password: Yup.string()
-      .min(6, "Password must be minimum of 6 characters")
-      .max(255)
+      .min(6, "Password must be at least 6 characters")
       .required("Required"),
-    documents: Yup.array().of(
-      Yup.object().shape({
-        name: Yup.string().required("Document name is required"),
-        expiryDate: Yup.date().required("Expiry date is required"),
-        image: Yup.mixed().required("Document upload is required"),
-      })
-    ),
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref("password"), undefined], "Passwords must match")
+      .required("Required"),
+    companyName: Yup.string().required("Company name is required"),
+    companyAddress: Yup.string().required("Company address is required"),
+    companyRC: Yup.string().required("Company RC is required"),
+    phone: Yup.string().required("Phone number is required"),
   });
 
-  const onSubmit = async () => {
-    // e.preventDefault(); // Prevent default browser behavior
+  const onSubmit = async (
+    // values: SignupValues,
+    // { resetForm }: { resetForm: ResetForm }
+  ) => {
+    router.push("/dashboard/home");
 
-    router.push("/dashboard/home"); // Replace with the actual path
-
-    console.log("Form submitted");
+    // try {
+    //   const result = await signup(values).unwrap();
+    //   // console.log(result);
+    //   if (isSuccess) {
+    //     resetForm();
+    //     router.push("/dashboard/home");
+    //   }
+    // } catch (error) {
+    //   console.error("Error during signup:", error);
+    // }
   };
+  
+
+  const handleBackClick = () => {
+    router.back(); // Navigate to the previous page
+  };
+
 
   return (
     <div className="w-full">
@@ -96,7 +124,7 @@ const Page = () => {
                   <h4 className="text-white text-center md:text-[48px] font-[700] text-[36px] leading-[55px] max-w-[400px]">
                     Urban Experience Centre (UEC)
                   </h4>
-                  <div className="flex py-8 justify-center">
+                  <div className="flex py-10 justify-center">
                     <Image
                       className=""
                       src="/urban single logo.svg"
@@ -200,7 +228,7 @@ const Page = () => {
                   validationSchema={validation}
                   onSubmit={onSubmit}
                 >
-                  {({  }) => (
+                  {({ isSubmitting }) => (
                     <Form className="w-full  mt-10 lg:mt-10 mb-6 flex flex-col justify-between">
                       <div>
                         <div className=" mb-5 relative">
@@ -212,50 +240,50 @@ const Page = () => {
                           </label>
                           <Field
                             className="mt-1 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
-                            name="first_name"
+                            name="companyName"
                             type="text"
-                            id="first_name"
+                            id="companyName"
                             placeholder=""
                           />
                           <p className="text-red-700 text-xs mt-1 ">
-                            <ErrorMessage name="first_name" />
+                            <ErrorMessage name="companyName" />
                           </p>
                         </div>
                         <div className=" mb-5 relative">
                           <label
                             className=" text-[#2B2C2B] text-[16px] md:text-[20px] font-[500] "
-                            htmlFor="last_name"
+                            htmlFor="companyAddress"
                           >
                             Company Address
                           </label>
                           <Field
                             className="mt-1 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
-                            name="last_name"
+                            name="companyAddress"
                             type="text"
-                            id="last_name"
+                            id="companyAddress"
                             placeholder=""
                           />
                           <p className="text-red-700 text-xs mt-1 ">
-                            <ErrorMessage name="last_name" />
+                            <ErrorMessage name="companyAddress" />
                           </p>
                         </div>
 
                         <div className=" mb-5 relative">
                           <label
                             className=" text-[#2B2C2B] text-[16px] md:text-[20px] font-[500] "
-                            htmlFor="last_name"
+                            htmlFor="companyRC"
                           >
                             Company RC
                           </label>
                           <Field
                             className="mt-1 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
-                            name="last_name"
+                            name="companyRC"
                             type="text"
-                            id="last_name"
+                            id="companyRC"
                             placeholder=""
                           />
                           <p className="text-red-700 text-xs mt-1 ">
-                            <ErrorMessage name="last_name" />
+                            <ErrorMessage name="companyRC" />
                           </p>
                         </div>
 
@@ -374,12 +402,12 @@ const Page = () => {
                       </div>
 
                       <button
-                        onClick={onSubmit}
-                        // disabled={!selectedOption} // Disable button if no option is selected
-                        className={`py-4 w-full px-6 bg-[#036E03] text-white rounded-lg  hover:bg-green-700
+                        type="submit"
+                        disabled={isSubmitting} // Disable button if no option is selected
+                        className={`disabled:bg-gray-500 py-4 w-full px-6 bg-[#036E03] text-white rounded-lg  hover:bg-green-700
     }`}
                       >
-                        Sign Up
+   {isSubmitting ? <LoadingSpinner /> : "Sign Up"}
                       </button>
                     </Form>
                   )}

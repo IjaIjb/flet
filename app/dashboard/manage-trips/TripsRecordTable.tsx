@@ -79,8 +79,8 @@ const TripsRecordTable = () => {
   ];
   return (
     <div>
-      <table className="w-full text-sm text-center  ">
-        <thead className="text-xs text-primary bg-gray-50 ">
+      <table className="w-full text-[18px] text-center  ">
+        <thead className="text-[18px] text-primary bg-gray-50 ">
           <tr>
             {/* <th scope="col" className="px-3 py-3">
             S/N
@@ -201,86 +201,86 @@ const TripsRecordTable = () => {
 
       <Modal
         classNames={{
-          modal: "rounded-[10px] overflow-visible relative",
+          modal: "rounded-[10px] overflow-hidden relative",
         }}
          open={openDetails} onClose={onCloseDetailsModal} center>
-        <div className="px-2 md:pt-4 md:px-8 pb-4">
+        <div className="md:w-[600px] px-2 md:pt-4 md:px-8 pb-4">
           <div className=" flex justify-center pt-4 pb-4">
-            <h4 className="text-primary text-[18px] md:text-[20px]">
+            <h4 className="text-primary text-[22px] md:text-[24px]">
               Trip Details
             </h4>
           </div>
           <div>
-            <h4 className="text-primary text-[12px] md:text-[14px] border-blackText border-b-4">
+            <h4 className="text-primary text-[20px] border-blackText border-b-4">
               Info
             </h4>
           </div>
-          <div className="md:w-[400px]  flex flex-col gap-2 body-font font-poppins">
+          <div className=" flex flex-col gap-2 body-font font-poppins">
             <div>
               <div className="flex gap-2 mt-2">
-                <h4 className="text-blackText text-[12px] md:text-[14px]">
+                <h4 className="text-blackText text-[20px]">
                   Vehicle Type:
                 </h4>
-                <h4 className="text-primary text-[12px] md:text-[14px]">Bus</h4>
+                <h4 className="text-primary text-[20px]">Bus</h4>
               </div>
 
               <div className="flex gap-2">
-                <h4 className="text-blackText text-[12px] md:text-[14px]">
+                <h4 className="text-blackText text-[20px]">
                   Vehicle plate number:
                 </h4>
-                <h4 className="text-primary text-[12px] md:text-[14px]">
+                <h4 className="text-primary  text-[20px]">
                   AD 234567543
                 </h4>
               </div>
 
               <div className="flex gap-2">
-                <h4 className="text-blackTexttext-[12px] md:text-[14px]">
+                <h4 className="text-blackText text-[20px]">
                   Vehicle color:
                 </h4>
-                <h4 className="text-primary text-[12px] md:text-[14px]">
+                <h4 className="text-primary text-[20px]">
                   Blue
                 </h4>
               </div>
               <div className="flex gap-2 ">
-                <h4 className="text-blackText text-[12px] md:text-[14px]">
+                <h4 className="text-blackText text-[20px]">
                   Trip Code:
                 </h4>
-                <h4 className="text-primary text-[12px] md:text-[14px]">345</h4>
+                <h4 className="text-primary text-[20px]">345</h4>
               </div>
             </div>
 
             <div className="mt-3">
               <div className="flex gap-2 mt-2">
-                <h4 className="text-blackText text-[12px] md:text-[14px]">
+                <h4 className="text-blackText text-[20px]">
                   Departure Park:
                 </h4>
-                <h4 className="text-primary text-[12px] md:text-[14px]">
+                <h4 className="text-primary text-[20px]">
                   Sagamu
                 </h4>
               </div>
 
               <div className="flex gap-2">
-                <h4 className="text-blackText text-[12px] md:text-[14px]">
+                <h4 className="text-blackText text-[20px]">
                   Departure Time:
                 </h4>
-                <h4 className="text-primary text-[12px] md:text-[14px]">
+                <h4 className="text-primary text-[20px]">
                   14:00 PM
                 </h4>
               </div>
 
               <div className="flex gap-2">
-                <h4 className="text-blackTexttext-[12px] md:text-[14px]">
+                <h4 className="text-blackText text-[20px]">
                   Arrival State:
                 </h4>
-                <h4 className="text-primary text-[12px] md:text-[14px]">
+                <h4 className="text-primary text-[20px]">
                   Abuja
                 </h4>
               </div>
               <div className="flex gap-2 ">
-                <h4 className="text-blackText text-[12px] md:text-[14px]">
+                <h4 className="text-blackText text-[20px]">
                   Arrival City:
                 </h4>
-                <h4 className="text-primary text-[12px] md:text-[14px]">
+                <h4 className="text-primary text-[20px]">
                   Lagos
                 </h4>
               </div>
@@ -294,47 +294,47 @@ const TripsRecordTable = () => {
           modal: "rounded-[10px] overflow-visible relative",
         }}
          open={openEarnings} onClose={onCloseEarningsModal} center>
-        <div className="px-2 md:pt-4 md:px-8 pb-6">
+        <div className=" md:w-[600px] w-full px-2 md:pt-4 md:px-8 pb-6">
           <div className=" flex justify-center pt-4 pb-4">
-            <h4 className="text-primary text-[18px] md:text-[20px]">
+            <h4 className="text-primary text-[18px] md:text-[24px]">
               Earnings
             </h4>
           </div>
 
-          <div className="md:w-[400px]  flex flex-col gap-2 body-font font-poppins">
-            <div className="grid grid-cols-2 gap-3">
-              <div className="flex flex-col">
-                <h4 className="text-blackText text-[12px] md:text-[14px]">
+          <div className="  flex flex-col gap-2 body-font font-poppins">
+            <div className="grid grid-cols-2 w-full gap-3">
+              <div className=" w-full">
+                <h4 className="text-blackText text-[16px] md:text-[18px]">
                   Number of Seats Occupied
                 </h4>
-                <h4 className="text-primary text-[12px] md:text-[14px]">7</h4>
+                <h4 className="text-primary text-[16px] md:text-[18px]">7</h4>
               </div>
 
-              <div className="flex flex-col">
-                <h4 className="text-blackText text-[12px] md:text-[14px]">
+              <div className=" w-full">
+                <h4 className="text-blackText text-[16px] md:text-[18px]">
                   Fare Charged
                 </h4>
-                <h4 className="text-primary text-[12px] md:text-[14px]">
+                <h4 className="text-primary text-[16px] md:text-[18px]">
                   2000/person
                 </h4>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 pt-2 gap-3">
+            <div className="grid grid-cols-2 w-full pt-2 gap-3">
               <div className="flex flex-col">
-                <h4 className="text-blackText text-[12px] md:text-[14px]">
+                <h4 className="text-blackText text-[16px] md:text-[18px]">
                   Revenue Generated
                 </h4>
-                <h4 className="text-primary text-[12px] md:text-[14px]">
+                <h4 className="text-primary text-[16px] md:text-[18px]">
                   N14,000.00
                 </h4>
               </div>
 
               <div className="flex flex-col">
-                <h4 className="text-blackText text-[12px] md:text-[14px]">
+                <h4 className="text-blackText text-[16px] md:text-[18px]">
                   Fleet Owner Commision 60%
                 </h4>
-                <h4 className="text-primary text-[12px] md:text-[14px]">
+                <h4 className="text-primary text-[16px] md:text-[18px]">
                   N8,400.00
                 </h4>
               </div>

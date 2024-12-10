@@ -69,8 +69,8 @@ function StatementTable() {
   ];
   return (
     <div>
-      <table className="w-full text-sm text-center  ">
-        <thead className="text-xs text-primary bg-gray-50 ">
+      <table className="w-full text-[18px] text-center  ">
+        <thead className="text-[18px] text-primary bg-gray-50 ">
           <tr>
             {/* <th scope="col" className="px-6 py-3">
               S/N
@@ -129,7 +129,7 @@ function StatementTable() {
                 <div className="relative">
                   <div
                     onClick={handleDetails}
-                    className="text-primary cursor-pointer border text-[10px] rounded-full px-1 py-1"
+                    className="text-primary cursor-pointer border text-[13px] rounded-full px-1 py-1"
                   >
                     View Details
                   </div>

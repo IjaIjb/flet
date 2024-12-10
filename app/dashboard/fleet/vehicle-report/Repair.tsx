@@ -34,8 +34,8 @@ function Repair() {
   ];
   return (
     <div className="overflow-hidden overflow-x-scroll">
-      <table className="w-full text-sm text-center  ">
-        <thead className="text-xs text-primary bg-gray-50 ">
+      <table className="w-full tex-[20px] text-center  ">
+        <thead className="tex-[20px] text-primary bg-gray-50 ">
           <tr>
             <th scope="col" className="px-6 py-3">
               S/N

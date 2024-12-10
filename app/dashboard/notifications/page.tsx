@@ -13,9 +13,9 @@ function Notificationpage() {
           <div className="lg:col-span-10 ">
           <div className="flex flex-col gap-6">
   {[
-    { id: 1, text: "Gbenro vehicle enrollment has been accepted", date: "Sep 10,22" },
-    { id: 2, text: "Your trip to Sagamu Park has been completed", date: "Sep 10,22" },
-    { id: 3, text: "Gbenro vehicle enrollment has been accepted", date: "Sep 10,22" },
+    { id: 1, text: "Gbenro vehicle enrollment has been accepted", date: "Sept 10, 2024" },
+    { id: 2, text: "Your trip to Sagamu Park has been completed", date: "Sept 10, 2024" },
+    { id: 3, text: "Gbenro vehicle enrollment has been accepted", date: "Sept 10, 2024" },
   ].map((notification, index) => (
     <EachNotification
       key={notification.id || index}
