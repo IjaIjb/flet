@@ -8,6 +8,8 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useAuthControllerLoginMutation } from "@/store/api";
 import LoadingSpinner from "../UI/LoadingSpinner";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 interface LoginValues {
   email: string;
@@ -18,13 +20,13 @@ const IndividualLogin = () => {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
 
-  const [login, { isLoading, isSuccess }] =
+  const [login, { isLoading, isSuccess, isError, error }] =
     useAuthControllerLoginMutation();
 
   const initialData = {
     email: "",
     password: "",
-    remember: false,
+    // remember: false,
   };
 
   const validation = Yup.object({
@@ -40,10 +42,16 @@ const IndividualLogin = () => {
       const response = await login(values).unwrap();
       console.log(response);
       if (isSuccess) {
+        // check if login is successful
         router.push("/dashboard/home");
+        toast.success("Login successful!");
       }
-    } catch (error) {
-      console.error("Login error: ", error);
+    } catch {
+      // If the mutation is unsuccessful, `error` will contain the error details
+      if (isError && error) {
+        console.error("Login error: ", error);
+        toast.error("An error occurred during login");
+      }
     }
   };
 
@@ -63,7 +71,7 @@ const IndividualLogin = () => {
         validationSchema={validation}
         onSubmit={onSubmit}
       >
-        {({ values, setFieldValue }) => (
+        {({}) => (
           <Form className="w-full flex flex-col gap-6">
             {/* Email Field */}
             <div>
@@ -117,8 +125,8 @@ const IndividualLogin = () => {
                     type="checkbox"
                     name="remember"
                     id="remember"
-                    checked={values.remember}
-                    onChange={() => setFieldValue("remember", !values.remember)}
+                    // checked={values.remember}
+                    // onChange={() => setFieldValue("remember", !values.remember)}
                   />
                   <label
                     className="text-[15px] font-normal text-[#958F8F]"
@@ -155,8 +163,8 @@ const IndividualLogin = () => {
             </p>
 
             {/* NDPC Complaint Section */}
-            <div className="flex items-center justify-center gap-3 mt-4">
-              <div className="border-2 p-2 rounded-full border-[#ECEBEB]">
+            <div className="flex items-center justify-center gap-3 my-4">
+              <div className="border-2 p-1 rounded-full border-[#ECEBEB]">
                 <div className="flex items-center px-3 gap-3">
                   <Image
                     src="/onboarding/ndpc.png"
@@ -165,7 +173,7 @@ const IndividualLogin = () => {
                     height={45}
                     priority
                   />
-                  <h6 className="text-[#000000] text-[22px] font-bold">
+                  <h6 className="text-[#000000] text-[18px] font-bold">
                     NDPC <span className="font-normal">Complaint</span>
                   </h6>
                 </div>
@@ -174,6 +182,17 @@ const IndividualLogin = () => {
           </Form>
         )}
       </Formik>
+      <ToastContainer
+        position="top-center"
+        autoClose={2000}
+        hideProgressBar={true}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
     </div>
   );
 };
