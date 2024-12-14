@@ -140,14 +140,14 @@ const page = () => {
         </section>
 
         <section className="overflow-hidden overflow-x-scroll">
-          <div className="flex flex-col   mb-8 gap-2">
+          <div className="flex flex-col    gap-2">
             <Formik
               initialValues={initialData}
               validationSchema={validation}
               onSubmit={onSubmit}
             >
               {({  }) => (
-                <Form className="w-full  mt-5 md:mt-5 mb-6 flex flex-col justify-between">
+                <Form className="w-full  mt-5 md:mt-5  flex flex-col justify-between">
                   <div className="">
                     <div className="mb-7  flex justify-between gap-2">
                       <input

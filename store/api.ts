@@ -1,12 +1,6 @@
 import { emptySplitApi as api } from "./emptyApi";
 const injectedRtkApi = api.injectEndpoints({
   endpoints: (build) => ({
-    appControllerGetHello: build.query<
-      AppControllerGetHelloApiResponse,
-      AppControllerGetHelloApiArg
-    >({
-      query: () => ({ url: `/` }),
-    }),
     authControllerLogin: build.mutation<
       AuthControllerLoginApiResponse,
       AuthControllerLoginApiArg
@@ -193,129 +187,46 @@ const injectedRtkApi = api.injectEndpoints({
         body: queryArg,
       }),
     }),
-    parkControllerCreatePark: build.mutation<
-      ParkControllerCreateParkApiResponse,
-      ParkControllerCreateParkApiArg
-    >({
-      query: (queryArg) => ({ url: `/parks`, method: "POST", body: queryArg }),
-    }),
-    parkControllerFindAllParks: build.query<
-      ParkControllerFindAllParksApiResponse,
-      ParkControllerFindAllParksApiArg
-    >({
-      query: () => ({ url: `/parks` }),
-    }),
-    parkControllerFindParkById: build.query<
-      ParkControllerFindParkByIdApiResponse,
-      ParkControllerFindParkByIdApiArg
-    >({
-      query: (queryArg) => ({ url: `/parks/${queryArg}` }),
-    }),
-    parkControllerUpdatePark: build.mutation<
-      ParkControllerUpdateParkApiResponse,
-      ParkControllerUpdateParkApiArg
+    corporateBodyDocumentControllerCreate: build.mutation<
+      CorporateBodyDocumentControllerCreateApiResponse,
+      CorporateBodyDocumentControllerCreateApiArg
     >({
       query: (queryArg) => ({
-        url: `/parks/${queryArg.id}`,
-        method: "PUT",
-        body: queryArg.updateParkDto,
-      }),
-    }),
-    parkControllerDeletePark: build.mutation<
-      ParkControllerDeleteParkApiResponse,
-      ParkControllerDeleteParkApiArg
-    >({
-      query: (queryArg) => ({ url: `/parks/${queryArg}`, method: "DELETE" }),
-    }),
-    tripControllerCreateTrip: build.mutation<
-      TripControllerCreateTripApiResponse,
-      TripControllerCreateTripApiArg
-    >({
-      query: (queryArg) => ({ url: `/trips`, method: "POST", body: queryArg }),
-    }),
-    tripControllerFindAll: build.query<
-      TripControllerFindAllApiResponse,
-      TripControllerFindAllApiArg
-    >({
-      query: (queryArg) => ({
-        url: `/trips`,
-        params: {
-          description: queryArg.description,
-          uniqueID: queryArg.uniqueId,
-          driverId: queryArg.driverId,
-          departureId: queryArg.departureId,
-          destinationId: queryArg.destinationId,
-          vehicleId: queryArg.vehicleId,
-        },
-      }),
-    }),
-    tripControllerFindOne: build.query<
-      TripControllerFindOneApiResponse,
-      TripControllerFindOneApiArg
-    >({
-      query: (queryArg) => ({ url: `/trips/${queryArg}` }),
-    }),
-    tripControllerUpdateTrip: build.mutation<
-      TripControllerUpdateTripApiResponse,
-      TripControllerUpdateTripApiArg
-    >({
-      query: (queryArg) => ({
-        url: `/trips/${queryArg.id}`,
-        method: "PUT",
-        body: queryArg.updateTripDto,
-      }),
-    }),
-    tripControllerDeleteTrip: build.mutation<
-      TripControllerDeleteTripApiResponse,
-      TripControllerDeleteTripApiArg
-    >({
-      query: (queryArg) => ({ url: `/trips/${queryArg}`, method: "DELETE" }),
-    }),
-    bookingControllerCreateBooking: build.mutation<
-      BookingControllerCreateBookingApiResponse,
-      BookingControllerCreateBookingApiArg
-    >({
-      query: (queryArg) => ({
-        url: `/bookings`,
+        url: `/corporateBody-documents`,
         method: "POST",
         body: queryArg,
       }),
     }),
-    bookingControllerFindAllBookings: build.query<
-      BookingControllerFindAllBookingsApiResponse,
-      BookingControllerFindAllBookingsApiArg
-    >({
-      query: () => ({ url: `/bookings` }),
-    }),
-    bookingControllerFindBookingById: build.query<
-      BookingControllerFindBookingByIdApiResponse,
-      BookingControllerFindBookingByIdApiArg
-    >({
-      query: (queryArg) => ({ url: `/bookings/${queryArg}` }),
-    }),
-    bookingControllerUpdateBooking: build.mutation<
-      BookingControllerUpdateBookingApiResponse,
-      BookingControllerUpdateBookingApiArg
+    corporateBodyDocumentControllerSearch: build.query<
+      CorporateBodyDocumentControllerSearchApiResponse,
+      CorporateBodyDocumentControllerSearchApiArg
     >({
       query: (queryArg) => ({
-        url: `/bookings/${queryArg.id}`,
-        method: "PUT",
-        body: queryArg.updateBookingDto,
+        url: `/corporateBody-documents`,
+        params: {
+          documentType: queryArg.documentType,
+          corporateBodyId: queryArg.corporateBodyId,
+          description: queryArg.description,
+        },
       }),
     }),
-    bookingControllerDeleteBooking: build.mutation<
-      BookingControllerDeleteBookingApiResponse,
-      BookingControllerDeleteBookingApiArg
-    >({
-      query: (queryArg) => ({ url: `/bookings/${queryArg}`, method: "DELETE" }),
-    }),
-    bookingControllerSearchBookings: build.query<
-      BookingControllerSearchBookingsApiResponse,
-      BookingControllerSearchBookingsApiArg
+    corporateBodyDocumentControllerUpdate: build.mutation<
+      CorporateBodyDocumentControllerUpdateApiResponse,
+      CorporateBodyDocumentControllerUpdateApiArg
     >({
       query: (queryArg) => ({
-        url: `/bookings/search`,
-        params: { query: queryArg },
+        url: `/corporateBody-documents/${queryArg.id}`,
+        method: "PUT",
+        body: queryArg.updateCorporateBodyDocumentDto,
+      }),
+    }),
+    corporateBodyDocumentControllerDelete: build.mutation<
+      CorporateBodyDocumentControllerDeleteApiResponse,
+      CorporateBodyDocumentControllerDeleteApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/corporateBody-documents/${queryArg}`,
+        method: "DELETE",
       }),
     }),
     vehicleControllerCreateVehicleType: build.mutation<
@@ -519,6 +430,131 @@ const injectedRtkApi = api.injectEndpoints({
       query: (queryArg) => ({
         url: `/vehicle-documents/${queryArg}`,
         method: "DELETE",
+      }),
+    }),
+    parkControllerCreatePark: build.mutation<
+      ParkControllerCreateParkApiResponse,
+      ParkControllerCreateParkApiArg
+    >({
+      query: (queryArg) => ({ url: `/parks`, method: "POST", body: queryArg }),
+    }),
+    parkControllerFindAllParks: build.query<
+      ParkControllerFindAllParksApiResponse,
+      ParkControllerFindAllParksApiArg
+    >({
+      query: () => ({ url: `/parks` }),
+    }),
+    parkControllerFindParkById: build.query<
+      ParkControllerFindParkByIdApiResponse,
+      ParkControllerFindParkByIdApiArg
+    >({
+      query: (queryArg) => ({ url: `/parks/${queryArg}` }),
+    }),
+    parkControllerUpdatePark: build.mutation<
+      ParkControllerUpdateParkApiResponse,
+      ParkControllerUpdateParkApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/parks/${queryArg.id}`,
+        method: "PUT",
+        body: queryArg.updateParkDto,
+      }),
+    }),
+    parkControllerDeletePark: build.mutation<
+      ParkControllerDeleteParkApiResponse,
+      ParkControllerDeleteParkApiArg
+    >({
+      query: (queryArg) => ({ url: `/parks/${queryArg}`, method: "DELETE" }),
+    }),
+    tripControllerCreateTrip: build.mutation<
+      TripControllerCreateTripApiResponse,
+      TripControllerCreateTripApiArg
+    >({
+      query: (queryArg) => ({ url: `/trips`, method: "POST", body: queryArg }),
+    }),
+    tripControllerFindAll: build.query<
+      TripControllerFindAllApiResponse,
+      TripControllerFindAllApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/trips`,
+        params: {
+          description: queryArg.description,
+          uniqueID: queryArg.uniqueId,
+          driverId: queryArg.driverId,
+          departureId: queryArg.departureId,
+          destinationId: queryArg.destinationId,
+          vehicleId: queryArg.vehicleId,
+        },
+      }),
+    }),
+    tripControllerFindOne: build.query<
+      TripControllerFindOneApiResponse,
+      TripControllerFindOneApiArg
+    >({
+      query: (queryArg) => ({ url: `/trips/${queryArg}` }),
+    }),
+    tripControllerUpdateTrip: build.mutation<
+      TripControllerUpdateTripApiResponse,
+      TripControllerUpdateTripApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/trips/${queryArg.id}`,
+        method: "PUT",
+        body: queryArg.updateTripDto,
+      }),
+    }),
+    tripControllerDeleteTrip: build.mutation<
+      TripControllerDeleteTripApiResponse,
+      TripControllerDeleteTripApiArg
+    >({
+      query: (queryArg) => ({ url: `/trips/${queryArg}`, method: "DELETE" }),
+    }),
+    bookingControllerCreateBooking: build.mutation<
+      BookingControllerCreateBookingApiResponse,
+      BookingControllerCreateBookingApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/bookings`,
+        method: "POST",
+        body: queryArg,
+      }),
+    }),
+    bookingControllerFindAllBookings: build.query<
+      BookingControllerFindAllBookingsApiResponse,
+      BookingControllerFindAllBookingsApiArg
+    >({
+      query: () => ({ url: `/bookings` }),
+    }),
+    bookingControllerFindBookingById: build.query<
+      BookingControllerFindBookingByIdApiResponse,
+      BookingControllerFindBookingByIdApiArg
+    >({
+      query: (queryArg) => ({ url: `/bookings/${queryArg}` }),
+    }),
+    bookingControllerUpdateBooking: build.mutation<
+      BookingControllerUpdateBookingApiResponse,
+      BookingControllerUpdateBookingApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/bookings/${queryArg.id}`,
+        method: "PUT",
+        body: queryArg.updateBookingDto,
+      }),
+    }),
+    bookingControllerDeleteBooking: build.mutation<
+      BookingControllerDeleteBookingApiResponse,
+      BookingControllerDeleteBookingApiArg
+    >({
+      query: (queryArg) => ({ url: `/bookings/${queryArg}`, method: "DELETE" }),
+    }),
+    bookingControllerSearchBookings: build.query<
+      BookingControllerSearchBookingsApiResponse,
+      BookingControllerSearchBookingsApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/bookings/search`,
+        params: { query: queryArg },
       }),
     }),
     driverControllerCreate: build.mutation<
@@ -753,10 +789,10 @@ const injectedRtkApi = api.injectEndpoints({
       query: (queryArg) => ({
         url: `/provider-agencies`,
         params: {
-          region: queryArg.queryRegion,
-          country: queryArg.queryCountry,
-          approvalStatus: queryArg.queryApprovalStatus,
-          userId: queryArg.queryUserId
+          region: queryArg.region,
+          country: queryArg.country,
+          approvalStatus: queryArg.approvalStatus,
+          userId: queryArg.userId,
         },
       }),
     }),
@@ -785,13 +821,285 @@ const injectedRtkApi = api.injectEndpoints({
         method: "DELETE",
       }),
     }),
+    fleetPartnerControllerFindAll: build.query<
+      FleetPartnerControllerFindAllApiResponse,
+      FleetPartnerControllerFindAllApiArg
+    >({
+      query: () => ({ url: `/fleet-partners` }),
+    }),
+    fleetPartnerControllerFindOne: build.query<
+      FleetPartnerControllerFindOneApiResponse,
+      FleetPartnerControllerFindOneApiArg
+    >({
+      query: (queryArg) => ({ url: `/fleet-partners/${queryArg}` }),
+    }),
+    fleetPartnerControllerDeleteFleetPartner: build.mutation<
+      FleetPartnerControllerDeleteFleetPartnerApiResponse,
+      FleetPartnerControllerDeleteFleetPartnerApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/fleet-partners/${queryArg}`,
+        method: "DELETE",
+      }),
+    }),
+    fuelAgencyControllerCreate: build.mutation<
+      FuelAgencyControllerCreateApiResponse,
+      FuelAgencyControllerCreateApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/fuel-agency`,
+        method: "POST",
+        body: queryArg,
+      }),
+    }),
+    fuelAgencyControllerFindAll: build.query<
+      FuelAgencyControllerFindAllApiResponse,
+      FuelAgencyControllerFindAllApiArg
+    >({
+      query: () => ({ url: `/fuel-agency` }),
+    }),
+    fuelAgencyControllerFindById: build.query<
+      FuelAgencyControllerFindByIdApiResponse,
+      FuelAgencyControllerFindByIdApiArg
+    >({
+      query: (queryArg) => ({ url: `/fuel-agency/${queryArg}` }),
+    }),
+    fuelAgencyControllerUpdate: build.mutation<
+      FuelAgencyControllerUpdateApiResponse,
+      FuelAgencyControllerUpdateApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/fuel-agency/${queryArg.id}`,
+        method: "PUT",
+        body: queryArg.updateFuelAgencyDto,
+      }),
+    }),
+    fuelAgencyControllerDelete: build.mutation<
+      FuelAgencyControllerDeleteApiResponse,
+      FuelAgencyControllerDeleteApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/fuel-agency/${queryArg}`,
+        method: "DELETE",
+      }),
+    }),
+    fuelAgencyControllerFindByState: build.query<
+      FuelAgencyControllerFindByStateApiResponse,
+      FuelAgencyControllerFindByStateApiArg
+    >({
+      query: (queryArg) => ({ url: `/fuel-agency/state/${queryArg}` }),
+    }),
+    fuelAgencyControllerCheckUniqueId: build.query<
+      FuelAgencyControllerCheckUniqueIdApiResponse,
+      FuelAgencyControllerCheckUniqueIdApiArg
+    >({
+      query: (queryArg) => ({ url: `/fuel-agency/check-unique/${queryArg}` }),
+    }),
+    hotelControllerCreate: build.mutation<
+      HotelControllerCreateApiResponse,
+      HotelControllerCreateApiArg
+    >({
+      query: (queryArg) => ({ url: `/hotels`, method: "POST", body: queryArg }),
+    }),
+    hotelControllerFindAll: build.query<
+      HotelControllerFindAllApiResponse,
+      HotelControllerFindAllApiArg
+    >({
+      query: () => ({ url: `/hotels` }),
+    }),
+    hotelControllerFindById: build.query<
+      HotelControllerFindByIdApiResponse,
+      HotelControllerFindByIdApiArg
+    >({
+      query: (queryArg) => ({ url: `/hotels/${queryArg}` }),
+    }),
+    hotelControllerUpdate: build.mutation<
+      HotelControllerUpdateApiResponse,
+      HotelControllerUpdateApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/hotels/${queryArg.id}`,
+        method: "PUT",
+        body: queryArg.updateHotelDto,
+      }),
+    }),
+    hotelControllerDelete: build.mutation<
+      HotelControllerDeleteApiResponse,
+      HotelControllerDeleteApiArg
+    >({
+      query: (queryArg) => ({ url: `/hotels/${queryArg}`, method: "DELETE" }),
+    }),
+    hotelControllerFindByCity: build.mutation<
+      HotelControllerFindByCityApiResponse,
+      HotelControllerFindByCityApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/hotels/find-by-city`,
+        method: "POST",
+        body: queryArg,
+      }),
+    }),
+    hotelControllerCheckUniqueId: build.mutation<
+      HotelControllerCheckUniqueIdApiResponse,
+      HotelControllerCheckUniqueIdApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/hotels/check-unique-id`,
+        method: "POST",
+        body: queryArg,
+      }),
+    }),
+    merchantCategoryControllerCreate: build.mutation<
+      MerchantCategoryControllerCreateApiResponse,
+      MerchantCategoryControllerCreateApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/merchant-categories`,
+        method: "POST",
+        body: queryArg,
+      }),
+    }),
+    merchantCategoryControllerFindAll: build.query<
+      MerchantCategoryControllerFindAllApiResponse,
+      MerchantCategoryControllerFindAllApiArg
+    >({
+      query: () => ({ url: `/merchant-categories` }),
+    }),
+    merchantCategoryControllerFindById: build.query<
+      MerchantCategoryControllerFindByIdApiResponse,
+      MerchantCategoryControllerFindByIdApiArg
+    >({
+      query: (queryArg) => ({ url: `/merchant-categories/${queryArg}` }),
+    }),
+    merchantCategoryControllerUpdate: build.mutation<
+      MerchantCategoryControllerUpdateApiResponse,
+      MerchantCategoryControllerUpdateApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/merchant-categories/${queryArg.id}`,
+        method: "PUT",
+        body: queryArg.updateMerchantCategoryDto,
+      }),
+    }),
+    merchantCategoryControllerDelete: build.mutation<
+      MerchantCategoryControllerDeleteApiResponse,
+      MerchantCategoryControllerDeleteApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/merchant-categories/${queryArg}`,
+        method: "DELETE",
+      }),
+    }),
+    merchantCategoryControllerFindByName: build.query<
+      MerchantCategoryControllerFindByNameApiResponse,
+      MerchantCategoryControllerFindByNameApiArg
+    >({
+      query: (queryArg) => ({ url: `/merchant-categories/search/${queryArg}` }),
+    }),
+    merchantControllerCreate: build.mutation<
+      MerchantControllerCreateApiResponse,
+      MerchantControllerCreateApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/merchants`,
+        method: "POST",
+        body: queryArg,
+      }),
+    }),
+    merchantControllerFindAll: build.query<
+      MerchantControllerFindAllApiResponse,
+      MerchantControllerFindAllApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/merchants`,
+        params: {
+          name: queryArg.name,
+          cityId: queryArg.cityId,
+          categoryId: queryArg.categoryId,
+          discount: queryArg.discount,
+          phone: queryArg.phone,
+          coordinates: queryArg.coordinates,
+        },
+      }),
+    }),
+    merchantControllerFindOne: build.query<
+      MerchantControllerFindOneApiResponse,
+      MerchantControllerFindOneApiArg
+    >({
+      query: (queryArg) => ({ url: `/merchants/${queryArg}` }),
+    }),
+    merchantControllerUpdate: build.mutation<
+      MerchantControllerUpdateApiResponse,
+      MerchantControllerUpdateApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/merchants/${queryArg.id}`,
+        method: "PUT",
+        body: queryArg.updateMerchantDto,
+      }),
+    }),
+    merchantControllerRemove: build.mutation<
+      MerchantControllerRemoveApiResponse,
+      MerchantControllerRemoveApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/merchants/${queryArg}`,
+        method: "DELETE",
+      }),
+    }),
+    urbanCardControllerCreate: build.mutation<
+      UrbanCardControllerCreateApiResponse,
+      UrbanCardControllerCreateApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/urban-cards`,
+        method: "POST",
+        body: queryArg,
+      }),
+    }),
+    urbanCardControllerFindAll: build.query<
+      UrbanCardControllerFindAllApiResponse,
+      UrbanCardControllerFindAllApiArg
+    >({
+      query: (queryArg) => ({ url: `/urban-cards`, body: queryArg }),
+    }),
+    urbanCardControllerFindOne: build.query<
+      UrbanCardControllerFindOneApiResponse,
+      UrbanCardControllerFindOneApiArg
+    >({
+      query: (queryArg) => ({ url: `/urban-cards/${queryArg}` }),
+    }),
+    urbanCardControllerUpdate: build.mutation<
+      UrbanCardControllerUpdateApiResponse,
+      UrbanCardControllerUpdateApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/urban-cards/${queryArg.id}`,
+        method: "PUT",
+        body: queryArg.updateUrbanCardDto,
+      }),
+    }),
+    urbanCardControllerRemove: build.mutation<
+      UrbanCardControllerRemoveApiResponse,
+      UrbanCardControllerRemoveApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/urban-cards/${queryArg}`,
+        method: "DELETE",
+      }),
+    }),
+    appControllerGetHello: build.query<
+      AppControllerGetHelloApiResponse,
+      AppControllerGetHelloApiArg
+    >({
+      query: () => ({ url: `/` }),
+    }),
   }),
   overrideExisting: false,
 });
 export { injectedRtkApi as api };
-export type AppControllerGetHelloApiResponse = unknown;
-export type AppControllerGetHelloApiArg = void;
-export type AuthControllerLoginApiResponse = unknown;
+export type AuthControllerLoginApiResponse =
+  /** status 200 Login successful */ UserLoginResponse;
 export type AuthControllerLoginApiArg = LoginUserDto;
 export type AuthControllerVerifyEmailApiResponse = unknown;
 export type AuthControllerVerifyEmailApiArg = /** Verification token */ string;
@@ -870,13 +1178,141 @@ export type UserControllerCreateParkOwnerCorporateBodyApiResponse =
   /** status 201 Park owner added successfully */ Individual;
 export type UserControllerCreateParkOwnerCorporateBodyApiArg =
   CreateCorporateBodyDto;
-export type ParkControllerCreateParkApiResponse = unknown;
+export type CorporateBodyDocumentControllerCreateApiResponse =
+  /** status 201 CorporateBody document created successfully */ CorporateBodyDocument;
+export type CorporateBodyDocumentControllerCreateApiArg =
+  CreateCorporateBodyDocumentDto;
+export type CorporateBodyDocumentControllerSearchApiResponse =
+  /** status 200 CorporateBody documents retrieved successfully */ CorporateBodyDocument[];
+export type CorporateBodyDocumentControllerSearchApiArg = {
+  /** Filter by document type */
+  documentType?: string;
+  /** Filter by associated corporateBody ID */
+  corporateBodyId?: string;
+  /** Search by document description */
+  description?: string;
+};
+export type CorporateBodyDocumentControllerUpdateApiResponse =
+  /** status 200 CorporateBody document updated successfully */ CorporateBodyDocument;
+export type CorporateBodyDocumentControllerUpdateApiArg = {
+  id: string;
+  updateCorporateBodyDocumentDto: UpdateCorporateBodyDocumentDto;
+};
+export type CorporateBodyDocumentControllerDeleteApiResponse =
+  /** status 200 CorporateBody document deleted successfully */ CorporateBodyDocument;
+export type CorporateBodyDocumentControllerDeleteApiArg = string;
+export type VehicleControllerCreateVehicleTypeApiResponse =
+  /** status 201 Vehicle type successfully created */ VehicleType;
+export type VehicleControllerCreateVehicleTypeApiArg = CreateVehicleTypeDto;
+export type VehicleControllerGetAllVehicleTypesApiResponse =
+  /** status 200 List of vehicle types */ VehicleType[];
+export type VehicleControllerGetAllVehicleTypesApiArg = void;
+export type VehicleControllerGetVehicleTypeByIdApiResponse =
+  /** status 200 Vehicle type found */ VehicleType;
+export type VehicleControllerGetVehicleTypeByIdApiArg =
+  /** Vehicle type ID */ string;
+export type VehicleControllerUpdateVehicleTypeApiResponse =
+  /** status 200 Vehicle type successfully updated */ VehicleType;
+export type VehicleControllerUpdateVehicleTypeApiArg = {
+  /** Vehicle type ID */
+  id: string;
+  updateVehicleTypeDto: UpdateVehicleTypeDto;
+};
+export type VehicleControllerDeleteVehicleTypeApiResponse = unknown;
+export type VehicleControllerDeleteVehicleTypeApiArg =
+  /** Vehicle type ID */ string;
+export type VehicleControllerCreateVehicleApiResponse =
+  /** status 201 Vehicle successfully created */ Vehicle;
+export type VehicleControllerCreateVehicleApiArg = CreateVehicleDto;
+export type VehicleControllerGetAllVehiclesApiResponse =
+  /** status 200 List of vehicles */ Vehicle[];
+export type VehicleControllerGetAllVehiclesApiArg = void;
+export type VehicleControllerGetVehicleByIdApiResponse =
+  /** status 200 Vehicle found */ Vehicle;
+export type VehicleControllerGetVehicleByIdApiArg = /** Vehicle ID */ string;
+export type VehicleControllerUpdateVehicleApiResponse =
+  /** status 200 Vehicle successfully updated */ Vehicle;
+export type VehicleControllerUpdateVehicleApiArg = {
+  /** Vehicle ID */
+  id: string;
+  updateVehicleDto: UpdateVehicleDto;
+};
+export type VehicleControllerDeleteVehicleApiResponse = unknown;
+export type VehicleControllerDeleteVehicleApiArg = /** Vehicle ID */ string;
+export type VehicleControllerCreateVehicleRequestApiResponse =
+  /** status 201 Vehicle request successfully created */ VehicleRequest;
+export type VehicleControllerCreateVehicleRequestApiArg =
+  CreateVehicleRequestDto;
+export type VehicleControllerGetAllVehicleRequestsApiResponse =
+  /** status 200 List of vehicle requests */ VehicleRequest[];
+export type VehicleControllerGetAllVehicleRequestsApiArg = void;
+export type VehicleControllerGetVehicleRequestByIdApiResponse =
+  /** status 200 Vehicle request found */ VehicleRequest;
+export type VehicleControllerGetVehicleRequestByIdApiArg =
+  /** Vehicle request ID */ string;
+export type VehicleControllerUpdateVehicleRequestApiResponse =
+  /** status 200 Vehicle request successfully updated */ VehicleRequest;
+export type VehicleControllerUpdateVehicleRequestApiArg = {
+  /** Vehicle request ID */
+  id: string;
+  updateVehicleRequestDto: UpdateVehicleRequestDto;
+};
+export type VehicleControllerDeleteVehicleRequestApiResponse = unknown;
+export type VehicleControllerDeleteVehicleRequestApiArg =
+  /** Vehicle request ID */ string;
+export type VehicleControllerCreateVehicleReportApiResponse =
+  /** status 201 Vehicle report successfully created */ VehicleReport;
+export type VehicleControllerCreateVehicleReportApiArg = CreateVehicleReportDto;
+export type VehicleControllerGetAllVehicleReportsApiResponse =
+  /** status 200 List of vehicle reports */ VehicleReport[];
+export type VehicleControllerGetAllVehicleReportsApiArg = void;
+export type VehicleControllerGetVehicleReportByIdApiResponse =
+  /** status 200 Vehicle report found */ VehicleReport;
+export type VehicleControllerGetVehicleReportByIdApiArg =
+  /** Vehicle report ID */ string;
+export type VehicleControllerUpdateVehicleReportApiResponse =
+  /** status 200 Vehicle report successfully updated */ VehicleReport;
+export type VehicleControllerUpdateVehicleReportApiArg = {
+  /** Vehicle report ID */
+  id: string;
+  updateVehicleReportDto: UpdateVehicleReportDto;
+};
+export type VehicleControllerDeleteVehicleReportApiResponse = unknown;
+export type VehicleControllerDeleteVehicleReportApiArg =
+  /** Vehicle report ID */ string;
+export type VehicleDocumentControllerCreateApiResponse =
+  /** status 201 Vehicle document created successfully */ VehicleDocument;
+export type VehicleDocumentControllerCreateApiArg = CreateVehicleDocumentDto;
+export type VehicleDocumentControllerSearchApiResponse =
+  /** status 200 Vehicle documents retrieved successfully */ VehicleDocument[];
+export type VehicleDocumentControllerSearchApiArg = {
+  /** Filter by document type */
+  documentType?: string;
+  /** Filter by associated vehicle ID */
+  vehicleId?: string;
+  /** Search by document description */
+  description?: string;
+};
+export type VehicleDocumentControllerUpdateApiResponse =
+  /** status 200 Vehicle document updated successfully */ VehicleDocument;
+export type VehicleDocumentControllerUpdateApiArg = {
+  id: string;
+  updateVehicleDocumentDto: UpdateVehicleDocumentDto;
+};
+export type VehicleDocumentControllerDeleteApiResponse =
+  /** status 200 Vehicle document deleted successfully */ VehicleDocument;
+export type VehicleDocumentControllerDeleteApiArg = string;
+export type ParkControllerCreateParkApiResponse =
+  /** status 201 Park created successfully */ Park;
 export type ParkControllerCreateParkApiArg = CreateParkDto;
-export type ParkControllerFindAllParksApiResponse = unknown;
+export type ParkControllerFindAllParksApiResponse =
+  /** status 200 Parks retrieved successfully */ Park[];
 export type ParkControllerFindAllParksApiArg = void;
-export type ParkControllerFindParkByIdApiResponse = unknown;
+export type ParkControllerFindParkByIdApiResponse =
+  /** status 200 Park retrieved successfully */ Park;
 export type ParkControllerFindParkByIdApiArg = /** ID of the park */ string;
-export type ParkControllerUpdateParkApiResponse = unknown;
+export type ParkControllerUpdateParkApiResponse =
+  /** status 200 Park updated successfully */ Park;
 export type ParkControllerUpdateParkApiArg = {
   /** ID of the park to update */
   id: string;
@@ -939,87 +1375,6 @@ export type BookingControllerSearchBookingsApiResponse =
   /** status 200 Bookings search completed successfully */ Booking[];
 export type BookingControllerSearchBookingsApiArg =
   /** Search query string for various fields */ string;
-export type VehicleControllerCreateVehicleTypeApiResponse = unknown;
-export type VehicleControllerCreateVehicleTypeApiArg = CreateVehicleTypeDto;
-export type VehicleControllerGetAllVehicleTypesApiResponse = unknown;
-export type VehicleControllerGetAllVehicleTypesApiArg = void;
-export type VehicleControllerGetVehicleTypeByIdApiResponse = unknown;
-export type VehicleControllerGetVehicleTypeByIdApiArg =
-  /** Vehicle type ID */ string;
-export type VehicleControllerUpdateVehicleTypeApiResponse = unknown;
-export type VehicleControllerUpdateVehicleTypeApiArg = {
-  /** Vehicle type ID */
-  id: string;
-  updateVehicleTypeDto: UpdateVehicleTypeDto;
-};
-export type VehicleControllerDeleteVehicleTypeApiResponse = unknown;
-export type VehicleControllerDeleteVehicleTypeApiArg =
-  /** Vehicle type ID */ string;
-export type VehicleControllerCreateVehicleApiResponse = unknown;
-export type VehicleControllerCreateVehicleApiArg = CreateVehicleDto;
-export type VehicleControllerGetAllVehiclesApiResponse = unknown;
-export type VehicleControllerGetAllVehiclesApiArg = void;
-export type VehicleControllerGetVehicleByIdApiResponse = unknown;
-export type VehicleControllerGetVehicleByIdApiArg = /** Vehicle ID */ string;
-export type VehicleControllerUpdateVehicleApiResponse = unknown;
-export type VehicleControllerUpdateVehicleApiArg = {
-  /** Vehicle ID */
-  id: string;
-  updateVehicleDto: UpdateVehicleDto;
-};
-export type VehicleControllerDeleteVehicleApiResponse = unknown;
-export type VehicleControllerDeleteVehicleApiArg = /** Vehicle ID */ string;
-export type VehicleControllerCreateVehicleRequestApiResponse = unknown;
-export type VehicleControllerCreateVehicleRequestApiArg =
-  CreateVehicleRequestDto;
-export type VehicleControllerGetAllVehicleRequestsApiResponse = unknown;
-export type VehicleControllerGetAllVehicleRequestsApiArg = void;
-export type VehicleControllerGetVehicleRequestByIdApiResponse = unknown;
-export type VehicleControllerGetVehicleRequestByIdApiArg =
-  /** Vehicle request ID */ string;
-export type VehicleControllerUpdateVehicleRequestApiResponse = unknown;
-export type VehicleControllerUpdateVehicleRequestApiArg = {
-  /** Vehicle request ID */
-  id: string;
-  updateVehicleRequestDto: UpdateVehicleRequestDto;
-};
-export type VehicleControllerDeleteVehicleRequestApiResponse = unknown;
-export type VehicleControllerDeleteVehicleRequestApiArg =
-  /** Vehicle request ID */ string;
-export type VehicleControllerCreateVehicleReportApiResponse = unknown;
-export type VehicleControllerCreateVehicleReportApiArg = CreateVehicleReportDto;
-export type VehicleControllerGetAllVehicleReportsApiResponse = unknown;
-export type VehicleControllerGetAllVehicleReportsApiArg = void;
-export type VehicleControllerGetVehicleReportByIdApiResponse = unknown;
-export type VehicleControllerGetVehicleReportByIdApiArg =
-  /** Vehicle report ID */ string;
-export type VehicleControllerUpdateVehicleReportApiResponse = unknown;
-export type VehicleControllerUpdateVehicleReportApiArg = {
-  /** Vehicle report ID */
-  id: string;
-  updateVehicleReportDto: UpdateVehicleReportDto;
-};
-export type VehicleControllerDeleteVehicleReportApiResponse = unknown;
-export type VehicleControllerDeleteVehicleReportApiArg =
-  /** Vehicle report ID */ string;
-export type VehicleDocumentControllerCreateApiResponse = unknown;
-export type VehicleDocumentControllerCreateApiArg = CreateVehicleDocumentDto;
-export type VehicleDocumentControllerSearchApiResponse = unknown;
-export type VehicleDocumentControllerSearchApiArg = {
-  /** Filter by document type */
-  documentType?: string;
-  /** Filter by associated vehicle ID */
-  vehicleId?: string;
-  /** Search by document description */
-  description?: string;
-};
-export type VehicleDocumentControllerUpdateApiResponse = unknown;
-export type VehicleDocumentControllerUpdateApiArg = {
-  id: string;
-  updateVehicleDocumentDto: UpdateVehicleDocumentDto;
-};
-export type VehicleDocumentControllerDeleteApiResponse = unknown;
-export type VehicleDocumentControllerDeleteApiArg = string;
 export type DriverControllerCreateApiResponse = unknown;
 export type DriverControllerCreateApiArg = CreateDriverDto;
 export type DriverControllerFindAllApiResponse = unknown;
@@ -1049,7 +1404,8 @@ export type DriverDocumentControllerUpdateApiArg = {
   id: string;
   updateDriverDocumentDto: UpdateDriverDocumentDto;
 };
-export type DriverDocumentControllerRemoveApiResponse = unknown;
+export type DriverDocumentControllerRemoveApiResponse =
+  /** status 200 The driver document has been successfully deleted. */ DriverDocument;
 export type DriverDocumentControllerRemoveApiArg = string;
 export type DriverDocumentControllerSearchApiResponse =
   /** status 200 List of matching driver documents. */ DriverDocument[];
@@ -1117,21 +1473,13 @@ export type ProviderAgencyControllerCreateApiArg = CreateProviderAgencyDto;
 export type ProviderAgencyControllerFindAllApiResponse = unknown;
 export type ProviderAgencyControllerFindAllApiArg = {
   /** Filter by region of the provider agency. */
-  queryRegion?: string;
+  region?: string;
   /** Filter by country of the provider agency. */
-  queryCountry?: string;
+  country?: string;
   /** Filter by approval status of the provider agency. */
-  queryApprovalStatus?: "ACCEPTED" | "PROCESSING" | "SUSPENDED" | "REJECTED";
+  approvalStatus?: "ACCEPTED" | "PROCESSING" | "SUSPENDED" | "REJECTED";
   /** Filter by user ID associated with the provider agency. */
-  queryUserId?: string;
-  /** Filter by region of the provider agency. */
-  _queryRegion?: string;
-  /** Filter by country of the provider agency. */
-  _queryCountry?: string;
-  /** Filter by approval status of the provider agency. */
-  _queryApprovalStatus?: "ACCEPTED" | "PROCESSING" | "SUSPENDED" | "REJECTED";
-  /** Filter by user ID associated with the provider agency. */
-  _queryUserId?: string;
+  userId?: string;
 };
 export type ProviderAgencyControllerFindOneApiResponse = unknown;
 export type ProviderAgencyControllerFindOneApiArg =
@@ -1145,6 +1493,139 @@ export type ProviderAgencyControllerUpdateApiArg = {
 export type ProviderAgencyControllerRemoveApiResponse = unknown;
 export type ProviderAgencyControllerRemoveApiArg =
   /** Provider agency ID */ string;
+export type FleetPartnerControllerFindAllApiResponse =
+  /** status 200 Fleet partners found */ FleetPartners[];
+export type FleetPartnerControllerFindAllApiArg = void;
+export type FleetPartnerControllerFindOneApiResponse =
+  /** status 200 Fleet partner found */ FleetPartners;
+export type FleetPartnerControllerFindOneApiArg =
+  /** The ID of the Fleet Partner */ string;
+export type FleetPartnerControllerDeleteFleetPartnerApiResponse =
+  /** status 200 Fleet partner deleted */ FleetPartners;
+export type FleetPartnerControllerDeleteFleetPartnerApiArg =
+  /** Fleet partner ID */ string;
+export type FuelAgencyControllerCreateApiResponse = unknown;
+export type FuelAgencyControllerCreateApiArg = CreateFuelAgencyDto;
+export type FuelAgencyControllerFindAllApiResponse = unknown;
+export type FuelAgencyControllerFindAllApiArg = void;
+export type FuelAgencyControllerFindByIdApiResponse = unknown;
+export type FuelAgencyControllerFindByIdApiArg =
+  /** ID of the fuel agency */ string;
+export type FuelAgencyControllerUpdateApiResponse = unknown;
+export type FuelAgencyControllerUpdateApiArg = {
+  /** ID of the fuel agency */
+  id: string;
+  updateFuelAgencyDto: UpdateFuelAgencyDto;
+};
+export type FuelAgencyControllerDeleteApiResponse = unknown;
+export type FuelAgencyControllerDeleteApiArg =
+  /** ID of the fuel agency */ string;
+export type FuelAgencyControllerFindByStateApiResponse = unknown;
+export type FuelAgencyControllerFindByStateApiArg =
+  /** State to search for fuel agencies */ string;
+export type FuelAgencyControllerCheckUniqueIdApiResponse = unknown;
+export type FuelAgencyControllerCheckUniqueIdApiArg =
+  /** Unique ID to check */ string;
+export type HotelControllerCreateApiResponse = unknown;
+export type HotelControllerCreateApiArg = CreateHotelDto;
+export type HotelControllerFindAllApiResponse = unknown;
+export type HotelControllerFindAllApiArg = void;
+export type HotelControllerFindByIdApiResponse = unknown;
+export type HotelControllerFindByIdApiArg = /** Hotel ID */ string;
+export type HotelControllerUpdateApiResponse = unknown;
+export type HotelControllerUpdateApiArg = {
+  /** Hotel ID */
+  id: string;
+  updateHotelDto: UpdateHotelDto;
+};
+export type HotelControllerDeleteApiResponse = unknown;
+export type HotelControllerDeleteApiArg = /** Hotel ID */ string;
+export type HotelControllerFindByCityApiResponse = unknown;
+export type HotelControllerFindByCityApiArg = FindByCityDto;
+export type HotelControllerCheckUniqueIdApiResponse = unknown;
+export type HotelControllerCheckUniqueIdApiArg = CheckUniqueIdDto;
+export type MerchantCategoryControllerCreateApiResponse = unknown;
+export type MerchantCategoryControllerCreateApiArg = CreateMerchantCategoryDto;
+export type MerchantCategoryControllerFindAllApiResponse = unknown;
+export type MerchantCategoryControllerFindAllApiArg = void;
+export type MerchantCategoryControllerFindByIdApiResponse = unknown;
+export type MerchantCategoryControllerFindByIdApiArg = string;
+export type MerchantCategoryControllerUpdateApiResponse = unknown;
+export type MerchantCategoryControllerUpdateApiArg = {
+  id: string;
+  updateMerchantCategoryDto: UpdateMerchantCategoryDto;
+};
+export type MerchantCategoryControllerDeleteApiResponse = unknown;
+export type MerchantCategoryControllerDeleteApiArg = string;
+export type MerchantCategoryControllerFindByNameApiResponse = unknown;
+export type MerchantCategoryControllerFindByNameApiArg = string;
+export type MerchantControllerCreateApiResponse =
+  /** status 201 Merchant created successfully */ Merchant;
+export type MerchantControllerCreateApiArg = CreateMerchantDto;
+export type MerchantControllerFindAllApiResponse =
+  /** status 200 Fetched all merchants */ Merchant[];
+export type MerchantControllerFindAllApiArg = {
+  /** Filter merchants by name (partial match allowed) */
+  name?: string;
+  /** Filter merchants by city ID */
+  cityId?: string;
+  /** Filter merchants by category ID */
+  categoryId?: string;
+  /** Filter merchants by discount (partial match allowed) */
+  discount?: string;
+  /** Filter merchants by phone number */
+  phone?: string;
+  /** Filter merchants by coordinates (e.g., lat,long) */
+  coordinates?: string;
+};
+export type MerchantControllerFindOneApiResponse =
+  /** status 200 Fetched merchant details */ Merchant;
+export type MerchantControllerFindOneApiArg =
+  /** The ID of the merchant */ string;
+export type MerchantControllerUpdateApiResponse =
+  /** status 200 Merchant updated successfully */ Merchant;
+export type MerchantControllerUpdateApiArg = {
+  /** The ID of the merchant */
+  id: string;
+  updateMerchantDto: UpdateMerchantDto;
+};
+export type MerchantControllerRemoveApiResponse = unknown;
+export type MerchantControllerRemoveApiArg =
+  /** The ID of the merchant */ string;
+export type UrbanCardControllerCreateApiResponse =
+  /** status 201 Urban card created successfully */ UrbanCardResponseDto;
+export type UrbanCardControllerCreateApiArg = CreateUrbanCardDto;
+export type UrbanCardControllerFindAllApiResponse =
+  /** status 200 Urban cards fetched successfully */ UrbanCardResponseDto[];
+export type UrbanCardControllerFindAllApiArg = UrbanCardFilterDto;
+export type UrbanCardControllerFindOneApiResponse =
+  /** status 200 Urban card found successfully */ UrbanCardResponseDto;
+export type UrbanCardControllerFindOneApiArg = string;
+export type UrbanCardControllerUpdateApiResponse =
+  /** status 200 Urban card updated successfully */ UrbanCardResponseDto;
+export type UrbanCardControllerUpdateApiArg = {
+  id: string;
+  updateUrbanCardDto: UpdateUrbanCardDto;
+};
+export type UrbanCardControllerRemoveApiResponse =
+  /** status 200 Urban card deleted successfully */ UrbanCardResponseDto;
+export type UrbanCardControllerRemoveApiArg = string;
+export type AppControllerGetHelloApiResponse = unknown;
+export type AppControllerGetHelloApiArg = void;
+export type User = {
+  id: string;
+  username: string;
+  isEmailVerified: boolean;
+  email: string;
+  role: string;
+  userType: string;
+  userCategory: string;
+  status: string;
+};
+export type UserLoginResponse = {
+  user: User;
+  token: string;
+};
 export type LoginUserDto = {
   email: string;
   password: string;
@@ -1171,6 +1652,28 @@ export type Individual = {
   /** The individual auth/user detail */
   user: User;
 };
+export type Text = {};
+export type String = {};
+export type CorporateBodyDocument = {
+  id: string;
+  documentType: string;
+  /** The description of document */
+  description: Text;
+  /** The file url */
+  file: String;
+  corporateBodyId: string;
+  /** The date when the document will expire */
+  expireAt: string;
+  /** The date when the request was created */
+  createdAt: string;
+  /** The date when the document was last updated */
+  updatedAt: string;
+  userId: string;
+  /** Instance of the CorporateBody */
+  corporateBody: CorporateBody;
+  /** The user who owns this resource */
+  user: User;
+};
 export type CorporateBody = {
   id: string;
   companyName: string;
@@ -1185,24 +1688,8 @@ export type CorporateBody = {
   updatedAt: string;
   /** The corporate body auth/user detail */
   user: User;
-};
-export type User = {
-  id: string;
-  username: string;
-  isEmailVerified: boolean;
-  email: string;
-  role: string;
-  userType: string;
-  userCategory: string;
-  status: string;
-  /** The date when the user was created */
-  createdAt: string;
-  /** The date when the user was last updated */
-  updatedAt: string;
-  /** The user individual detail */
-  individual: Individual;
-  /** The user corporate body detail */
-  corporateBody: CorporateBody;
+  /** The corporate body documents */
+  documents: CorporateBodyDocument;
 };
 export type UpdateUserDto = {
   /** Updated username of the user */
@@ -1226,7 +1713,8 @@ export type UpdateUserDto = {
     | "MANAGER"
     | "PARK_OWNER"
     | "DISPATCH_OFFICER"
-    | "PASSENGERS";
+    | "PASSENGERS"
+    | "FLEET_PARTNERS";
   /** Mark email as verified */
   isEmailVerified?: boolean;
 };
@@ -1258,7 +1746,8 @@ export type UpdateIndividualDto = {
     | "MANAGER"
     | "PARK_OWNER"
     | "DISPATCH_OFFICER"
-    | "PASSENGERS";
+    | "PASSENGERS"
+    | "FLEET_PARTNERS";
 };
 export type UpdateCorporateBodyDto = {
   companyName?: string;
@@ -1287,159 +1776,93 @@ export type UpdateCorporateBodyDto = {
     | "MANAGER"
     | "PARK_OWNER"
     | "DISPATCH_OFFICER"
-    | "PASSENGERS";
+    | "PASSENGERS"
+    | "FLEET_PARTNERS";
 };
 export type CreateCorporateBodyDto = {
   companyName: string;
   companyAddress: string;
   companyRC: string;
   phone: string;
-  avatar: string;
+  avatar?: string;
   /** Password of the user */
   password: string;
   /** Email of the user */
   email: string;
-  userId: string;
-  parkId: string;
+  userId?: string;
+  parkId?: string;
   /** Role of the user */
-  role: "SUPER_ADMIN" | "ADMIN" | "AGENT" | "USER";
+  role?: "SUPER_ADMIN" | "ADMIN" | "AGENT" | "USER";
   /** User type */
-  userType:
+  userType?:
     | "FLEET_PARTNERS"
     | "PARK"
     | "PROVIDER_AGENCY"
     | "UBAN_MAIN"
     | "PASSENGERS";
   /** User category */
-  userCategory:
+  userCategory?:
     | "DRIVERS"
     | "MANAGER"
     | "PARK_OWNER"
     | "DISPATCH_OFFICER"
-    | "PASSENGERS";
+    | "PASSENGERS"
+    | "FLEET_PARTNERS";
 };
 export type CreateIndividualDto = {
-  title: string;
+  title?: string;
   firstname: string;
   lastname: string;
   phone: string;
   city: string;
-  avatar: string;
+  avatar?: string;
   /** Password of the user */
   password: string;
   /** Email of the user */
   email: string;
-  userId: string;
-  parkId: string;
+  userId?: string;
+  parkId?: string;
   /** Role of the user */
-  role: "SUPER_ADMIN" | "ADMIN" | "AGENT" | "USER";
+  role?: "SUPER_ADMIN" | "ADMIN" | "AGENT" | "USER";
   /** User type */
-  userType:
+  userType?:
     | "FLEET_PARTNERS"
     | "PARK"
     | "PROVIDER_AGENCY"
     | "UBAN_MAIN"
     | "PASSENGERS";
   /** User category */
-  userCategory:
+  userCategory?:
     | "DRIVERS"
     | "MANAGER"
     | "PARK_OWNER"
     | "DISPATCH_OFFICER"
-    | "PASSENGERS";
+    | "PASSENGERS"
+    | "FLEET_PARTNERS";
 };
-export type CreateParkDto = {
-  /** Description of the park */
-  description: string;
-  /** Phone number to contact the park */
-  phone: string;
-  /** GPS coordinates of the park */
-  coordinate: string;
-  /** City where the park is located */
-  city: string;
-  /** Region where the park is located */
-  region: string;
-  /** Image URL for the park */
-  image: string;
-  /** UUID of the park owner (user who owns the park) */
-  parkOwnerId: string;
-  /** UUID of the user (authenticated user creating the park) */
-  userId: string;
-};
-export type UpdateParkDto = {
-  /** Description of the park */
+export type CreateCorporateBodyDocumentDto = {
+  /** The type of the document */
+  documentType: string;
+  /** The description of the document */
   description?: string;
-  /** Phone number to contact the park */
-  phone?: string;
-  /** GPS coordinates of the park */
-  coordinate?: string;
-  /** City where the park is located */
-  city?: string;
-  /** Region where the park is located */
-  region?: string;
-  /** Image URL for the park */
-  image?: string;
-  /** UUID of the park owner (user who owns the park) */
-  parkOwnerId?: string;
-  /** UUID of the user (authenticated user updating the park) */
-  userId: string;
+  /** The file URL of the document */
+  file: string;
+  /** The ID of the associated corporateBody */
+  corporateBodyId: string;
+  /** The expiration date of the document (optional) */
+  expireAt?: string;
 };
-export type Text = string;
-export type String = string;
-export type Park = {
-  id: string;
-  /** The description of document */
-  description: Text;
-  /** The phone to contact a park */
-  phone: String;
-  /** The gps coordinate */
-  coordinate: String;
-  /** The city where park is */
-  city: String;
-  /** The region where park is */
-  region: String;
-  /** The image url */
-  image: String;
-  parkOwnerId: string;
-  userId: string;
-  /** The date when the document was created */
-  createdAt: string;
-  /** The date when the document was last updated */
-  updatedAt: string;
-  /** Instance of the User */
-  parkOwner: User;
-  /** The user who owns this resource */
-  user: User;
-  /** Users associated with this park */
-  otherUsers: User;
-};
-export type Driver = {
-  id: string;
-  userId: string;
-  license: string;
-  fullName: string;
-  age: number;
-  nationalIdentityNumber: string;
-  sex: string;
-  maritalStatus: string;
-  stateOfOrigin: string;
-  localGovernment: string;
-  houseAddress: string;
-  avatar: string;
-  otherDocument: string;
-  /** any other relevant detail */
-  otherDetail: string;
-  latitude: string;
-  longitude: string;
-  status: string;
-  /** admin approval */
-  approvalStatus: string;
-  /** The date when the driver detail was created */
-  createdAt: string;
-  /** The date when the driver detail was last updated */
-  updatedAt: string;
-  /** The user who added the detail */
-  user: User;
+export type UpdateCorporateBodyDocumentDto = {
+  /** The type of the document */
+  documentType?: string;
+  /** The description of the document */
+  description?: string;
+  /** The file URL of the document */
+  file?: string;
+  /** The ID of the associated corporateBody */
+  corporateBodyId?: string;
+  /** The expiration date of the document (optional) */
+  expireAt?: string;
 };
 export type VehicleType = {
   id: string;
@@ -1460,6 +1883,34 @@ export type VehicleType = {
   vehicles: string[];
   /** The user who owns this resource */
   user: User;
+};
+export type CreateVehicleTypeDto = {
+  /** The category of the vehicle type, e.g., Bus, Van */
+  category: string;
+  /** Additional details about the vehicle type */
+  otherDetail?: string;
+  /** Number of seats in the vehicle */
+  numberOfSeats: number;
+  /** Number of rows in the vehicle */
+  numberOfRows: number;
+  /** Number of columns in the vehicle */
+  numberOfColumns: number;
+  /** The seating arrangement of the vehicle, e.g., 1-3-4-4 */
+  seatFormation: string;
+};
+export type UpdateVehicleTypeDto = {
+  /** The category of the vehicle type, e.g., Bus, Van */
+  category?: string;
+  /** Additional details about the vehicle type */
+  otherDetail?: string;
+  /** Number of seats in the vehicle */
+  numberOfSeats?: number;
+  /** Number of rows in the vehicle */
+  numberOfRows?: number;
+  /** Number of columns in the vehicle */
+  numberOfColumns?: number;
+  /** The seating arrangement of the vehicle, e.g., 1-3-4-4 */
+  seatFormation?: string;
 };
 export type FleetPartners = {
   id: string;
@@ -1522,6 +1973,251 @@ export type Vehicle = {
   fleetPartners: FleetPartners;
   providerAgency: ProviderAgency;
   driver: ProviderAgency;
+};
+export type CreateVehicleDto = {
+  /** The color of the vehicle */
+  color: string;
+  /** Additional details about the vehicle */
+  otherDetail?: string;
+  /** The unique human-readable ID of the vehicle */
+  uniqueID?: string;
+  /** The plate number of the vehicle */
+  plateNumber: string;
+  /** The status of the vehicle */
+  status: "ACTIVE" | "INACTIVE" | "PROCESSING" | "CANCELLED";
+  /** The total revenue generated by the vehicle */
+  totalRevenue: number;
+  /** The city where the vehicle was enrolled */
+  enrollmentCity?: string;
+  /** The registration date of the vehicle */
+  registrationDate: string;
+  /** The ID of the vehicle type */
+  vehicleTypeId: string;
+  /** The ID of the driver */
+  driverId?: string;
+  /** The ID of the provider agency */
+  providerAgencyId?: string;
+  /** The ID of the fleet partner */
+  fleetPartnersId?: string;
+};
+export type UpdateVehicleDto = {
+  /** The color of the vehicle */
+  color?: string;
+  /** Additional details about the vehicle */
+  otherDetail?: string;
+  /** The unique human-readable ID of the vehicle */
+  uniqueID?: string;
+  /** The plate number of the vehicle */
+  plateNumber?: string;
+  /** The status of the vehicle */
+  status?: "ACTIVE" | "INACTIVE" | "PROCESSING" | "CANCELLED";
+  /** The total revenue generated by the vehicle */
+  totalRevenue?: number;
+  /** The city where the vehicle was enrolled */
+  enrollmentCity?: string;
+  /** The registration date of the vehicle */
+  registrationDate?: string;
+  /** The ID of the vehicle type */
+  vehicleTypeId?: string;
+  /** The ID of the driver */
+  driverId?: string;
+  /** The ID of the provider agency */
+  providerAgencyId?: string;
+  /** The ID of the fleet partner */
+  fleetPartnersId?: string;
+};
+export type VehicleRequest = {
+  id: string;
+  numberOfSeats: number;
+  userId: string;
+  /** The date when the user was created */
+  createdAt: string;
+  /** The date when the user was last updated */
+  updatedAt: string;
+  /** The user who owns this resource */
+  user: User;
+};
+export type CreateVehicleRequestDto = {
+  vehicleTypeId: string;
+  numberOfSeats: number;
+};
+export type UpdateVehicleRequestDto = {
+  vehicleTypeId?: string;
+  numberOfSeats?: number;
+};
+export type Decimal = {};
+export type Date = {};
+export type VehicleReport = {
+  id: string;
+  reportType: string;
+  /** The content of the report */
+  description: Text;
+  /** The cost for for repair */
+  cost: Decimal;
+  /** The cost for for repair */
+  maintenanceDate: Date;
+  extraData: object;
+  vehicleId: string;
+  userId: string;
+  /** The date when the request was created */
+  createdAt: string;
+  /** The date when the request was last updated */
+  updatedAt: string;
+  /** Instance of the Vehicle */
+  vehicle: Vehicle;
+  /** The user who owns this resource */
+  user: User;
+};
+export type CreateVehicleReportDto = {
+  reportType: string;
+  description: string;
+  cost?: number;
+  maintenanceDate?: string;
+  extraData: object;
+  vehicleId: string;
+};
+export type UpdateVehicleReportDto = {
+  reportType?: string;
+  description?: string;
+  cost?: number;
+  maintenanceDate?: string;
+  extraData?: object;
+  vehicleId?: string;
+};
+export type VehicleDocument = {
+  id: string;
+  documentType: string;
+  /** The description of document */
+  description: Text;
+  /** The file url */
+  file: String;
+  vehicleId: string;
+  /** The date when the document will expire */
+  expireAt: string;
+  /** The date when the document was created */
+  createdAt: string;
+  /** The date when the document was last updated */
+  updatedAt: string;
+  userId: string;
+  /** The user who owns this resource */
+  user: User;
+  /** Instance of the Vehicle */
+  vehicle: Vehicle;
+};
+export type CreateVehicleDocumentDto = {
+  /** The type of the document */
+  documentType: string;
+  /** The description of the document */
+  description?: string;
+  /** The file URL of the document */
+  file: string;
+  /** The ID of the associated vehicle */
+  vehicleId: string;
+  /** The expiration date of the document (optional) */
+  expireAt?: string;
+};
+export type UpdateVehicleDocumentDto = {
+  /** The type of the document */
+  documentType?: string;
+  /** The description of the document */
+  description?: string;
+  /** The file URL of the document */
+  file?: string;
+  /** The ID of the associated vehicle */
+  vehicleId?: string;
+  /** The expiration date of the document (optional) */
+  expireAt?: string;
+};
+export type Park = {
+  id: string;
+  /** The description of document */
+  description: Text;
+  /** The phone to contact a park */
+  phone: String;
+  /** The gps coordinate */
+  coordinate: String;
+  /** The city where park is */
+  city: String;
+  /** The region where park is */
+  region: String;
+  /** The image url */
+  image: String;
+  parkOwnerId: string;
+  userId: string;
+  /** The date when the document was created */
+  createdAt: string;
+  /** The date when the document was last updated */
+  updatedAt: string;
+  /** Instance of the User */
+  parkOwner: User;
+  /** The user who owns this resource */
+  user: User;
+  /** Users associated with this park */
+  otherUsers: User;
+};
+export type CreateParkDto = {
+  /** Description of the park */
+  description: string;
+  /** Phone number to contact the park */
+  phone: string;
+  /** GPS coordinates of the park */
+  coordinate: string;
+  /** City where the park is located */
+  city: string;
+  /** Region where the park is located */
+  region: string;
+  /** Image URL for the park */
+  image: string;
+  /** UUID of the park owner (user who owns the park) */
+  parkOwnerId: string;
+  /** UUID of the user (authenticated user creating the park) */
+  userId?: string;
+};
+export type UpdateParkDto = {
+  /** Description of the park */
+  description?: string;
+  /** Phone number to contact the park */
+  phone?: string;
+  /** GPS coordinates of the park */
+  coordinate?: string;
+  /** City where the park is located */
+  city?: string;
+  /** Region where the park is located */
+  region?: string;
+  /** Image URL for the park */
+  image?: string;
+  /** UUID of the park owner (user who owns the park) */
+  parkOwnerId?: string;
+  /** UUID of the user (authenticated user updating the park) */
+  userId?: string;
+};
+export type Driver = {
+  id: string;
+  userId: string;
+  license: string;
+  fullName: string;
+  age: number;
+  nationalIdentityNumber: string;
+  sex: string;
+  maritalStatus: string;
+  stateOfOrigin: string;
+  localGovernment: string;
+  houseAddress: string;
+  avatar: string;
+  otherDocument: string;
+  /** any other relevant detail */
+  otherDetail: string;
+  latitude: string;
+  longitude: string;
+  status: string;
+  /** admin approval */
+  approvalStatus: string;
+  /** The date when the driver detail was created */
+  createdAt: string;
+  /** The date when the driver detail was last updated */
+  updatedAt: string;
+  /** The user who added the detail */
+  user: User;
 };
 export type Trip = {
   id: string;
@@ -1596,9 +2292,9 @@ export type CreateBookingDto = {
   /** Phone number of the next of kin */
   nextOfKinPhone: string;
   /** Cost of extra luggage */
-  costOfExtraLuggage: number;
+  costOfExtraLuggage?: number;
   /** Weight of extra luggage */
-  extraLuggageWeight: number;
+  extraLuggageWeight?: number;
   /** Unique ID for the booking */
   uniqueID: string;
   /** User ID of the person who made the booking */
@@ -1624,134 +2320,6 @@ export type UpdateBookingDto = {
   /** Trip ID for the associated trip */
   tripId?: string;
 };
-export type CreateVehicleTypeDto = {
-  /** The category of the vehicle type, e.g., Bus, Van */
-  category: string;
-  /** Additional details about the vehicle type */
-  otherDetail?: string;
-  /** Number of seats in the vehicle */
-  numberOfSeats: number;
-  /** Number of rows in the vehicle */
-  numberOfRows: number;
-  /** Number of columns in the vehicle */
-  numberOfColumns: number;
-  /** The seating arrangement of the vehicle, e.g., 1-3-4-4 */
-  seatFormation: string;
-};
-export type UpdateVehicleTypeDto = {
-  /** The category of the vehicle type, e.g., Bus, Van */
-  category?: string;
-  /** Additional details about the vehicle type */
-  otherDetail?: string;
-  /** Number of seats in the vehicle */
-  numberOfSeats?: number;
-  /** Number of rows in the vehicle */
-  numberOfRows?: number;
-  /** Number of columns in the vehicle */
-  numberOfColumns?: number;
-  /** The seating arrangement of the vehicle, e.g., 1-3-4-4 */
-  seatFormation?: string;
-};
-export type CreateVehicleDto = {
-  /** The color of the vehicle */
-  color: string;
-  /** Additional details about the vehicle */
-  otherDetail?: string;
-  /** The unique human-readable ID of the vehicle */
-  uniqueID?: string;
-  /** The plate number of the vehicle */
-  plateNumber: string;
-  /** The status of the vehicle */
-  status: "ACTIVE" | "INACTIVE" | "PROCESSING" | "CANCELLED";
-  /** The total revenue generated by the vehicle */
-  totalRevenue: number;
-  /** The city where the vehicle was enrolled */
-  enrollmentCity?: string;
-  /** The registration date of the vehicle */
-  registrationDate: string;
-  /** The ID of the vehicle type */
-  vehicleTypeId: string;
-  /** The ID of the driver */
-  driverId?: string;
-  /** The ID of the provider agency */
-  providerAgencyId?: string;
-  /** The ID of the fleet partner */
-  fleetPartnersId?: string;
-};
-export type UpdateVehicleDto = {
-  /** The color of the vehicle */
-  color?: string;
-  /** Additional details about the vehicle */
-  otherDetail?: string;
-  /** The unique human-readable ID of the vehicle */
-  uniqueID?: string;
-  /** The plate number of the vehicle */
-  plateNumber?: string;
-  /** The status of the vehicle */
-  status?: "ACTIVE" | "INACTIVE" | "PROCESSING" | "CANCELLED";
-  /** The total revenue generated by the vehicle */
-  totalRevenue?: number;
-  /** The city where the vehicle was enrolled */
-  enrollmentCity?: string;
-  /** The registration date of the vehicle */
-  registrationDate?: string;
-  /** The ID of the vehicle type */
-  vehicleTypeId?: string;
-  /** The ID of the driver */
-  driverId?: string;
-  /** The ID of the provider agency */
-  providerAgencyId?: string;
-  /** The ID of the fleet partner */
-  fleetPartnersId?: string;
-};
-export type CreateVehicleRequestDto = {
-  vehicleTypeId: string;
-  numberOfSeats: number;
-};
-export type UpdateVehicleRequestDto = {
-  vehicleTypeId?: string;
-  numberOfSeats?: number;
-};
-export type CreateVehicleReportDto = {
-  reportType: string;
-  description: string;
-  cost?: number;
-  maintenanceDate?: string;
-  extraData: object;
-  vehicleId: string;
-};
-export type UpdateVehicleReportDto = {
-  reportType?: string;
-  description?: string;
-  cost?: number;
-  maintenanceDate?: string;
-  extraData?: object;
-  vehicleId?: string;
-};
-export type CreateVehicleDocumentDto = {
-  /** The type of the document */
-  documentType: string;
-  /** The description of the document */
-  description: string;
-  /** The file URL of the document */
-  file: string;
-  /** The ID of the associated vehicle */
-  vehicleId: string;
-  /** The expiration date of the document (optional) */
-  expireAt: string;
-};
-export type UpdateVehicleDocumentDto = {
-  /** The type of the document */
-  documentType?: string;
-  /** The description of the document */
-  description?: string;
-  /** The file URL of the document */
-  file?: string;
-  /** The ID of the associated vehicle */
-  vehicleId?: string;
-  /** The expiration date of the document (optional) */
-  expireAt?: string;
-};
 export type CreateDriverDto = {
   license: string;
   age: number;
@@ -1762,40 +2330,40 @@ export type CreateDriverDto = {
   localGovernment: string;
   houseAddress: string;
   otherDocument: string;
-  otherDetail: string;
+  otherDetail?: string;
   latitude: string;
   longitude: string;
   status: string;
   approvalStatus: string;
   providerAgencyId: string;
-  title: string;
+  title?: string;
   firstname: string;
   lastname: string;
   phone: string;
-  avatar: string;
+  avatar?: string;
   /** Password of the user */
   password: string;
   /** Email of the user */
   email: string;
 };
 export type UpdateDriverDto = {
-  license: string;
-  fullName: string;
-  age: number;
-  nationalIdentityNumber: string;
-  sex: string;
-  maritalStatus: string;
-  stateOfOrigin: string;
-  localGovernment: string;
-  houseAddress: string;
-  avatar: string;
-  otherDocument: string;
-  otherDetail: string;
-  latitude: string;
-  longitude: string;
-  status: string;
-  approvalStatus: string;
-  providerAgencyId: string;
+  license?: string;
+  fullName?: string;
+  age?: number;
+  nationalIdentityNumber?: string;
+  sex?: string;
+  maritalStatus?: string;
+  stateOfOrigin?: string;
+  localGovernment?: string;
+  houseAddress?: string;
+  avatar?: string;
+  otherDocument?: string;
+  otherDetail?: string;
+  latitude?: string;
+  longitude?: string;
+  status?: string;
+  approvalStatus?: string;
+  providerAgencyId?: string;
 };
 export type DriverDocument = {
   id: string;
@@ -1822,14 +2390,14 @@ export type CreateDriverDocumentDto = {
   description: string;
   file: string;
   driverId: string;
-  expireAt: string;
+  expireAt?: string;
 };
 export type UpdateDriverDocumentDto = {
-  documentType: string;
-  description: string;
-  file: string;
-  driverId: string;
-  expireAt: string;
+  documentType?: string;
+  description?: string;
+  file?: string;
+  driverId?: string;
+  expireAt?: string;
 };
 export type CreateDriverReportDto = {
   description: string;
@@ -1837,25 +2405,25 @@ export type CreateDriverReportDto = {
   vehicleId: string;
 };
 export type UpdateDriverReportDto = {
-  description: string;
-  extraData: object;
-  vehicleId: string;
+  description?: string;
+  extraData?: object;
+  vehicleId?: string;
 };
 export type CreateDriverRequestDto = {
   /** The ID of the trip associated with this driver request */
   tripId: string;
   /** The description or details of the driver request */
-  description: string;
+  description?: string;
   /** Additional data related to the driver request (JSON object) */
-  extraData: object;
+  extraData?: object;
 };
 export type UpdateDriverRequestDto = {
   /** The ID of the trip associated with this driver request */
-  tripId: string;
+  tripId?: string;
   /** The description or details of the driver request */
-  description: string;
+  description?: string;
   /** Additional data related to the driver request (JSON object) */
-  extraData: object;
+  extraData?: object;
 };
 export type CreateProviderAgencyDto = {
   /** Any other relevant detail about the provider agency. */
@@ -1881,9 +2449,220 @@ export type UpdateProviderAgencyDto = {
   /** The user ID associated with the provider agency. */
   userId?: string;
 };
+export type CreateFuelAgencyDto = {
+  /** Name of the company */
+  companyName: string;
+  /** Address of the company */
+  companyAddress: string;
+  /** Company registration certificate number */
+  companyRC: string;
+  /** Phone number of the company */
+  phone?: string;
+  /** State where the company is located */
+  state: string;
+  /** City where the company is located */
+  city: string;
+  /** Geographical coordinates of the company */
+  coordinates: string;
+  /** Unique identifier for the company */
+  uniqueID: string;
+  /** Avatar URL for the company */
+  avatar?: string;
+};
+export type UpdateFuelAgencyDto = {
+  /** Name of the company */
+  companyName?: string;
+  /** Address of the company */
+  companyAddress?: string;
+  /** Company registration certificate number */
+  companyRC?: string;
+  /** Phone number of the company */
+  phone?: string;
+  /** State where the company is located */
+  state?: string;
+  /** City where the company is located */
+  city?: string;
+  /** Geographical coordinates of the company */
+  coordinates?: string;
+  /** Unique identifier for the company */
+  uniqueID?: string;
+  /** Avatar URL for the company */
+  avatar?: string;
+};
+export type CreateHotelDto = {
+  /** Name of the hotel */
+  name: string;
+  /** Address of the hotel */
+  address: string;
+  /** Phone number of the hotel */
+  phone?: string;
+  /** Discount details of the hotel */
+  discount?: string;
+  /** City ID where the hotel is located */
+  cityId: string;
+  /** Coordinates of the hotel location */
+  coordinates: string;
+  /** Avatar URL of the hotel */
+  avatar?: string;
+};
+export type UpdateHotelDto = {
+  /** Name of the hotel */
+  name?: string;
+  /** Address of the hotel */
+  address?: string;
+  /** Phone number of the hotel */
+  phone?: string;
+  /** Discount details of the hotel */
+  discount?: string;
+  /** City ID where the hotel is located */
+  cityId?: string;
+  /** Coordinates of the hotel location */
+  coordinates?: string;
+  /** Avatar URL of the hotel */
+  avatar?: string;
+};
+export type FindByCityDto = {
+  /** City ID to find hotels */
+  cityId: string;
+};
+export type CheckUniqueIdDto = {
+  /** Unique ID to check */
+  uniqueID: string;
+};
+export type CreateMerchantCategoryDto = {
+  /** Name of the merchant category */
+  name: string;
+  /** Summary of the merchant category */
+  summary?: string;
+};
+export type UpdateMerchantCategoryDto = {
+  /** Name of the merchant category */
+  name?: string;
+  /** Summary of the merchant category */
+  summary?: string;
+};
+export type LocationCountry = {
+  id: string;
+  name: string;
+  coordinate: string;
+  /** The date when the user was created */
+  createdAt: string;
+  /** The date when the user was last updated */
+  updatedAt: string;
+  userId: string;
+  /** The user who owns this resource */
+  user: User;
+  states: string[];
+};
+export type LocationState = {
+  id: string;
+  name: string;
+  coordinate: string;
+  locationCountryId: string;
+  /** The date when the user was created */
+  createdAt: string;
+  /** The date when the user was last updated */
+  updatedAt: string;
+  userId: string;
+  /** The state that this city belongs to */
+  locationCountry: LocationCountry;
+  /** The user who owns this resource */
+  user: User;
+  cities: string[];
+};
+export type LocationCity = {
+  id: string;
+  name: string;
+  uniqueID: string;
+  coordinate: string;
+  locationStateId: string;
+  /** The date when the user was created */
+  createdAt: string;
+  /** The date when the user was last updated */
+  updatedAt: string;
+  userId: string;
+  /** The user who owns this resource */
+  user: User;
+  /** The state that this city belongs to */
+  locationState: LocationState;
+};
+export type MerchantCategory = {
+  id: string;
+  name: string;
+  summary: string;
+  /** The date when the user was created */
+  createdAt: string;
+  /** The date when the user was last updated */
+  updatedAt: string;
+  userId: string;
+  /** The user who owns this resource */
+  user: User;
+};
+export type Merchant = {
+  id: string;
+  name: string;
+  address: string;
+  phone: string;
+  discount: string;
+  cityId: string;
+  categoryId: string;
+  coordinates: string;
+  avatar: string;
+  /** The date when the user was created */
+  createdAt: string;
+  /** The date when the user was last updated */
+  updatedAt: string;
+  userId: string;
+  /** The user who owns this resource */
+  user: User;
+  /** The user who owns this resource */
+  city: LocationCity;
+  /** The merchant category */
+  category: MerchantCategory;
+};
+export type CreateMerchantDto = {
+  name: string;
+  address: string;
+  phone?: string;
+  discount: string;
+  cityId: string;
+  categoryId: string;
+  coordinates: string;
+  avatar?: string;
+};
+export type UpdateMerchantDto = {
+  name?: string;
+  address?: string;
+  phone?: string;
+  discount?: string;
+  cityId?: string;
+  categoryId?: string;
+  coordinates?: string;
+  avatar?: string;
+  userId?: string;
+};
+export type UrbanCardResponseDto = {
+  id: string;
+  title: string;
+  file: string;
+  createdAt: string;
+  updatedAt: string;
+  userId: string;
+  user: User;
+};
+export type CreateUrbanCardDto = {
+  title: string;
+  file: string;
+};
+export type UrbanCardFilterDto = {
+  title?: string;
+  userId?: string;
+};
+export type UpdateUrbanCardDto = {
+  title?: string;
+  file?: string;
+};
 export const {
-  useAppControllerGetHelloQuery,
-  useLazyAppControllerGetHelloQuery,
   useAuthControllerLoginMutation,
   useAuthControllerVerifyEmailQuery,
   useLazyAuthControllerVerifyEmailQuery,
@@ -1913,29 +2692,11 @@ export const {
   useUserControllerCreateParkManagerBodyMutation,
   useUserControllerCreateParkOwnerBodyMutation,
   useUserControllerCreateParkOwnerCorporateBodyMutation,
-  useParkControllerCreateParkMutation,
-  useParkControllerFindAllParksQuery,
-  useLazyParkControllerFindAllParksQuery,
-  useParkControllerFindParkByIdQuery,
-  useLazyParkControllerFindParkByIdQuery,
-  useParkControllerUpdateParkMutation,
-  useParkControllerDeleteParkMutation,
-  useTripControllerCreateTripMutation,
-  useTripControllerFindAllQuery,
-  useLazyTripControllerFindAllQuery,
-  useTripControllerFindOneQuery,
-  useLazyTripControllerFindOneQuery,
-  useTripControllerUpdateTripMutation,
-  useTripControllerDeleteTripMutation,
-  useBookingControllerCreateBookingMutation,
-  useBookingControllerFindAllBookingsQuery,
-  useLazyBookingControllerFindAllBookingsQuery,
-  useBookingControllerFindBookingByIdQuery,
-  useLazyBookingControllerFindBookingByIdQuery,
-  useBookingControllerUpdateBookingMutation,
-  useBookingControllerDeleteBookingMutation,
-  useBookingControllerSearchBookingsQuery,
-  useLazyBookingControllerSearchBookingsQuery,
+  useCorporateBodyDocumentControllerCreateMutation,
+  useCorporateBodyDocumentControllerSearchQuery,
+  useLazyCorporateBodyDocumentControllerSearchQuery,
+  useCorporateBodyDocumentControllerUpdateMutation,
+  useCorporateBodyDocumentControllerDeleteMutation,
   useVehicleControllerCreateVehicleTypeMutation,
   useVehicleControllerGetAllVehicleTypesQuery,
   useLazyVehicleControllerGetAllVehicleTypesQuery,
@@ -1969,6 +2730,29 @@ export const {
   useLazyVehicleDocumentControllerSearchQuery,
   useVehicleDocumentControllerUpdateMutation,
   useVehicleDocumentControllerDeleteMutation,
+  useParkControllerCreateParkMutation,
+  useParkControllerFindAllParksQuery,
+  useLazyParkControllerFindAllParksQuery,
+  useParkControllerFindParkByIdQuery,
+  useLazyParkControllerFindParkByIdQuery,
+  useParkControllerUpdateParkMutation,
+  useParkControllerDeleteParkMutation,
+  useTripControllerCreateTripMutation,
+  useTripControllerFindAllQuery,
+  useLazyTripControllerFindAllQuery,
+  useTripControllerFindOneQuery,
+  useLazyTripControllerFindOneQuery,
+  useTripControllerUpdateTripMutation,
+  useTripControllerDeleteTripMutation,
+  useBookingControllerCreateBookingMutation,
+  useBookingControllerFindAllBookingsQuery,
+  useLazyBookingControllerFindAllBookingsQuery,
+  useBookingControllerFindBookingByIdQuery,
+  useLazyBookingControllerFindBookingByIdQuery,
+  useBookingControllerUpdateBookingMutation,
+  useBookingControllerDeleteBookingMutation,
+  useBookingControllerSearchBookingsQuery,
+  useLazyBookingControllerSearchBookingsQuery,
   useDriverControllerCreateMutation,
   useDriverControllerFindAllQuery,
   useLazyDriverControllerFindAllQuery,
@@ -2008,4 +2792,54 @@ export const {
   useLazyProviderAgencyControllerFindOneQuery,
   useProviderAgencyControllerUpdateMutation,
   useProviderAgencyControllerRemoveMutation,
+  useFleetPartnerControllerFindAllQuery,
+  useLazyFleetPartnerControllerFindAllQuery,
+  useFleetPartnerControllerFindOneQuery,
+  useLazyFleetPartnerControllerFindOneQuery,
+  useFleetPartnerControllerDeleteFleetPartnerMutation,
+  useFuelAgencyControllerCreateMutation,
+  useFuelAgencyControllerFindAllQuery,
+  useLazyFuelAgencyControllerFindAllQuery,
+  useFuelAgencyControllerFindByIdQuery,
+  useLazyFuelAgencyControllerFindByIdQuery,
+  useFuelAgencyControllerUpdateMutation,
+  useFuelAgencyControllerDeleteMutation,
+  useFuelAgencyControllerFindByStateQuery,
+  useLazyFuelAgencyControllerFindByStateQuery,
+  useFuelAgencyControllerCheckUniqueIdQuery,
+  useLazyFuelAgencyControllerCheckUniqueIdQuery,
+  useHotelControllerCreateMutation,
+  useHotelControllerFindAllQuery,
+  useLazyHotelControllerFindAllQuery,
+  useHotelControllerFindByIdQuery,
+  useLazyHotelControllerFindByIdQuery,
+  useHotelControllerUpdateMutation,
+  useHotelControllerDeleteMutation,
+  useHotelControllerFindByCityMutation,
+  useHotelControllerCheckUniqueIdMutation,
+  useMerchantCategoryControllerCreateMutation,
+  useMerchantCategoryControllerFindAllQuery,
+  useLazyMerchantCategoryControllerFindAllQuery,
+  useMerchantCategoryControllerFindByIdQuery,
+  useLazyMerchantCategoryControllerFindByIdQuery,
+  useMerchantCategoryControllerUpdateMutation,
+  useMerchantCategoryControllerDeleteMutation,
+  useMerchantCategoryControllerFindByNameQuery,
+  useLazyMerchantCategoryControllerFindByNameQuery,
+  useMerchantControllerCreateMutation,
+  useMerchantControllerFindAllQuery,
+  useLazyMerchantControllerFindAllQuery,
+  useMerchantControllerFindOneQuery,
+  useLazyMerchantControllerFindOneQuery,
+  useMerchantControllerUpdateMutation,
+  useMerchantControllerRemoveMutation,
+  useUrbanCardControllerCreateMutation,
+  useUrbanCardControllerFindAllQuery,
+  useLazyUrbanCardControllerFindAllQuery,
+  useUrbanCardControllerFindOneQuery,
+  useLazyUrbanCardControllerFindOneQuery,
+  useUrbanCardControllerUpdateMutation,
+  useUrbanCardControllerRemoveMutation,
+  useAppControllerGetHelloQuery,
+  useLazyAppControllerGetHelloQuery,
 } = injectedRtkApi;

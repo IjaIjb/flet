@@ -6,18 +6,20 @@ import { useRouter } from "next/navigation";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import * as Yup from "yup";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
-import { FiPlus, FiTrash, FiUpload } from "react-icons/fi";
+import { FiUpload } from "react-icons/fi";
 import Image from "next/image";
-
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "react-responsive-modal/styles.css";
 import { Modal } from "react-responsive-modal";
 import nigeriaData from "../../../components/assets/states.json"; // Adjust path to your JSON file
+import { useUserControllerCreateIndividualBodyMutation } from "@/store/api";
 // import { useUserControllerCreateIndividualBodyMutation } from "@/store/api";
 
 // ImageUpload component definition with proper types
 interface ImageUploadProps {
-  image: string | null; // image can be a string (URL) or null
-  setImage: (image: string | null) => void; // setImage is a function that updates the image state
+  image: string | undefined; // image can be a string (URL) or null
+  setImage: (image: string | undefined) => void; // setImage is a function that updates the image state
 }
 
 // Define the types for the component props
@@ -32,11 +34,26 @@ interface BusFrontUploadProps {
   setImage: (image: string | null) => void; // setImage is a function that updates the image state
 }
 
-interface DocumentUploadProps {
-  image: string | null; // image can be a string (URL) or null
-  setImage: (image: string | null) => void; // setImage is a function that updates the image state
-}
+// interface DocumentUploadProps {
+//   image: string | null; // image can be a string (URL) or null
+//   setImage: (image: string | null) => void; // setImage is a function that updates the image state
+// }
 
+interface LoginValues {
+  title?: string;
+  firstname: string;
+  lastname: string;
+  phone: string;
+  city: string;
+  avatar?: string;
+  password: string;
+  email: string;
+  role?: string;
+  userId?: string;
+  parkId?: string;
+  userType: string;
+  userCategory: string;
+}
 const RegisterIndividual = () => {
   const router = useRouter();
   // const [selectedOption, setSelectedOption] = useState<string | null>(null);
@@ -44,6 +61,9 @@ const RegisterIndividual = () => {
   const [confirmPassword, setShowConfirmPassword] = useState(false);
   const [showScreen, setShowScreen] = useState(1);
   const [showBusArchitecture, setBusAchitecture] = useState(false);
+
+  const [signup, { isSuccess }] =
+    useUserControllerCreateIndividualBodyMutation();
 
   // const [signup, { isLoading, data, isSuccess, isError }] =
   //   useUserControllerCreateIndividualBodyMutation();
@@ -67,28 +87,43 @@ const RegisterIndividual = () => {
     setBusAchitecture(!showBusArchitecture);
   };
   const initialData = {
-    email: "",
-
+    firstname: "",
+    lastname: "",
+    phone: "",
+    city: "",
+    avatar: "",
+    /** Password of the user */
     password: "",
-    remember: "",
+    /** Email of the user */
+    email: "",
+    role: "AGENT",
+    userType: "FLEET_PARTNERS",
+    userCategory: "FLEET_PARTNERS",
     documents: [
       { name: "", expiryDate: "", image: null }, // Ensure a default document exists
     ],
   };
 
   const validation = Yup.object({
+    firstname: Yup.string().required("First name is required"),
+    lastname: Yup.string().required("Last name is required"),
+    phone: Yup.string().required("Phone number is required"),
+    city: Yup.string().required("City is required"),
     email: Yup.string().email("Invalid email address").required("Required"),
     password: Yup.string()
       .min(6, "Password must be minimum of 6 characters")
       .max(255)
       .required("Required"),
-    documents: Yup.array().of(
-      Yup.object().shape({
-        name: Yup.string().required("Document name is required"),
-        expiryDate: Yup.date().required("Expiry date is required"),
-        image: Yup.mixed().required("Document upload is required"),
-      })
-    ),
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref("password"), undefined], "Passwords must match")
+      .required("Required"),
+    // documents: Yup.array().of(
+    //   Yup.object().shape({
+    //     name: Yup.string().required("Document name is required"),
+    //     expiryDate: Yup.date().required("Expiry date is required"),
+    //     image: Yup.mixed().required("Document upload is required"),
+    //   })
+    // ),
   });
 
   const ImageUpload: React.FC<ImageUploadProps> = ({ image, setImage }) => (
@@ -233,66 +268,66 @@ const RegisterIndividual = () => {
     </div>
   );
 
-  const DocumentUpload: React.FC<DocumentUploadProps> = ({
-    image,
-    setImage,
-  }) => (
-    <div className="flex justify-center w-full mt-2 text-center h-4">
-      <label className="flex w-full bg-white dotted-border flex-col  items-center justify-center rounded-[5px] cursor-pointer relative">
-        <div className="flex flex-col items-center  justify-center ">
-          {image ? (
-            // <img
-            //   src={image}
-            //   alt="Preview"
-            //   className="mt-2 block w-full border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
-            //   // style={{ minHeight: "50px", maxHeight: "50px", }}
-            // />
-            <div className="relative w-full h-64">
-              <Image
-                src={image}
-                alt="Descriptive alt text"
-                layout="fill"
-                objectFit="cover"
-              />
-            </div>
-          ) : (
-            <div className="flex items-center gap-2">
-              <FiUpload />
-              <h4 className="text-sm text-[#9F9F9F]">Upload Side bus Image</h4>
-            </div>
-          )}
-        </div>
-        <input
-          id="dropzone4"
-          type="file"
-          accept="image/x-png,image/gif,image/jpeg"
-          className="hidden mb-2 text-sm  text-[#6C757D] font-medium"
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            const file = e.target.files?.[0]; // Optional chaining in case files is undefined
-            if (file) {
-              const reader = new FileReader();
-              reader.onloadend = () => {
-                setImage(reader.result as string); // Cast reader.result as string
-              };
-              reader.readAsDataURL(file);
-            }
-          }}
-        />
-      </label>
-    </div>
-  );
+  // const DocumentUpload: React.FC<DocumentUploadProps> = ({
+  //   image,
+  //   setImage,
+  // }) => (
+  //   <div className="flex justify-center w-full mt-2 text-center h-4">
+  //     <label className="flex w-full bg-white dotted-border flex-col  items-center justify-center rounded-[5px] cursor-pointer relative">
+  //       <div className="flex flex-col items-center  justify-center ">
+  //         {image ? (
+  //           // <img
+  //           //   src={image}
+  //           //   alt="Preview"
+  //           //   className="mt-2 block w-full border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
+  //           //   // style={{ minHeight: "50px", maxHeight: "50px", }}
+  //           // />
+  //           <div className="relative w-full h-64">
+  //             <Image
+  //               src={image}
+  //               alt="Descriptive alt text"
+  //               layout="fill"
+  //               objectFit="cover"
+  //             />
+  //           </div>
+  //         ) : (
+  //           <div className="flex items-center gap-2">
+  //             <FiUpload />
+  //             <h4 className="text-sm text-[#9F9F9F]">Upload Side bus Image</h4>
+  //           </div>
+  //         )}
+  //       </div>
+  //       <input
+  //         id="dropzone4"
+  //         type="file"
+  //         accept="image/x-png,image/gif,image/jpeg"
+  //         className="hidden mb-2 text-sm  text-[#6C757D] font-medium"
+  //         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+  //           const file = e.target.files?.[0]; // Optional chaining in case files is undefined
+  //           if (file) {
+  //             const reader = new FileReader();
+  //             reader.onloadend = () => {
+  //               setImage(reader.result as string); // Cast reader.result as string
+  //             };
+  //             reader.readAsDataURL(file);
+  //           }
+  //         }}
+  //       />
+  //     </label>
+  //   </div>
+  // );
 
-  const [image, setImage] = useState<string | null>(null);
+  const [image, setImage] = useState<string | undefined>(undefined);
   const [sideBusImage, setSideBusImage] = useState<string | null>(null);
   const [frontBusImage, setFrontBusImage] = useState<string | null>(null);
 
   const [open, setOpen] = useState(false);
   const [openCongratModal, setOpenCongratModal] = useState(false);
 
-  const onOpenModal = () => {
-    // e.preventDefault();
-    setOpen(true);
-  };
+  // const onOpenModal = () => {
+  //   // e.preventDefault();
+  //   setOpen(true);
+  // };
   const onCloseModal = () => setOpen(false);
 
   const onOpenCongratModal = () => {
@@ -303,10 +338,33 @@ const RegisterIndividual = () => {
 
   const onCloseCongratModal = () => setOpenCongratModal(false);
 
-  const onSubmit = async () => {
+  const onSubmit = async (values: LoginValues) => {
     // e.preventDefault(); // Prevent default browser behavior
-    onOpenModal(); // Open the modal
-    console.log("Form submitted");
+    // onOpenModal(); // Open the modal
+    // console.log("Form submitted");
+    if (showScreen === 1) {
+      setShowScreen(2);
+    } else {
+      const payload = {
+        ...values,
+        avatar: image, // Include the uploaded image (as base64 string)
+        role: values.role as "AGENT", // Type assertion
+        userType: values.userType as "FLEET_PARTNERS", // Type assertion
+        userCategory: values.userCategory as "FLEET_PARTNERS",
+      };
+      console.log(payload);
+      try {
+        const result = await signup(payload).unwrap();
+        console.log(result);
+        if (isSuccess) {
+          router.push("/dashboard/home");
+          toast.success("Account Created Successfuly");
+        }
+      } catch (error) {
+        console.error("Error during signup:", error);
+        toast.error("An error occured");
+      }
+    }
   };
 
   const onSubmit2 = async () => {
@@ -563,43 +621,43 @@ const RegisterIndividual = () => {
                   validationSchema={validation}
                   onSubmit={onSubmit}
                 >
-                  {({ values, setFieldValue }) => (
+                  {({ setFieldValue }) => (
                     <Form className="w-full  mt-10 lg:mt-10 mb-6 flex flex-col justify-between">
                       <div className={showScreen === 1 ? "block " : "hidden"}>
                         <div className=" mb-5 relative">
                           <label
                             className=" text-[#2B2C2B] text-[16px] md:text-[20px] font-[500] "
-                            htmlFor="first_name"
+                            htmlFor="firstname"
                           >
                             First Name
                           </label>
                           <Field
                             className="mt-1 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
-                            name="first_name"
+                            name="firstname"
                             type="text"
-                            id="first_name"
+                            id="firstname"
                             placeholder=""
                           />
                           <p className="text-red-700 text-xs mt-1 ">
-                            <ErrorMessage name="first_name" />
+                            <ErrorMessage name="firstname" />
                           </p>
                         </div>
                         <div className=" mb-5 relative">
                           <label
                             className=" text-[#2B2C2B] text-[16px] md:text-[20px] font-[500] "
-                            htmlFor="last_name"
+                            htmlFor="lastname"
                           >
                             Last Name
                           </label>
                           <Field
                             className="mt-1 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
-                            name="last_name"
+                            name="lastname"
                             type="text"
-                            id="last_name"
+                            id="lastname"
                             placeholder=""
                           />
                           <p className="text-red-700 text-xs mt-1 ">
-                            <ErrorMessage name="last_name" />
+                            <ErrorMessage name="lastname" />
                           </p>
                         </div>
                         <div className=" mb-5 relative">
@@ -843,7 +901,7 @@ const RegisterIndividual = () => {
                             <Field
                               className="mt-1 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
                               name="phone"
-                              type="number"
+                              type="text"
                               id="phone"
                               placeholder=""
                             />
@@ -1057,13 +1115,12 @@ const RegisterIndividual = () => {
                         </div>
 
                         <div>
-                          {values.documents.map((doc, index) => (
+                          {/* {values.documents.map((doc, index) => (
                             <div key={index}>
                               <hr />
                               <div className="my-3">
                                 <div className="grid grid-cols-2 w-full gap-4 mb-5">
-                                  {/* Name Field */}
-                                  <div className="w-full relative">
+                                <div className="w-full relative">
                                     <label
                                       className="text-[#2B2C2B] text-[13px] md:text-[16px] font-[500]"
                                       htmlFor={`documents[${index}].name`}
@@ -1082,8 +1139,8 @@ const RegisterIndividual = () => {
                                       />
                                     </p>
                                   </div>
-                                  {/* Upload Field */}
-                                  <div className="w-full relative">
+                               
+                                <div className="w-full relative">
                                     <label
                                       className="text-[#2B2C2B] text-[13px] md:text-[16px] font-[500]"
                                       htmlFor={`documents[${index}].image`}
@@ -1103,8 +1160,8 @@ const RegisterIndividual = () => {
                                 </div>
 
                                 <div className="grid grid-cols-2 w-full gap-4 mb-10">
-                                  {/* Expiry Date Field */}
-                                  <div className="w-full relative">
+                                
+                                <div className="w-full relative">
                                     <label
                                       className="text-[#2B2C2B] text-[13px] md:text-[16px] font-[500]"
                                       htmlFor={`documents[${index}].expiryDate`}
@@ -1122,8 +1179,8 @@ const RegisterIndividual = () => {
                                       />
                                     </p>
                                   </div>
-                                  {/* Remove Button */}
-                                  {values.documents.length > 1 && (
+                                
+                                 {values.documents.length > 1 && (
                                     <div className="flex items-center">
                                       <button
                                         type="button"
@@ -1144,9 +1201,9 @@ const RegisterIndividual = () => {
                                 </div>
                               </div>
                             </div>
-                          ))}
-                          {/* Add Document Button */}
-                          <div className="flex justify-center mb-6">
+                          ))} */}
+
+                          {/* <div className="flex justify-center mb-6">
                             <div
                               className="flex text-primary underline items-center gap-1 cursor-pointer"
                               onClick={() =>
@@ -1164,14 +1221,15 @@ const RegisterIndividual = () => {
                               <FiPlus />
                               Add More Documents
                             </div>
-                          </div>
+                          </div> */}
                         </div>
                       </div>
 
                       {showScreen === 4 ? (
                         <div className="block w-full md:w-[70%]">
                           <button
-                            onClick={onSubmit}
+                            // onClick={onSubmit}
+                            type="submit"
                             // disabled={!selectedOption} // Disable button if no option is selected
                             className={`py-4 w-full px-6 bg-[#036E03] text-white rounded-lg  hover:bg-green-700
       }`}
@@ -1181,13 +1239,14 @@ const RegisterIndividual = () => {
                         </div>
                       ) : (
                         <button
-                          onClick={
-                            showScreen === 1
-                              ? () => setShowScreen(2)
-                              : showScreen === 2
-                              ? () => setShowScreen(3)
-                              : () => setShowScreen(4)
-                          }
+                          type="submit"
+                          // onClick={
+                          //   showScreen === 1
+                          //     ? () => setShowScreen(2)
+                          //     : showScreen === 2
+                          //     ? () => setShowScreen(3)
+                          //     : () => setShowScreen(4)
+                          // }
                           // disabled={!selectedOption} // Disable button if no option is selected
                           className={`py-4 w-full px-6 bg-[#036E03] text-white rounded-lg  hover:bg-green-700
         }`}
@@ -1431,6 +1490,18 @@ const RegisterIndividual = () => {
         </a>
       </footer>
     </div> */}
+
+      <ToastContainer
+        position="top-center"
+        autoClose={2000}
+        hideProgressBar={true}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
     </div>
   );
 };

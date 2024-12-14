@@ -6,36 +6,97 @@ import { ErrorMessage, Field, Form, Formik } from "formik";
 import * as Yup from "yup";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import Image from "next/image";
-// import { useUserControllerCreateCorporateBodyMutation } from "@/store/api";
 import LoadingSpinner from "@/components/UI/LoadingSpinner";
+import { useUserControllerCreateCorporateBodyMutation } from "@/store/api";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-// interface SignupValues {
-//   email: string;
-//   password: string;
-//   confirmPassword: string;
-//   companyName: string;
-//   companyAddress: string;
-//   companyRC: string;
-//   phone: string;
-// }
-// type ResetForm = () => void;
+// ImageUpload component definition with proper types
+interface ImageUploadProps {
+  image: string | undefined; // image can be a string (URL) or null
+  setImage: (image: string | undefined) => void; // setImage is a function that updates the image state
+}
 
+interface LoginValues {
+  companyName: string;
+  companyAddress: string;
+  companyRC: string;
+  phone: string;
+  avatar?: string;
+  password: string;
+  email: string;
+  userId?: string;
+  parkId?: string;
+  role?: string;
+  userType?: string;
+  userCategory?: string;
+}
 const Page = () => {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [confirmPassword, setShowConfirmPassword] = useState(false);
+  const [showScreen, setShowScreen] = useState(1);
+  const [image, setImage] = useState<string | undefined>(undefined);
 
+  const [signup, { isSuccess }] =
+    useUserControllerCreateCorporateBodyMutation();
 
-  // const [signup, {  isSuccess}] = useUserControllerCreateCorporateBodyMutation();
+  const ImageUpload: React.FC<ImageUploadProps> = ({ image, setImage }) => (
+    <div className="flex justify-center text-center">
+      <label className="flex w-[200px] bg-white dotted-border flex-col items-center justify-center rounded-[5px] cursor-pointer relative">
+        <div className="flex flex-col items-center justify-center h-[150px]">
+          {image ? (
+            <Image
+              className=""
+              src={image}
+              alt="Uploaded image"
+              width={100}
+              height={100}
+            />
+          ) : (
+            <Image
+              className=""
+              src="/onboarding/Icon.svg" // Replace with your default image path
+              alt="Default placeholder"
+              width={100}
+              height={100}
+            />
+          )}
+        </div>
+        <input
+          // id="dropzone1"
+          name="avatar"
+          type="file"
+          accept="image/x-png,image/gif,image/jpeg"
+          className="hidden mb-2 text-sm text-[#6C757D] font-medium"
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            const file = e.target.files?.[0];
+            if (file) {
+              const reader = new FileReader();
+              reader.onloadend = () => {
+                setImage(reader.result as string);
+              };
+              reader.readAsDataURL(file);
+            }
+          }}
+        />
+      </label>
+    </div>
+  );
 
   const initialData = {
+    companyName: "",
+    companyAddress: "",
     email: "",
     password: "",
     confirmPassword: "",
-    companyName: "",
-    companyAddress: "",
+
     companyRC: "",
     phone: "",
+    avatar: "",
+    role: "AGENT",
+    userType: "FLEET_PARTNERS",
+    userCategory: "FLEET_PARTNERS",
   };
 
   const validation = Yup.object({
@@ -52,29 +113,36 @@ const Page = () => {
     phone: Yup.string().required("Phone number is required"),
   });
 
-  const onSubmit = async (
-    // values: SignupValues,
-    // { resetForm }: { resetForm: ResetForm }
-  ) => {
-    router.push("/dashboard/home");
-
-    // try {
-    //   const result = await signup(values).unwrap();
-    //   // console.log(result);
-    //   if (isSuccess) {
-    //     resetForm();
-    //     router.push("/dashboard/home");
-    //   }
-    // } catch (error) {
-    //   console.error("Error during signup:", error);
-    // }
+  const onSubmit = async (values: LoginValues) => {
+    // Include the avatar (image) in the payload
+    if (showScreen === 1) {
+      setShowScreen(2);
+    } else {
+      const payload = {
+        ...values,
+        avatar: image, // Include the uploaded image (as base64 string)
+        role: values.role as "AGENT", // Type assertion
+        userType: values.userType as "FLEET_PARTNERS", // Type assertion
+        userCategory: values.userCategory as "FLEET_PARTNERS",
+      };
+      console.log(payload);
+      try {
+        const result = await signup(payload).unwrap();
+        console.log(result);
+        if (isSuccess) {
+          router.push("/dashboard/home");
+          toast.success("Account Created Successfuly");
+        }
+      } catch (error) {
+        console.error("Error during signup:", error);
+        toast.error("An error occured");
+      }
+    }
   };
-  
 
   const handleBackClick = () => {
     router.back(); // Navigate to the previous page
   };
-
 
   return (
     <div className="w-full">
@@ -82,34 +150,26 @@ const Page = () => {
         {/* Left Section */}
         <div className="w-full z-10 h-screen lg:block hidden relative">
           <div className="absolute h-screen z-10 object-cover w-full rounded-xl">
-            {/* <img
+            <Image
               className="h-full z-10 object-cover w-full"
               src="/onboarding/transport-concept-parked-vehicles 1.svg"
-              alt=""
-            /> */}
-
-
-<Image
-     className="h-full z-10 object-cover w-full"
-                  src="/onboarding/transport-concept-parked-vehicles 1.svg"
-    alt="Descriptive alt text"
-    layout="fill"
-    // objectFit="cover"
-  />
+              alt="Descriptive alt text"
+              layout="fill"
+              // objectFit="cover"
+            />
           </div>
           <div className="flex items-center justify-center relative z-20 h-full">
-          <div className="">
+            <div className="">
               <div className="bg-[#036E03]/[30%] rounded-t-[25px]">
                 <div className="flex justify-center pt-14 pb-8">
-       
                   <Image
-            className=""
-            src="/urban 1.png"
-            alt="image"
-            width={140}
-            height={140}
-            priority
-          />
+                    className=""
+                    src="/urban 1.png"
+                    alt="image"
+                    width={140}
+                    height={140}
+                    priority
+                  />
                 </div>
               </div>
               <div className="relative">
@@ -159,68 +219,92 @@ const Page = () => {
           <div className="lg:hidden block">
             <div className="w-full z-10   relative">
               <div className="absolute h-full z-10 object-cover w-full rounded-xl">
-                {/* <img
-                  className="h-full z-10 object-cover w-full"
+                <Image
+                  className="h-full  object-cover w-full"
                   src="/onboarding/transport-concept-parked-vehicles 1.svg"
-                  alt=""
-                /> */}
-
-<Image
-     className="h-full  object-cover w-full"
-                  src="/onboarding/transport-concept-parked-vehicles 1.svg"
-    alt="Descriptive alt text"
-    layout="fill"
-    objectFit="cover"
-  />
+                  alt="Descriptive alt text"
+                  layout="fill"
+                  objectFit="cover"
+                />
                 <div className="overlay h-full absolute inset-0 bg-primary/[50%] "></div>
               </div>
               <div className="flex relative z-20 h-full justify-center text-center">
                 <div className="flex justify-center text-center pt-14 pb-14">
-             
                   <Image
-            className=""
-            src="/urban 1.png"
-            alt="image"
-            width={140}
-            height={140}
-            priority
-          />
+                    className=""
+                    src="/urban 1.png"
+                    alt="image"
+                    width={140}
+                    height={140}
+                    priority
+                  />
                 </div>
               </div>
             </div>
           </div>
           <div className="px-8 ">
-
             <div className="sticky top-0 pt-[40px] z-20 bg-white">
-            <div className="flex justify-between">
-              <button
-                type="button"
-                onClick={handleBackClick}
-                className="flex items-center text-gray-600 mb-4"
-              >
-                <FaArrowLeft className="" />
-              </button>
+              {showScreen === 1 ? (
+                <div className="flex justify-between">
+                  <button
+                    type="button"
+                    onClick={handleBackClick}
+                    className="flex items-center text-gray-600 mb-4"
+                  >
+                    <FaArrowLeft className="" />
+                  </button>
 
-              {/* <div className="flex items-center gap-2">
-                <h6>Step 1</h6>
-                <div className="flex items-center gap-1">
-                  <div className="h-3 w-3 rounded-full bg-[#6CC56C]"></div>
-                  <div className="h-3 w-3 rounded-full bg-[#D9D9D9]"></div>
-                  <div className="h-3 w-3 rounded-full bg-[#D9D9D9]"></div>
+                  <div className="flex items-center gap-2">
+                    <h6>Step 1</h6>
+                    <div className="flex items-center gap-1">
+                      <div className="h-3 w-3 rounded-full bg-[#6CC56C]"></div>
+                      <div className="h-3 w-3 rounded-full bg-[#D9D9D9]"></div>
+                      {/* <div className="h-3 w-3 rounded-full bg-[#D9D9D9]"></div> */}
+                    </div>
+                  </div>
                 </div>
-              </div> */}
-            </div>
+              ) : (
+                <div className="flex justify-between">
+                  <button
+                    type="button"
+                    onClick={() => setShowScreen(1)}
+                    className="flex items-center text-gray-600 mb-4"
+                  >
+                    <FaArrowLeft className="" />
+                  </button>
+
+                  <div className="flex items-center gap-2">
+                    <h6>Step 2</h6>
+                    <div className="flex items-center gap-1">
+                      <div className="h-3 w-3 rounded-full bg-[#6CC56C]"></div>
+                      <div className="h-3 w-3 rounded-full bg-[#6CC56C]"></div>
+                      {/* <div className="h-3 w-3 rounded-full bg-[#D9D9D9]"></div> */}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="md:h-full h-full scrollbar-hide overflow-y-scroll">
-              <div className="flex flex-col">
-                <h5 className="text-[#121212] text-[26px] md:text-[34px] lg:text-[40px] font-[800]">
-                  Sign up as Corporate Organization
-                </h5>
-                {/* <h3 className="text-[#1A1A1A] text-[15px] lg:text-[18px] font-[300]">
-                  Register in three easy steps
-                </h3> */}
-              </div>
+              {showScreen === 1 ? (
+                <div className="flex flex-col">
+                  <h5 className="text-[#121212] text-[26px] md:text-[34px] lg:text-[40px] font-[800]">
+                    Sign up as Corporate Organization
+                  </h5>
+                  {/* <h3 className="text-[#1A1A1A] text-[15px] lg:text-[18px] font-[300]">
+     Register in three easy steps
+   </h3> */}
+                </div>
+              ) : (
+                <div className="flex flex-col">
+                  <h5 className="text-[#121212] text-[26px] md:text-[34px] lg:text-[36px] font-[800]">
+                    Upload Profile Picture
+                  </h5>
+                  <h3 className="text-[#1A1A1A] text-[15px] lg:text-[20px] font-[300]">
+                    Upload a cleer picture of yourself
+                  </h3>
+                </div>
+              )}
 
               <div className="flex flex-col mb-8 gap-8">
                 <Formik
@@ -230,202 +314,210 @@ const Page = () => {
                 >
                   {({ isSubmitting }) => (
                     <Form className="w-full  mt-10 lg:mt-10 mb-6 flex flex-col justify-between">
-                      <div>
-                        <div className=" mb-5 relative">
-                          <label
-                            className=" text-[#2B2C2B] text-[16px] md:text-[20px] font-[500] "
-                            htmlFor="first_name"
-                          >
-                            Company Name
-                          </label>
-                          <Field
-                            className="mt-1 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
-                            name="companyName"
-                            type="text"
-                            id="companyName"
-                            placeholder=""
-                          />
-                          <p className="text-red-700 text-xs mt-1 ">
-                            <ErrorMessage name="companyName" />
-                          </p>
-                        </div>
-                        <div className=" mb-5 relative">
-                          <label
-                            className=" text-[#2B2C2B] text-[16px] md:text-[20px] font-[500] "
-                            htmlFor="companyAddress"
-                          >
-                            Company Address
-                          </label>
-                          <Field
-                            className="mt-1 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
-                            name="companyAddress"
-                            type="text"
-                            id="companyAddress"
-                            placeholder=""
-                          />
-                          <p className="text-red-700 text-xs mt-1 ">
-                            <ErrorMessage name="companyAddress" />
-                          </p>
-                        </div>
-
-                        <div className=" mb-5 relative">
-                          <label
-                            className=" text-[#2B2C2B] text-[16px] md:text-[20px] font-[500] "
-                            htmlFor="companyRC"
-                          >
-                            Company RC
-                          </label>
-                          <Field
-                            className="mt-1 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
-                            name="companyRC"
-                            type="text"
-                            id="companyRC"
-                            placeholder=""
-                          />
-                          <p className="text-red-700 text-xs mt-1 ">
-                            <ErrorMessage name="companyRC" />
-                          </p>
-                        </div>
-
-                        <div className=" mb-5 relative">
-                          <label
-                            className=" text-[#2B2C2B] text-[16px] md:text-[20px] font-[500] "
-                            htmlFor="email"
-                          >
-                            Email Address
-                          </label>
-                          <Field
-                            className="mt-1 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
-                            name="email"
-                            type="email"
-                            id="email"
-                            placeholder=""
-                          />
-                          <p className="text-red-700 text-xs mt-1 ">
-                            <ErrorMessage name="email" />
-                          </p>
-                        </div>
-
-                        <div className=" mb-5 relative">
-                          <label
-                            className=" text-[#2B2C2B] text-[16px] md:text-[20px] font-[500] "
-                            htmlFor="phone"
-                          >
-                            Phone Number
-                          </label>
-                          <Field
-                            className="mt-1 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
-                            name="phone"
-                            type="number"
-                            id="phone"
-                            placeholder=""
-                          />
-                          <p className="text-red-700 text-xs mt-1 ">
-                            <ErrorMessage name="phone" />
-                          </p>
-                        </div>
-
-                        <div className=" mb-5 relative">
-                          <label
-                            className=" text-[#2B2C2B] text-[16px] md:text-[20px] font-[500] "
-                            htmlFor="password"
-                          >
-                            Password
-                          </label>
-                          <div>
+                      <div className={showScreen === 1 ? "block " : "hidden"}>
+                        <div>
+                          <div className=" mb-5 relative">
+                            <label
+                              className=" text-[#2B2C2B] text-[16px] md:text-[20px] font-[500] "
+                              htmlFor="companyName"
+                            >
+                              Company Name
+                            </label>
                             <Field
                               className="mt-1 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
-                              name="password"
-                              id="password"
-                              type={!showPassword ? "password" : "text"}
+                              name="companyName"
+                              type="text"
+                              id="companyName"
                               placeholder=""
                             />
-                            <button
-                              type="button"
-                              role="button"
-                              aria-label="show password"
-                              title=" show password"
-                              onClick={() =>
-                                setShowPassword(() => !showPassword)
-                              }
-                              className={`absolute right-4 top-12`}
-                            >
-                              {!showPassword ? (
-                                <AiOutlineEyeInvisible className="" />
-                              ) : (
-                                <AiOutlineEye className="" />
-                              )}
-                            </button>
+                            <p className="text-red-700 text-xs mt-1 ">
+                              <ErrorMessage name="companyName" />
+                            </p>
                           </div>
-                          <p className="text-red-700 text-xs mt-1 ">
-                            <ErrorMessage name="password" />
-                          </p>
-                        </div>
-                        <div className=" mb-5 relative">
-                          <label
-                            className=" text-[#2B2C2B] text-[16px] md:text-[20px] font-[500] "
-                            htmlFor="confirmPassword"
-                          >
-                            Retype Password
-                          </label>
-                          <div>
+                          <div className=" mb-5 relative">
+                            <label
+                              className=" text-[#2B2C2B] text-[16px] md:text-[20px] font-[500] "
+                              htmlFor="companyAddress"
+                            >
+                              Company Address
+                            </label>
                             <Field
                               className="mt-1 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
-                              name="confirmPassword"
-                              id="confirmPassword"
-                              type={
-                                !confirmPassword ? "confirmPassword" : "text"
-                              }
+                              name="companyAddress"
+                              type="text"
+                              id="companyAddress"
                               placeholder=""
                             />
-                            <button
-                              type="button"
-                              role="button"
-                              aria-label="show password"
-                              title=" show password"
-                              onClick={() =>
-                                setShowConfirmPassword(() => !confirmPassword)
-                              }
-                              className={`absolute right-4 top-12`}
-                            >
-                              {!confirmPassword ? (
-                                <AiOutlineEyeInvisible className="" />
-                              ) : (
-                                <AiOutlineEye className="" />
-                              )}
-                            </button>
+                            <p className="text-red-700 text-xs mt-1 ">
+                              <ErrorMessage name="companyAddress" />
+                            </p>
                           </div>
-                          <p className="text-red-700 text-xs mt-1 ">
-                            <ErrorMessage name="confirmPassword" />
-                          </p>
+
+                          <div className=" mb-5 relative">
+                            <label
+                              className=" text-[#2B2C2B] text-[16px] md:text-[20px] font-[500] "
+                              htmlFor="companyRC"
+                            >
+                              Company RC
+                            </label>
+                            <Field
+                              className="mt-1 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
+                              name="companyRC"
+                              type="text"
+                              id="companyRC"
+                              placeholder=""
+                            />
+                            <p className="text-red-700 text-xs mt-1 ">
+                              <ErrorMessage name="companyRC" />
+                            </p>
+                          </div>
+
+                          <div className=" mb-5 relative">
+                            <label
+                              className=" text-[#2B2C2B] text-[16px] md:text-[20px] font-[500] "
+                              htmlFor="email"
+                            >
+                              Email Address
+                            </label>
+                            <Field
+                              className="mt-1 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
+                              name="email"
+                              type="email"
+                              id="email"
+                              placeholder=""
+                            />
+                            <p className="text-red-700 text-xs mt-1 ">
+                              <ErrorMessage name="email" />
+                            </p>
+                          </div>
+
+                          <div className=" mb-5 relative">
+                            <label
+                              className=" text-[#2B2C2B] text-[16px] md:text-[20px] font-[500] "
+                              htmlFor="phone"
+                            >
+                              Phone Number
+                            </label>
+                            <Field
+                              className="mt-1 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
+                              name="phone"
+                              type="text"
+                              id="phone"
+                              placeholder=""
+                            />
+                            <p className="text-red-700 text-xs mt-1 ">
+                              <ErrorMessage name="phone" />
+                            </p>
+                          </div>
+
+                          <div className=" mb-5 relative">
+                            <label
+                              className=" text-[#2B2C2B] text-[16px] md:text-[20px] font-[500] "
+                              htmlFor="password"
+                            >
+                              Password
+                            </label>
+                            <div>
+                              <Field
+                                className="mt-1 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
+                                name="password"
+                                id="password"
+                                type={!showPassword ? "password" : "text"}
+                                placeholder=""
+                              />
+                              <button
+                                type="button"
+                                role="button"
+                                aria-label="show password"
+                                title=" show password"
+                                onClick={() =>
+                                  setShowPassword(() => !showPassword)
+                                }
+                                className={`absolute right-4 top-12`}
+                              >
+                                {!showPassword ? (
+                                  <AiOutlineEyeInvisible className="" />
+                                ) : (
+                                  <AiOutlineEye className="" />
+                                )}
+                              </button>
+                            </div>
+                            <p className="text-red-700 text-xs mt-1 ">
+                              <ErrorMessage name="password" />
+                            </p>
+                          </div>
+                          <div className=" mb-5 relative">
+                            <label
+                              className=" text-[#2B2C2B] text-[16px] md:text-[20px] font-[500] "
+                              htmlFor="confirmPassword"
+                            >
+                              Retype Password
+                            </label>
+                            <div>
+                              <Field
+                                className="mt-1 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
+                                name="confirmPassword"
+                                id="confirmPassword"
+                                type={
+                                  !confirmPassword ? "confirmPassword" : "text"
+                                }
+                                placeholder=""
+                              />
+                              <button
+                                type="button"
+                                role="button"
+                                aria-label="show password"
+                                title=" show password"
+                                onClick={() =>
+                                  setShowConfirmPassword(() => !confirmPassword)
+                                }
+                                className={`absolute right-4 top-12`}
+                              >
+                                {!confirmPassword ? (
+                                  <AiOutlineEyeInvisible className="" />
+                                ) : (
+                                  <AiOutlineEye className="" />
+                                )}
+                              </button>
+                            </div>
+                            <p className="text-red-700 text-xs mt-1 ">
+                              <ErrorMessage name="confirmPassword" />
+                            </p>
+                          </div>
                         </div>
                       </div>
 
+                      <div className={showScreen === 2 ? "block " : "hidden"}>
+                        <div className="mb-7">
+                          <ImageUpload image={image} setImage={setImage} />
+                        </div>
+                      </div>
+
+                      {/* {showScreen === 1 ? (
+                        <button
+                          onClick={() => setShowScreen(2)}
+                          // disabled={isSubmitting} // Disable button if no option is selected
+                          className={`disabled:bg-gray-500 py-4 w-full px-6 bg-[#036E03] text-white rounded-lg  hover:bg-green-700
+}`}
+                        >
+                          { "Proceed"}
+                        </button>
+                      ) : ( */}
                       <button
                         type="submit"
+                        // onClick={onSubmit}
                         disabled={isSubmitting} // Disable button if no option is selected
                         className={`disabled:bg-gray-500 py-4 w-full px-6 bg-[#036E03] text-white rounded-lg  hover:bg-green-700
-    }`}
+}`}
                       >
-   {isSubmitting ? <LoadingSpinner /> : "Sign Up"}
+                        {isSubmitting ? <LoadingSpinner /> : "Sign Up"}
                       </button>
+                      {/* // )} */}
                     </Form>
                   )}
                 </Formik>
               </div>
             </div>
-            {/* Proceed Button */}
-            {/* <button
-            onClick={handleProceed}
-            disabled={!selectedOption} // Disable button if no option is selected
-            className={`py-4 px-6 bg-[#036E03] w-full mb-8 text-white rounded-lg ${
-              !selectedOption
-                ? "opacity-50 cursor-not-allowed"
-                : "hover:bg-green-700"
-            }`}
-          >
-            Proceed
-          </button> */}
           </div>
         </div>
       </div>
@@ -524,6 +616,17 @@ const Page = () => {
       </a>
     </footer>
   </div> */}
+      <ToastContainer
+        position="top-center"
+        autoClose={2000}
+        hideProgressBar={true}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
     </div>
   );
 };
