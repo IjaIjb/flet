@@ -13,7 +13,8 @@ import "react-toastify/dist/ReactToastify.css";
 import "react-responsive-modal/styles.css";
 import { Modal } from "react-responsive-modal";
 import nigeriaData from "../../../components/assets/states.json"; // Adjust path to your JSON file
-import { useUserControllerCreateIndividualBodyMutation } from "@/store/api";
+import { useAuthControllerLoginMutation, useUserControllerCreateIndividualBodyMutation } from "@/store/api";
+import LoadingSpinner from "@/components/UI/LoadingSpinner";
 // import { useUserControllerCreateIndividualBodyMutation } from "@/store/api";
 
 // ImageUpload component definition with proper types
@@ -39,6 +40,7 @@ interface BusFrontUploadProps {
 //   setImage: (image: string | null) => void; // setImage is a function that updates the image state
 // }
 
+
 interface LoginValues {
   title?: string;
   firstname: string;
@@ -62,9 +64,11 @@ const RegisterIndividual = () => {
   const [showScreen, setShowScreen] = useState(1);
   const [showBusArchitecture, setBusAchitecture] = useState(false);
 
-  const [signup, { isSuccess }] =
+  const [signup, { isLoading, }] =
     useUserControllerCreateIndividualBodyMutation();
-
+    
+  const [login] =
+    useAuthControllerLoginMutation();
   // const [signup, { isLoading, data, isSuccess, isError }] =
   //   useUserControllerCreateIndividualBodyMutation();
 
@@ -96,9 +100,9 @@ const RegisterIndividual = () => {
     password: "",
     /** Email of the user */
     email: "",
-    role: "AGENT",
+    role: "USER",
     userType: "FLEET_PARTNERS",
-    userCategory: "FLEET_PARTNERS",
+    userCategory: "PASSENGERS",
     documents: [
       { name: "", expiryDate: "", image: null }, // Ensure a default document exists
     ],
@@ -338,34 +342,104 @@ const RegisterIndividual = () => {
 
   const onCloseCongratModal = () => setOpenCongratModal(false);
 
-  const onSubmit = async (values: LoginValues) => {
-    // e.preventDefault(); // Prevent default browser behavior
-    // onOpenModal(); // Open the modal
-    // console.log("Form submitted");
-    if (showScreen === 1) {
-      setShowScreen(2);
-    } else {
-      const payload = {
-        ...values,
-        avatar: image, // Include the uploaded image (as base64 string)
-        role: values.role as "AGENT", // Type assertion
-        userType: values.userType as "FLEET_PARTNERS", // Type assertion
-        userCategory: values.userCategory as "FLEET_PARTNERS",
-      };
-      console.log(payload);
-      try {
-        const result = await signup(payload).unwrap();
-        console.log(result);
-        if (isSuccess) {
-          router.push("/dashboard/home");
-          toast.success("Account Created Successfuly");
+  // const onSubmit = async (values: LoginValues) => {
+  //   // e.preventDefault(); // Prevent default browser behavior
+  //   // onOpenModal(); // Open the modal
+  //   // console.log("Form submitted");
+  //   if (showScreen === 1) {
+  //     setShowScreen(2);
+  //   } else {
+  //     const payload = {
+  //       ...values,
+  //       avatar: image, // Include the uploaded image (as base64 string)
+  //       role: values.role as "USER", // Type assertion
+  //       userType: values.userType as "FLEET_PARTNERS", // Type assertion
+  //       userCategory: values.userCategory as "PASSENGERS",
+  //     };
+  //     // console.log(payload);
+  //     try {
+  //       const response = await signup(payload).unwrap();
+  //       console.log(response);
+  //       if ((response as any)?.status == 200) {
+
+  //          // Store token and user data in localStorage
+  //       const token = (response as any)?.data?.token;
+  //       const user = (response as any)?.data?.user;
+  
+  //       localStorage.setItem("auth_token", token);
+  //       localStorage.setItem("userData", JSON.stringify(user));
+  //         // router.push("/dashboard/home");
+  //         console.log(response)
+  //         toast.success((response as any)?.message);
+  //       } else { 
+  //         console.log(response)
+  //         toast.error((response as any)?.message);
+
+  //       }
+  //     } catch (error) {
+  //       console.error("Error during signup:", error);
+  //       toast.error("An error occured");
+  //     }
+  //   }
+  // };
+
+
+const onSubmit = async (values: LoginValues) => {
+  if (showScreen === 1) {
+    setShowScreen(2);
+  } else {
+    const payload = {
+      ...values,
+      avatar: image, // Include the uploaded image (as base64 string)
+      role: values.role as "USER", // Type assertion
+      userType: values.userType as "FLEET_PARTNERS", // Type assertion
+      userCategory: values.userCategory as "PASSENGERS",
+    };
+
+    try {
+      const signupResponse = await signup(payload).unwrap();
+
+      if (signupResponse?.status === 200 || signupResponse?.status === 201) {
+        // Signup successful
+        toast.success(signupResponse?.message);
+
+        // Extract login credentials from signup payload
+        const loginCredentials = {
+          email: payload.email,
+          password: payload.password,
+        };
+
+        // Perform login
+        try {
+          const loginResponse = await login(loginCredentials).unwrap();
+
+          if (loginResponse?.status === 200) {
+            // Store token and user data in localStorage
+            const token = loginResponse?.data?.token;
+            const user = loginResponse?.data?.user;
+
+            localStorage.setItem("auth_token", token);
+            localStorage.setItem("userData", JSON.stringify(user));
+
+            // Redirect to dashboard/home
+            router.push("/dashboard/home");
+            toast.success(loginResponse?.message);
+          } else {
+            toast.error(loginResponse?.message);
+          }
+        } catch (loginError) {
+          console.error("Error during login:", loginError);
+          toast.error("An error occurred during login.");
         }
-      } catch (error) {
-        console.error("Error during signup:", error);
-        toast.error("An error occured");
+      } else {
+        toast.error(signupResponse?.message);
       }
+    } catch (signupError) {
+      console.error("Error during signup:", signupError);
+      toast.error("An error occurred during signup.");
     }
-  };
+  }
+};
 
   const onSubmit2 = async () => {
     // e.preventDefault(); // Prevent default browser behavior
@@ -670,7 +744,7 @@ const RegisterIndividual = () => {
                           <Field
                             className="mt-1 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
                             name="phone"
-                            type="number"
+                            type="text"
                             id="phone"
                             placeholder=""
                           />
@@ -1247,11 +1321,11 @@ const RegisterIndividual = () => {
                           //     ? () => setShowScreen(3)
                           //     : () => setShowScreen(4)
                           // }
-                          // disabled={!selectedOption} // Disable button if no option is selected
-                          className={`py-4 w-full px-6 bg-[#036E03] text-white rounded-lg  hover:bg-green-700
+                          disabled={isLoading} // Disable button if no option is selected
+                          className={`disabled:bg-gray-500  py-4 w-full px-6 bg-[#036E03] text-white rounded-lg  hover:bg-green-700
         }`}
                         >
-                          Proceed
+                         {isLoading ? <LoadingSpinner /> : "Proceed"} 
                         </button>
                       )}
                     </Form>

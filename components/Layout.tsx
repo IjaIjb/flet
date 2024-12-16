@@ -1,19 +1,31 @@
 "use client"; // Add this for client components in the Next.js app directory
 
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
 import SidebarPage from "./Sidebar";
 import Header from "./shared/Header";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useRouter } from "next/navigation";
 
 interface DashboardLayoutProps {
   children: ReactNode;
 }
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
+    const router = useRouter();
   const [openDrawer, setOpenDrawer] = useState(false);
   const [showSideBar, setShowSideBar] = useState(false);
   // const [showNotification, setShowNotification] = useState<boolean>(false);
 
+  useEffect(() => {
+    const token = localStorage.getItem("auth_token");
+
+    if (!token) {
+      toast.error("Please login to access the dashboard.");
+      router.push("/");
+    }
+  }, [router]);
   // Toggle Side Drawer
   const toggleDrawer = () => {
     setOpenDrawer((prev) => !prev);
@@ -88,6 +100,17 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           {children}
         </div>
       </div>
+           <ToastContainer
+              position="top-center"
+              autoClose={2000}
+              hideProgressBar={true}
+              newestOnTop={false}
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+            />
     </div>
   );
 };

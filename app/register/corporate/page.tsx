@@ -7,7 +7,7 @@ import * as Yup from "yup";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import Image from "next/image";
 import LoadingSpinner from "@/components/UI/LoadingSpinner";
-import { useUserControllerCreateCorporateBodyMutation } from "@/store/api";
+import { useAuthControllerLoginMutation, useUserControllerCreateCorporateBodyMutation } from "@/store/api";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -31,6 +31,7 @@ interface LoginValues {
   userType?: string;
   userCategory?: string;
 }
+
 const Page = () => {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
@@ -38,8 +39,10 @@ const Page = () => {
   const [showScreen, setShowScreen] = useState(1);
   const [image, setImage] = useState<string | undefined>(undefined);
 
-  const [signup, { isSuccess }] =
+  const [signup, { isLoading }] =
     useUserControllerCreateCorporateBodyMutation();
+  const [login] =
+    useAuthControllerLoginMutation();
 
   const ImageUpload: React.FC<ImageUploadProps> = ({ image, setImage }) => (
     <div className="flex justify-center text-center">
@@ -94,9 +97,9 @@ const Page = () => {
     companyRC: "",
     phone: "",
     avatar: "",
-    role: "AGENT",
+    role: "USER",
     userType: "FLEET_PARTNERS",
-    userCategory: "FLEET_PARTNERS",
+    userCategory: "PASSENGERS",
   };
 
   const validation = Yup.object({
@@ -114,31 +117,63 @@ const Page = () => {
   });
 
   const onSubmit = async (values: LoginValues) => {
-    // Include the avatar (image) in the payload
     if (showScreen === 1) {
       setShowScreen(2);
     } else {
       const payload = {
         ...values,
         avatar: image, // Include the uploaded image (as base64 string)
-        role: values.role as "AGENT", // Type assertion
+        role: values.role as "USER", // Type assertion
         userType: values.userType as "FLEET_PARTNERS", // Type assertion
-        userCategory: values.userCategory as "FLEET_PARTNERS",
+        userCategory: values.userCategory as "PASSENGERS",
       };
-      console.log(payload);
+  
       try {
-        const result = await signup(payload).unwrap();
-        console.log(result);
-        if (isSuccess) {
-          router.push("/dashboard/home");
-          toast.success("Account Created Successfuly");
+        // Use the correct type here for signupResponse
+        const signupResponse = await signup(payload).unwrap();
+  
+        if (signupResponse.status === 200 || signupResponse.status === 201) {
+          toast.success(signupResponse.message);
+  
+          // Extract login credentials from signup payload
+          const loginCredentials = {
+            email: payload.email,
+            password: payload.password,
+          };
+  
+          // Perform login
+          try {
+            // Use the correct type here for loginResponse
+            const loginResponse = await login(loginCredentials).unwrap();
+  
+            if (loginResponse.status === 200) {
+              // Store token and user data in localStorage
+              const token = loginResponse.data.token;
+              const user = loginResponse.data.user;
+  
+              localStorage.setItem("auth_token", token);
+              localStorage.setItem("userData", JSON.stringify(user));
+  
+              // Redirect to dashboard/home
+              router.push("/dashboard/home");
+              toast.success(loginResponse.message);
+            } else {
+              toast.error(loginResponse.message);
+            }
+          } catch (loginError) {
+            console.error("Error during login:", loginError);
+            toast.error("An error occurred during login.");
+          }
+        } else {
+          toast.error(signupResponse.message);
         }
-      } catch (error) {
-        console.error("Error during signup:", error);
-        toast.error("An error occured");
+      } catch (signupError) {
+        console.error("Error during signup:", signupError);
+        toast.error("An error occurred during signup.");
       }
     }
   };
+  
 
   const handleBackClick = () => {
     router.back(); // Navigate to the previous page
@@ -312,7 +347,7 @@ const Page = () => {
                   validationSchema={validation}
                   onSubmit={onSubmit}
                 >
-                  {({ isSubmitting }) => (
+                  {({  }) => (
                     <Form className="w-full  mt-10 lg:mt-10 mb-6 flex flex-col justify-between">
                       <div className={showScreen === 1 ? "block " : "hidden"}>
                         <div>
@@ -506,11 +541,13 @@ const Page = () => {
                       <button
                         type="submit"
                         // onClick={onSubmit}
-                        disabled={isSubmitting} // Disable button if no option is selected
+                        disabled={isLoading} // Disable button if no option is selected
+                        // disabled={isSubmitting} // Disable button if no option is selected
                         className={`disabled:bg-gray-500 py-4 w-full px-6 bg-[#036E03] text-white rounded-lg  hover:bg-green-700
 }`}
                       >
-                        {isSubmitting ? <LoadingSpinner /> : "Sign Up"}
+                        {isLoading ? <LoadingSpinner /> : "Sign Up"}
+                        {/* {isSubmitting ? <LoadingSpinner /> : "Sign Up"} */}
                       </button>
                       {/* // )} */}
                     </Form>

@@ -11,17 +11,20 @@ import { RootState } from './redux/store';
 const mutex = new Mutex();
 export const base_url = process.env.NEXT_PUBLIC_BACKEND_BASE_URL;
 const baseQuery = fetchBaseQuery({
-  baseUrl: '/api',
-  // baseUrl: base_url,
+  baseUrl: base_url,
   prepareHeaders: (headers, { getState }) => {
-    const token = (getState() as RootState)?.auth?.authToken || localStorage.getItem("auth_token");
+    const token =
+      (getState() as RootState)?.auth?.authToken ||
+      localStorage.getItem("auth_token");
     if (token) {
-      headers.set('Authorization', `Bearer ${token}`);
+      headers.set("Authorization", `Bearer ${token}`);
     }
-    headers.set('Accept', 'application/json');
+    headers.set("Accept", "application/json");
+    headers.set("Content-Type", "application/json");
     return headers;
   },
 });
+
 
 const baseQueryWithAuth: BaseQueryFn<
   string | FetchArgs,
