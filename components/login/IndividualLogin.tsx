@@ -20,7 +20,7 @@ const IndividualLogin = () => {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
 
-  const [login, { isLoading, isSuccess, isError, error }] =
+  const [login, { isLoading, isError, error }] =
     useAuthControllerLoginMutation();
 
   const initialData = {
@@ -41,19 +41,30 @@ const IndividualLogin = () => {
     try {
       const response = await login(values).unwrap();
       console.log(response);
-      if (isSuccess) {
-        // check if login is successful
+  
+      if (response?.status === 200) {
+        // Store token and user data in localStorage
+        const token = response?.data?.token;
+        const user = response?.data?.user;
+  
+        localStorage.setItem("auth_token", token);
+        localStorage.setItem("userData", JSON.stringify(user));
+  
+        // Redirect to dashboard/home
         router.push("/dashboard/home");
-        toast.success("Login successful!");
+  
+        toast.success(response?.message);
+      } else {
+        toast.error(response?.message);
       }
     } catch {
-      // If the mutation is unsuccessful, `error` will contain the error details
       if (isError && error) {
         console.error("Login error: ", error);
         toast.error("An error occurred during login");
       }
     }
   };
+  
 
   return (
     <div className="pt-10">
@@ -164,13 +175,13 @@ const IndividualLogin = () => {
 
             {/* NDPC Complaint Section */}
             <div className="flex items-center justify-center gap-3 my-4">
-              <div className="border-2 p-1 rounded-full border-[#ECEBEB]">
+              <div className="border-2  rounded-full border-[#ECEBEB]">
                 <div className="flex items-center px-3 gap-3">
                   <Image
-                    src="/onboarding/ndpc.png"
+                    src="/onboarding/ndpc.svg"
                     alt="NDPC Logo"
-                    width={45}
-                    height={45}
+                    width={40}
+                    height={40}
                     priority
                   />
                   <h6 className="text-[#000000] text-[18px] font-bold">

@@ -1,13 +1,21 @@
 "use client"; // Add this for client components in the Next.js app directory
 import DashboardLayout from "@/components/Layout";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import BreadcrumbsDisplay from "../BreadscrumbsDisplay";
 import Image from "next/image";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import * as Yup from "yup";
 import ActiveFleet from "../fleet/ActiveFleet";
 
-const page = () => {
+interface UserData {
+  id: string;
+  name: string;
+  email: string;
+  individual?: boolean;
+  // Add other fields that exist in the user data object
+}
+
+const Page = () => {
   const initialData = {
     email: "",
 
@@ -17,7 +25,14 @@ const page = () => {
       { name: "", expiryDate: "", image: null }, // Ensure a default document exists
     ],
   };
-
+  const [userData, setUserData] = useState<UserData | null>(null);
+  useEffect(() => {
+    const storedUserData = localStorage.getItem("userData");
+    if (storedUserData) {
+      setUserData(JSON.parse(storedUserData));
+    }
+  }, []);
+console.log(userData)
   const validation = Yup.object({
     email: Yup.string().email("Invalid email address").required("Required"),
     password: Yup.string()
@@ -42,7 +57,7 @@ const page = () => {
       <div className="bg-white overflow-hidden rounded-[8px] px-3 md:px-8 py-7 md:py-9">
         <BreadcrumbsDisplay />
         <h5 className="md:text-[20px] text-[16px] font-light mb-4">
-          Account Type: <span className="font-[500]">Corporate</span>
+          Account Type: <span className="font-[500]">{userData?.individual ? "Individual" : "Corporate"}</span>
         </h5>
 
         <div className="bg-primary rounded-[10px] overflow-hidden">
@@ -269,4 +284,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
