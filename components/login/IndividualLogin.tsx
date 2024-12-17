@@ -42,6 +42,7 @@ const IndividualLogin = () => {
       const response = await login(values).unwrap();
       console.log(response);
   
+      
       if (response?.status === 200) {
         // Store token and user data in localStorage
         const token = response?.data?.token;
