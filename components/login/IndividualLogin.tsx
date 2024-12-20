@@ -10,7 +10,7 @@ import { useAuthControllerLoginMutation } from "@/store/api";
 import LoadingSpinner from "../UI/LoadingSpinner";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useAppDispatch, useAppSelector } from "@/store/redux/store";
+import { useAppDispatch } from "@/store/redux/store";
 import { loginUserSuccess } from "@/store/redux/actions/AuthAction";
 
 interface LoginValues {
