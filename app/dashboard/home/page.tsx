@@ -27,7 +27,7 @@ const Page = () => {
   };
   const [userData, setUserData] = useState<UserData | null>(null);
   useEffect(() => {
-    const storedUserData = localStorage.getItem("userData");
+    const storedUserData = localStorage.getItem("user");
     if (storedUserData) {
       setUserData(JSON.parse(storedUserData));
     }

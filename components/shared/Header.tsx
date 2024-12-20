@@ -6,19 +6,24 @@ import { Modal } from "react-responsive-modal";
 import { useRouter } from "next/navigation";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { logoutUser } from "@/store/redux/actions/AuthAction";
+import { useAppDispatch } from "@/store/redux/store";
 
 // Define the structure of user data
 interface UserData {
   individual?: {
     firstname: string;
+    avatar: string;
   };
   corporateBody?: {
     companyName: string;
+    avatar: string;
   };
   status?: string;
 }
 
 const Header = () => {
+  const dispatch = useAppDispatch(); // Access `dispatch`
     const router = useRouter();
   
     const [open, setOpen] = useState(false);
@@ -36,16 +41,18 @@ const Header = () => {
     const [userData, setUserData] = useState<UserData | null>(null);
     
       useEffect(() => {
-        const storedUserData = localStorage.getItem("userData");
+        const storedUserData = localStorage.getItem("user");
         if (storedUserData) {
           setUserData(JSON.parse(storedUserData));
         }
       }, []);
       
+      console.log(userData)
     const handleLogout = () => {
+      dispatch(logoutUser());
       // Clear user data from localStorage
       localStorage.removeItem("auth_token");
-      localStorage.removeItem("userData");
+      localStorage.removeItem("user");
     
       // Redirect to login page
       router.push("/");
@@ -58,13 +65,36 @@ const Header = () => {
       {/* desktop screen */}
       <div className="lg:flex hidden justify-between items-center gap-[150px] ">
         <div className="flex items-center gap-2">
-          <Image
-            src="/dashboard/690a1755bbf9435e00568b362bdf02e6.jpeg"
-            alt="person icon"
-            className="rounded-full"
-            width={60}
-            height={60}
-          />
+        {userData?.individual?.avatar ? (
+    <div
+    className="rounded-full overflow-hidden bg-gray-200"
+    style={{ width: 60, height: 60 }}
+  >
+    <Image
+      src={userData.individual.avatar}
+      alt="person icon"
+      className="object-cover w-full h-full"
+      width={60}
+      height={60}
+    />
+  </div>
+) : userData?.corporateBody?.avatar ? (
+  <div
+  className="rounded-full overflow-hidden bg-gray-200"
+  style={{ width: 60, height: 60 }}
+>
+  <Image
+    src={userData.corporateBody?.avatar}
+    alt="person icon"
+    className="object-cover w-full h-full"
+    width={60}
+    height={60}
+  />
+</div>
+) : 
+(
+  <div className="rounded-full bg-gray-200" style={{ width: 60, height: 60 }} />
+)}
           <div className="flex flex-col leading-[24px]">
             <h4 className="text-[#1A1A1A]  text-[20px] font-light ">Hello</h4>
             <h4 className="text-primary whitespace-nowrap font-[400] text-[20px]">
@@ -122,7 +152,7 @@ const Header = () => {
 
           <div   onClick={handleDetails} className="cursor-pointer rounded-full p-2 bg-[#FF4848]">
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M15 14L19 10M19 10L15 6M19 10H7M11 19H4.20078C3.08068 19 2.52062 19 2.0928 18.782C1.71648 18.5903 1.41052 18.2843 1.21877 17.908C1.00078 17.4802 1.00078 16.9201 1.00078 15.8V4.2C1.00078 3.0799 1.00078 2.51984 1.21877 2.09202C1.41052 1.71569 1.71648 1.40973 2.0928 1.21799C2.52062 1 3.08068 1 4.20078 1L11 1" stroke="white" strokeWidth="2" strokeLinecap="round" stroke-linejoin="round"/>
+<path d="M15 14L19 10M19 10L15 6M19 10H7M11 19H4.20078C3.08068 19 2.52062 19 2.0928 18.782C1.71648 18.5903 1.41052 18.2843 1.21877 17.908C1.00078 17.4802 1.00078 16.9201 1.00078 15.8V4.2C1.00078 3.0799 1.00078 2.51984 1.21877 2.09202C1.41052 1.71569 1.71648 1.40973 2.0928 1.21799C2.52062 1 3.08068 1 4.20078 1L11 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
 </svg>
 
           </div>
@@ -133,13 +163,36 @@ const Header = () => {
       <div className=" lg:hidden ">
         <div className="flex justify-between">
         <div className="flex items-center gap-2">
-          <Image
-            src="/dashboard/690a1755bbf9435e00568b362bdf02e6.jpeg"
-            alt="person icon"
-            className="rounded-full"
-            width={40}
-            height={40}
-          />
+        {userData?.individual?.avatar ? (
+    <div
+    className="rounded-full overflow-hidden bg-gray-200"
+    style={{ width: 40, height: 40 }}
+  >
+    <Image
+      src={userData.individual.avatar}
+      alt="person icon"
+      className="object-cover w-full h-full"
+      width={40}
+      height={40}
+    />
+  </div>
+) : userData?.corporateBody?.avatar ? (
+  <div
+  className="rounded-full overflow-hidden bg-gray-200"
+  style={{ width: 40, height: 40 }}
+>
+  <Image
+    src={userData.corporateBody?.avatar}
+    alt="person icon"
+    className="object-cover w-full h-full"
+    width={40}
+    height={40}
+  />
+</div>
+) : 
+(
+  <div className="rounded-full bg-gray-200" style={{ width: 40, height: 40 }} />
+)}
           <div className="flex flex-col leading-[24px]">
             <h4 className="text-[#1A1A1A]  text-[18px] font-light ">Hello</h4>
             <h4 className="text-primary font-[400] text-[18px]">
@@ -161,7 +214,7 @@ const Header = () => {
           </div>
           <div   onClick={handleDetails} className="cursor-pointer rounded-full h-9 w-9 flex justify-center items-center bg-[#FF4848]">
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M15 14L19 10M19 10L15 6M19 10H7M11 19H4.20078C3.08068 19 2.52062 19 2.0928 18.782C1.71648 18.5903 1.41052 18.2843 1.21877 17.908C1.00078 17.4802 1.00078 16.9201 1.00078 15.8V4.2C1.00078 3.0799 1.00078 2.51984 1.21877 2.09202C1.41052 1.71569 1.71648 1.40973 2.0928 1.21799C2.52062 1 3.08068 1 4.20078 1L11 1" stroke="white" strokeWidth="2" strokeLinecap="round" stroke-linejoin="round"/>
+<path d="M15 14L19 10M19 10L15 6M19 10H7M11 19H4.20078C3.08068 19 2.52062 19 2.0928 18.782C1.71648 18.5903 1.41052 18.2843 1.21877 17.908C1.00078 17.4802 1.00078 16.9201 1.00078 15.8V4.2C1.00078 3.0799 1.00078 2.51984 1.21877 2.09202C1.41052 1.71569 1.71648 1.40973 2.0928 1.21799C2.52062 1 3.08068 1 4.20078 1L11 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
 </svg>
 
           </div>

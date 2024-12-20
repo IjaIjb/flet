@@ -2226,7 +2226,7 @@ export type UpdateIndividualDto = {
   lastname?: string;
   phone?: string;
   city?: string;
-  avatar?: string;
+  avatar?: string | null;
   /** Password of the user */
   password?: string;
   /** Email of the user */
@@ -2255,7 +2255,7 @@ export type UpdateCorporateBodyDto = {
   companyAddress?: string;
   companyRC?: string;
   phone?: string;
-  avatar?: string;
+  avatar?: string | null;
   /** Password of the user */
   password?: string;
   /** Email of the user */

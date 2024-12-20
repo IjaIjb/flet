@@ -15,12 +15,14 @@ import { Modal } from "react-responsive-modal";
 import nigeriaData from "../../../components/assets/states.json"; // Adjust path to your JSON file
 import { useAuthControllerLoginMutation, useUserControllerCreateIndividualBodyMutation } from "@/store/api";
 import LoadingSpinner from "@/components/UI/LoadingSpinner";
+import { loginUserSuccess } from "@/store/redux/actions/AuthAction";
+import { useAppDispatch } from "@/store/redux/store";
 // import { useUserControllerCreateIndividualBodyMutation } from "@/store/api";
 
 // ImageUpload component definition with proper types
 interface ImageUploadProps {
-  image: string | undefined; // image can be a string (URL) or null
-  setImage: (image: string | undefined) => void; // setImage is a function that updates the image state
+  image: string | undefined; // URL of the uploaded image
+  setImage: (image: string | undefined) => void; // Updates the image URL
 }
 
 // Define the types for the component props
@@ -58,6 +60,8 @@ interface LoginValues {
 }
 const RegisterIndividual = () => {
   const router = useRouter();
+    const dispatch = useAppDispatch(); // Access `dispatch`
+  
   // const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [confirmPassword, setShowConfirmPassword] = useState(false);
@@ -130,7 +134,7 @@ const RegisterIndividual = () => {
     // ),
   });
 
-  const ImageUpload: React.FC<ImageUploadProps> = ({ image, setImage }) => (
+  const ImageUpload: React.FC<ImageUploadProps> = ({ image, setImage}) => (
     <div className="flex justify-center text-center">
       <label className="flex w-[200px] bg-white dotted-border flex-col items-center justify-center rounded-[5px] cursor-pointer relative">
         <div className="flex flex-col items-center justify-center h-[150px]">
@@ -160,11 +164,8 @@ const RegisterIndividual = () => {
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             const file = e.target.files?.[0];
             if (file) {
-              const reader = new FileReader();
-              reader.onloadend = () => {
-                setImage(reader.result as string);
-              };
-              reader.readAsDataURL(file);
+            
+              setImage(URL.createObjectURL(file)); // Set preview URL
             }
           }}
         />
@@ -322,7 +323,7 @@ const RegisterIndividual = () => {
   // );
 
   const [image, setImage] = useState<string | undefined>(undefined);
-  const [sideBusImage, setSideBusImage] = useState<string | null>(null);
+   const [sideBusImage, setSideBusImage] = useState<string | null>(null);
   const [frontBusImage, setFrontBusImage] = useState<string | null>(null);
 
   const [open, setOpen] = useState(false);
@@ -417,9 +418,10 @@ const onSubmit = async (values: LoginValues) => {
             // Store token and user data in localStorage
             const token = loginResponse?.data?.token;
             const user = loginResponse?.data?.user;
+       dispatch(loginUserSuccess({ auth_token: token, user: user }));
 
             localStorage.setItem("auth_token", token);
-            localStorage.setItem("userData", JSON.stringify(user));
+            localStorage.setItem("user", JSON.stringify(user));
 
             // Redirect to dashboard/home
             router.push("/dashboard/home");
@@ -883,9 +885,9 @@ const onSubmit = async (values: LoginValues) => {
                       </div>
 
                       <div className={showScreen === 2 ? "block " : "hidden"}>
-                        <div className="mb-7">
-                          <ImageUpload image={image} setImage={setImage} />
-                        </div>
+                      <div className="mb-7">
+      <ImageUpload image={image} setImage={setImage}  />
+    </div>
                       </div>
 
                       <div className={showScreen === 3 ? "block " : "hidden"}>
