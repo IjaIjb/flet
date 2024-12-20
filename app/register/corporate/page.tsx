@@ -10,11 +10,14 @@ import LoadingSpinner from "@/components/UI/LoadingSpinner";
 import { useAuthControllerLoginMutation, useUserControllerCreateCorporateBodyMutation } from "@/store/api";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { loginUserSuccess } from "@/store/redux/actions/AuthAction";
+import { useAppDispatch } from "@/store/redux/store";
 
 // ImageUpload component definition with proper types
 interface ImageUploadProps {
-  image: string | undefined; // image can be a string (URL) or null
-  setImage: (image: string | undefined) => void; // setImage is a function that updates the image state
+  image: string | undefined; // URL of the uploaded image
+  setImage: (image: string | undefined) => void; // Updates the image URL
+  // setFile: (file: File | undefined) => void; // Passes the File to the parent for submission
 }
 
 interface LoginValues {
@@ -33,18 +36,21 @@ interface LoginValues {
 }
 
 const Page = () => {
+      const dispatch = useAppDispatch(); // Access `dispatch`
+  
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [confirmPassword, setShowConfirmPassword] = useState(false);
   const [showScreen, setShowScreen] = useState(1);
   const [image, setImage] = useState<string | undefined>(undefined);
 
+
   const [signup, { isLoading }] =
     useUserControllerCreateCorporateBodyMutation();
   const [login] =
     useAuthControllerLoginMutation();
 
-  const ImageUpload: React.FC<ImageUploadProps> = ({ image, setImage }) => (
+  const ImageUpload: React.FC<ImageUploadProps> = ({ image, setImage}) => (
     <div className="flex justify-center text-center">
       <label className="flex w-[200px] bg-white dotted-border flex-col items-center justify-center rounded-[5px] cursor-pointer relative">
         <div className="flex flex-col items-center justify-center h-[150px]">
@@ -67,19 +73,15 @@ const Page = () => {
           )}
         </div>
         <input
-          // id="dropzone1"
-          name="avatar"
+          id="dropzone1"
           type="file"
           accept="image/x-png,image/gif,image/jpeg"
           className="hidden mb-2 text-sm text-[#6C757D] font-medium"
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             const file = e.target.files?.[0];
             if (file) {
-              const reader = new FileReader();
-              reader.onloadend = () => {
-                setImage(reader.result as string);
-              };
-              reader.readAsDataURL(file);
+              // setFile(file); // Update the file in the parent
+              setImage(URL.createObjectURL(file)); // Set preview URL
             }
           }}
         />
@@ -150,9 +152,10 @@ const Page = () => {
               // Store token and user data in localStorage
               const token = loginResponse.data.token;
               const user = loginResponse.data.user;
+         dispatch(loginUserSuccess({ auth_token: token, user: user }));
   
               localStorage.setItem("auth_token", token);
-              localStorage.setItem("userData", JSON.stringify(user));
+              localStorage.setItem("user", JSON.stringify(user));
   
               // Redirect to dashboard/home
               router.push("/dashboard/home");
@@ -523,9 +526,9 @@ const Page = () => {
                       </div>
 
                       <div className={showScreen === 2 ? "block " : "hidden"}>
-                        <div className="mb-7">
-                          <ImageUpload image={image} setImage={setImage} />
-                        </div>
+                      <div className="mb-7">
+      <ImageUpload image={image} setImage={setImage}  />
+    </div>
                       </div>
 
                       {/* {showScreen === 1 ? (
@@ -545,8 +548,14 @@ const Page = () => {
                         // disabled={isSubmitting} // Disable button if no option is selected
                         className={`disabled:bg-gray-500 py-4 w-full px-6 bg-[#036E03] text-white rounded-lg  hover:bg-green-700
 }`}
-                      >
-                        {isLoading ? <LoadingSpinner /> : "Sign Up"}
+                      >{showScreen === 1 ? (
+                        <div>{isLoading ? <LoadingSpinner /> : "Proceed"}</div>
+                      ) : (
+                        <div>
+                          {isLoading ? <LoadingSpinner /> : "Sign Up"}
+                        </div>
+                      )}
+                        
                         {/* {isSubmitting ? <LoadingSpinner /> : "Sign Up"} */}
                       </button>
                       {/* // )} */}

@@ -10,6 +10,8 @@ import { useAuthControllerLoginMutation } from "@/store/api";
 import LoadingSpinner from "../UI/LoadingSpinner";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useAppDispatch, useAppSelector } from "@/store/redux/store";
+import { loginUserSuccess } from "@/store/redux/actions/AuthAction";
 
 interface LoginValues {
   email: string;
@@ -19,7 +21,7 @@ interface LoginValues {
 const IndividualLogin = () => {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
-
+  const dispatch = useAppDispatch(); // Access `dispatch`
   const [login, { isLoading, isError, error }] =
     useAuthControllerLoginMutation();
 
@@ -42,14 +44,14 @@ const IndividualLogin = () => {
       const response = await login(values).unwrap();
       console.log(response);
   
-      
       if (response?.status === 200) {
-        // Store token and user data in localStorage
-        const token = response?.data?.token;
+    const token = response?.data?.token;
         const user = response?.data?.user;
-  
+       // Store token and user data in localStorage
+       dispatch(loginUserSuccess({ auth_token: token, user: user }));
+       
         localStorage.setItem("auth_token", token);
-        localStorage.setItem("userData", JSON.stringify(user));
+        localStorage.setItem("user", JSON.stringify(user));
   
         // Redirect to dashboard/home
         router.push("/dashboard/home");

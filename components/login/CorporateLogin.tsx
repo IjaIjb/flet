@@ -47,7 +47,7 @@ const CorporateLogin = () => {
         const user = response?.data?.user;
   
         localStorage.setItem("auth_token", token);
-        localStorage.setItem("userData", JSON.stringify(user));
+        localStorage.setItem("user", JSON.stringify(user));
   
         // Redirect to dashboard/home
         router.push("/dashboard/home");
