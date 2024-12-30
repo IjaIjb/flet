@@ -8,7 +8,9 @@ const NotificationSettings = memo(() => {
         <div className="flex items-center gap-2">
           <RiNotification2Line className="text-primary w-6 h-6" />
           {/* <MdOutlinePhoneInTalk /> */}
-          <h5 className="text-primary  md:text-[20px] text-[18px]">Notification Settings</h5>
+          <h5 className="text-primary  md:text-[20px] text-[18px]">
+            Notification Settings
+          </h5>
         </div>
 
         <div className="mt-6 flex flex-col gap-5">
@@ -78,6 +80,5 @@ const NotificationSettings = memo(() => {
   );
 });
 NotificationSettings.displayName = "NotificationSettings"; // Explicitly set displayName
-
 
 export default NotificationSettings;

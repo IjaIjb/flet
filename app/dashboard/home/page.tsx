@@ -6,6 +6,7 @@ import Image from "next/image";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import * as Yup from "yup";
 import ActiveFleet from "../fleet/ActiveFleet";
+import { useLazyVehicleControllerGetAllVehiclesQuery } from "@/store/api";
 
 interface UserData {
   id: string;
@@ -13,6 +14,25 @@ interface UserData {
   email: string;
   individual?: boolean;
   // Add other fields that exist in the user data object
+}
+
+interface Vehicle {
+  data: {
+    vehicleType: {
+      category: string;
+    };
+    plateNumber: string;
+    providerAgency: string;
+
+    // Add other fields as needed
+  };
+  totalRevenue: string;
+}
+
+interface ActiveVehiclesResponse {
+  data: {
+    data: Vehicle[];
+  };
 }
 
 const Page = () => {
@@ -32,7 +52,7 @@ const Page = () => {
       setUserData(JSON.parse(storedUserData));
     }
   }, []);
-console.log(userData)
+  console.log(userData);
   const validation = Yup.object({
     email: Yup.string().email("Invalid email address").required("Required"),
     password: Yup.string()
@@ -48,6 +68,21 @@ console.log(userData)
     ),
   });
 
+  const [getActiveVehicle, { data: activeVehicles }] =
+    useLazyVehicleControllerGetAllVehiclesQuery<ActiveVehiclesResponse>();
+
+  // console.log(activeVehicles)
+  // Fetch vehicle types on component mount
+  useEffect(() => {
+    getActiveVehicle(); // Trigger the API call
+  }, [getActiveVehicle]);
+
+  const totalRevenue =
+    activeVehicles?.data?.reduce((sum, vehicle) => {
+      const revenue = parseFloat(vehicle.totalRevenue) || 0;
+      return sum + revenue;
+    }, 0) || 0;
+
   const onSubmit = async () => {
     // e.preventDefault(); // Prevent default browser behavior
     console.log("Form submitted");
@@ -57,7 +92,10 @@ console.log(userData)
       <div className="bg-white overflow-hidden rounded-[8px] px-3 md:px-8 py-7 md:py-9">
         <BreadcrumbsDisplay />
         <h5 className="md:text-[20px] text-[16px] font-light mb-4">
-          Account Type: <span className="font-[500]">{userData?.individual ? "Individual" : "Corporate"}</span>
+          Account Type:{" "}
+          <span className="font-[500]">
+            {userData?.individual ? "Individual" : "Corporate"}
+          </span>
         </h5>
 
         <div className="bg-primary rounded-[10px] overflow-hidden">
@@ -65,47 +103,48 @@ console.log(userData)
             <div className=" py-3 md:py-4 pl-3 pr-3 md:pl-6 md:pr-0 text-white ">
               <div className="flex flex-col gap-3">
                 <div className="flex gap-2 items-center">
-                <div className="md:block hidden">
-                <Image
-                    aria-hidden
-                    src="/dashboard/dashboardCar.svg"
-                    alt="Window icon"
-                    width={40}
-                    height={40}
-                  />
-                </div>
+                  <div className="md:block hidden">
+                    <Image
+                      aria-hidden
+                      src="/dashboard/dashboardCar.svg"
+                      alt="Window icon"
+                      width={40}
+                      height={40}
+                    />
+                  </div>
 
-                <div className="block md:hidden">
-                <Image
-                    aria-hidden
-                    src="/dashboard/dashboardCar.svg"
-                    alt="Window icon"
-                    width={30}
-                    height={30}
-                  />
-                </div>
-          
+                  <div className="block md:hidden">
+                    <Image
+                      aria-hidden
+                      src="/dashboard/dashboardCar.svg"
+                      alt="Window icon"
+                      width={30}
+                      height={30}
+                    />
+                  </div>
+
                   <h4 className=" text-[18px] md:text-[24px] font-light leading-[25px]">
                     Total Revenue Generated
                   </h4>
                 </div>
 
-                <h4 className=" text-[35px] md:text-[48px] font-[700]">N345,000.00</h4>
+                <h4 className=" text-[35px] md:text-[48px] font-[700]">
+                  ₦{totalRevenue.toFixed(2)}
+                </h4>
               </div>
             </div>
             <div className="md:block hidden">
               {/* <img src="/dashboard/Group 20.svg" alt="Logo" className="" /> */}
               {/* <div className="relative w-full h-64"> */}
-  <Image
-    src="/dashboard/Group 20.svg"
-    alt="Descriptive alt text"
-    className="h-full w-full"
-
-    width={100}
-            height={100}
-            priority
-  />
-{/* </div> */}
+              <Image
+                src="/dashboard/Group 20.svg"
+                alt="Descriptive alt text"
+                className="h-full w-full"
+                width={100}
+                height={100}
+                priority
+              />
+              {/* </div> */}
             </div>
           </div>
         </div>
@@ -126,7 +165,10 @@ console.log(userData)
                 </h4>
               </div>
 
-              <h4 className="text-[35px] md:text-[48px] text-[#274871] font-[500]">234</h4>
+              <h4 className="text-[35px] md:text-[48px] text-[#274871] font-[500]">
+                {" "}
+                {activeVehicles?.data?.length ?? 0}
+              </h4>
             </div>
 
             {/* <div className="md:block hidden"> */}
@@ -149,7 +191,9 @@ console.log(userData)
                 </h4>
               </div>
 
-              <h4 className="text-[35px] md:text-[40px] text-[#C05406] font-[500]">109</h4>
+              <h4 className="text-[35px] md:text-[40px] text-[#C05406] font-[500]">
+                0
+              </h4>
             </div>
           </div>
         </section>
@@ -161,7 +205,7 @@ console.log(userData)
               validationSchema={validation}
               onSubmit={onSubmit}
             >
-              {({  }) => (
+              {({}) => (
                 <Form className="w-full  mt-5 md:mt-5  flex flex-col justify-between">
                   <div className="">
                     <div className="mb-7  flex justify-between gap-2">
@@ -276,7 +320,7 @@ console.log(userData)
             </Formik>
           </div>
           <div>
-         <ActiveFleet />
+            <ActiveFleet />
           </div>
         </section>
       </div>

@@ -188,11 +188,14 @@ function StatementTable() {
         </div>
       </div>
 
-      <Modal 
+      <Modal
         classNames={{
           modal: "rounded-[10px] overflow-visible relative",
         }}
-        open={open} onClose={onCloseModal} center>
+        open={open}
+        onClose={onCloseModal}
+        center
+      >
         <div className="px-4 pb-2">
           <div className=" flex justify-center pt-2">
             <h4 className="text-primary text-[15px] md:text-[18px]">
@@ -261,6 +264,6 @@ function StatementTable() {
       </Modal>
     </div>
   );
-};
+}
 
 export default StatementTable;

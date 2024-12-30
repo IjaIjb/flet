@@ -148,7 +148,7 @@ const Page = () => {
             // Use the correct type here for loginResponse
             const loginResponse = await login(loginCredentials).unwrap();
   
-            if (loginResponse.status === 200) {
+            if (loginResponse.status >= 200 || loginResponse.status < 300) {
               // Store token and user data in localStorage
               const token = loginResponse.data.token;
               const user = loginResponse.data.user;

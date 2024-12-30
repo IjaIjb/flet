@@ -1,17 +1,61 @@
 "use client";
 import DashboardLayout from "@/components/Layout";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import BreadcrumbsDisplay from "../../BreadscrumbsDisplay";
 import Repair from "./Repair";
 import Delivery from "./Delivery";
 import Emergency from "./Emergency";
 import Modal from "react-responsive-modal";
+import { useVehicleControllerCreateVehicleReportMutation } from "@/store/api";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { ErrorMessage, Field, Form, Formik } from "formik";
+import * as Yup from "yup";
+import LoadingSpinner from "@/components/UI/LoadingSpinner";
+
+interface LoginValues {
+  reportType: string;
+  description: string;
+  cost?: number;
+  maintenanceDate?: string;
+  extraData?: object;
+  vehicleId: string;
+}
 
 function VehicleReport() {
+  const [vehicleId, setVehicleId] = useState<string>("");
+  // const [isLoading, setIsLoading] = useState<boolean>(false); // Manage loading state manually
+
+  useEffect(() => {
+    // Retrieve the vehicle ID from sessionStorage
+    const storedId = localStorage.getItem("vehicleId");
+    if (storedId) {
+      setVehicleId(storedId);
+    }
+  }, []);
+
+  const [writeReport, { isLoading }] =
+    useVehicleControllerCreateVehicleReportMutation();
+
   const [openReport, setOpenReport] = useState(false);
   const [deliveryReport, setDeliveryReport] = useState(false);
   const [maintenanceReport, setMaintenanceReport] = useState(false);
   const [emergencyReport, setEmergencyReport] = useState(false);
+
+  const initialData = {
+    reportType: "",
+    description: "",
+    cost: 0,
+    maintenanceDate: "",
+    // extraData?: object;
+    vehicleId: "",
+  };
+
+  const validation = Yup.object({
+    description: Yup.string()
+      .required("Description is required")
+      .min(10, "Description must be at least 10 characters"),
+  });
 
   const onOpenReportModal = () => {
     // e.preventDefault();
@@ -30,7 +74,7 @@ function VehicleReport() {
   const onCloseDeliveryReportModal = () => setDeliveryReport(false);
 
   const handleDeliveryReport = () => {
-    onCloseReportModal()
+    onCloseReportModal();
     onOpenDeliveryReportModal(); // Open the modal
   };
 
@@ -41,10 +85,9 @@ function VehicleReport() {
   const onCloseMaintenanceReportModal = () => setMaintenanceReport(false);
 
   const handleMaintenanceReport = () => {
-    onCloseReportModal()
+    onCloseReportModal();
     onOpenMaintenanceReportModal(); // Open the modal
   };
-
 
   const onOpenEmergencyReportModal = () => {
     // e.preventDefault();
@@ -53,7 +96,7 @@ function VehicleReport() {
   const onCloseEmergencyReportModal = () => setEmergencyReport(false);
 
   const handleEmergencyReport = () => {
-    onCloseReportModal()
+    onCloseReportModal();
     onOpenEmergencyReportModal(); // Open the modal
   };
 
@@ -125,6 +168,74 @@ function VehicleReport() {
       </>
     );
   };
+
+  // const onSubmitDelivery = async (values: LoginValues) => {
+  //   const payload = {
+  //     reportType: "DELIVERY",
+  //     description: values.description,
+  //     cost: values.cost ? Number(values.cost) : undefined, // Ensure number type
+  //     // maintenanceDate: values
+  //     vehicleId: vehicleId,
+  //   };
+
+  //   console.log("Payload sent to API:", payload);
+  //     try {
+  //       // Map form values to CreateVehicleDto structure
+
+  //       // Call API to create vehicle
+  //       const response: any = await writeReport(payload).unwrap();
+  //   // setPassVehicleID(response?.data?.id)
+  //   console.log(response);
+
+  //       // Handle success
+
+  //       console.log("Vehicle Report created successfully");
+  //       toast.success(response?.message || "Vehicle Report created successfully");
+  //       onCloseDeliveryReportModal()
+  //     } catch (error: any) {
+  //       console.error("Error creating vehicle Report:", error);
+
+  //       // Handle errors
+  //       const errorMessage = error?.data?.message || "An error occurred while creating the vehicle Report";
+  //       toast.error(errorMessage);
+  //     }
+  // };
+
+  const onSubmitReport = async (values: LoginValues, reportType: string) => {
+    const payload = {
+      reportType: reportType,
+      description: values.description,
+      cost: values.cost ? Number(values.cost) : undefined, // Ensure number type
+      vehicleId: vehicleId,
+    };
+
+    console.log("Payload sent to API:", payload);
+    try {
+      const response: any = await writeReport(payload).unwrap();
+      console.log(response);
+
+      // Handle success
+      toast.success(response?.message);
+
+      // Close the appropriate modal
+      if (reportType === "DELIVERY") {
+        onCloseDeliveryReportModal();
+      } else if (reportType === "MAINTENANCE") {
+        onCloseMaintenanceReportModal();
+      } else {
+        onCloseEmergencyReportModal();
+      }
+    } catch (error: any) {
+      console.error(`Error creating ${reportType} Report:`, error);
+
+      // Handle errors
+      const errorMessage =
+        error?.data?.message ||
+        `An error occurred while creating the ${reportType} Report`;
+      toast.error(errorMessage);
+    }
+  };
+
   return (
     <div>
       <DashboardLayout>
@@ -161,7 +272,9 @@ function VehicleReport() {
           </div>
 
           <div
-          onClick={handleWriteReport} className="py-3 w-fit mt-7 cursor-pointer px-7 bg-[#036E030F]/[6%] rounded-[10px] text-primary">
+            onClick={handleWriteReport}
+            className="py-3 w-fit mt-7 cursor-pointer px-7 bg-[#036E030F]/[6%] rounded-[10px] text-primary"
+          >
             Write Report
           </div>
           <div className=" pt-[40px]">
@@ -210,133 +323,318 @@ function VehicleReport() {
         Thank you for getting back to KwickMall,
       </h5> */}
 
-<Modal
-        classNames={{
-          modal: "rounded-[10px] overflow-hidden relative",
-        }}
-         open={openReport} onClose={onCloseReportModal} center>
-        <div className="md:w-[600px] px-2 md:pt-4 md:px-8 pb-4">
-          <div className=" flex justify-center pt-4 pb-4">
-            <h4 className="text-primary text-[22px] md:text-[24px]">
-            Select the type of report you want to write
-            </h4>
-          </div>
-        
-          <div className=" flex flex-col gap-2 body-font font-poppins">
-            <div className="flex text-center flex-col gap-2">
-    <div onClick={handleDeliveryReport} className="text-blackText py-2  hover:bg-primary/[30%] text-[20px]">
-      Delivery Report
-    </div>
-    <div onClick={handleMaintenanceReport} className="text-blackText py-2  hover:bg-primary/[30%] text-[20px]">
-      Maintenance Report
-    </div>
-    <div onClick={handleEmergencyReport} className="text-blackText py-2  hover:bg-primary/[30%] text-[20px]">
-      Emergency Report
-    </div>
-            </div>
+            <Modal
+              classNames={{
+                modal: "rounded-[10px] overflow-hidden relative",
+              }}
+              open={openReport}
+              onClose={onCloseReportModal}
+              center
+            >
+              <div className="md:w-[600px] px-2 md:pt-4 md:px-8 pb-4">
+                <div className=" flex justify-center pt-4 pb-4">
+                  <h4 className="text-primary text-[22px] md:text-[24px]">
+                    Select the type of report you want to write
+                  </h4>
+                </div>
 
-          </div>
-        </div>
-      </Modal>
+                <div className=" flex flex-col gap-2 body-font font-poppins">
+                  <div className="flex text-center flex-col gap-2">
+                    <div
+                      onClick={handleDeliveryReport}
+                      className="text-blackText py-2  hover:bg-primary/[30%] text-[20px]"
+                    >
+                      Delivery Report
+                    </div>
+                    <div
+                      onClick={handleMaintenanceReport}
+                      className="text-blackText py-2  hover:bg-primary/[30%] text-[20px]"
+                    >
+                      Maintenance Report
+                    </div>
+                    <div
+                      onClick={handleEmergencyReport}
+                      className="text-blackText py-2  hover:bg-primary/[30%] text-[20px]"
+                    >
+                      Emergency Report
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Modal>
 
+            <Modal
+              classNames={{
+                modal: "rounded-[10px] overflow-hidden relative",
+              }}
+              open={deliveryReport}
+              onClose={onCloseDeliveryReportModal}
+              center
+            >
+              <div className="md:w-[600px] px-2 md:pt-4 md:px-8 pb-4">
+                <div className=" flex justify-center pt-4 pb-4">
+                  <h4 className="text-primary text-[22px] md:text-[24px]">
+                    Delivery Report
+                  </h4>
+                </div>
 
-      <Modal
-        classNames={{
-          modal: "rounded-[10px] overflow-hidden relative",
-        }}
-         open={deliveryReport} onClose={onCloseDeliveryReportModal} center>
-        <div className="md:w-[600px] px-2 md:pt-4 md:px-8 pb-4">
-          <div className=" flex justify-center pt-4 pb-4">
-            <h4 className="text-primary text-[22px] md:text-[24px]">
-         Delivery Report
-            </h4>
-          </div>
-        
-          <div className=" flex flex-col gap-2 body-font font-poppins">
-          <div className="flex flex-col space-y-2">
-      <label htmlFor="message" className="text-[20px] font-[400] text-gray-700">
-      Description
-      </label>
-      <textarea
+                <Formik
+                  initialValues={initialData}
+                  validationSchema={validation}
+                  onSubmit={(values: any) => onSubmitReport(values, "DELIVERY")}
+                >
+                  {({ setFieldValue }) => (
+                    <Form className="">
+                      <div className=" flex flex-col gap-2 body-font font-poppins">
+                        <div className=" mb-3 w-full relative">
+                          <label
+                            className=" text-[#2B2C2B] text-[16px] font-[500] "
+                            htmlFor="cost"
+                          >
+                            Cost
+                          </label>
+                          <Field
+                            className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
+                            name="cost"
+                            type="number"
+                            id="cost"
+                            onChange={(
+                              e: React.ChangeEvent<HTMLInputElement>
+                            ) =>
+                              setFieldValue("cost", parseFloat(e.target.value))
+                            }
+                            placeholder=""
+                          />
+                          <p className="text-red-700 text-xs mt-1 ">
+                            <ErrorMessage name="cost" />
+                          </p>
+                        </div>
+
+                        <div className="flex flex-col space-y-2">
+                          <label
+                            htmlFor="description"
+                            className="text-[20px] font-[400] text-gray-700"
+                          >
+                            Description
+                          </label>
+                          <Field
+                            as="textarea"
+                            id="description"
+                            name="description"
+                            className="w-full p-3 text-sm text-gray-800 border border-[#9B9898] rounded-[10px] focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                            rows="6"
+                            placeholder="Enter your description"
+                          />
+                          <p className="text-red-700 text-xs mt-1 ">
+                            <ErrorMessage name="description" />
+                          </p>
+                          {/* <textarea
         id="message"
         rows={6}
         placeholder="Type your message here..."
         className="w-full p-3 text-sm text-gray-800 border border-[#9B9898] rounded-[10px] focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-      ></textarea>
-    </div>
-    <button className="bg-primary py-3 px-10 text-[20px] w-fit text-white rounded-[10px]">
-      Submit
-    </button>
-          </div>
-        </div>
-      </Modal>
+      ></textarea> */}
+                        </div>
+                        <button
+                          type="submit"
+                          disabled={isLoading}
+                          className="bg-primary disabled:bg-gray-500 py-3 px-10 text-[20px] w-fit text-white rounded-[10px]"
+                        >
+                          {isLoading ? <LoadingSpinner /> : "Submit"}
+                        </button>
+                      </div>
+                    </Form>
+                  )}
+                </Formik>
+              </div>
+            </Modal>
 
-      <Modal
-        classNames={{
-          modal: "rounded-[10px] overflow-hidden relative",
-        }}
-         open={maintenanceReport} onClose={onCloseMaintenanceReportModal} center>
-        <div className="md:w-[600px] px-2 md:pt-4 md:px-8 pb-4">
-          <div className=" flex justify-center pt-4 pb-4">
-            <h4 className="text-primary text-[22px] md:text-[24px]">
-         Maintenance Report
-            </h4>
-          </div>
-        
-          <div className=" flex flex-col gap-2 body-font font-poppins">
-          <div className="flex flex-col space-y-2">
-      <label htmlFor="message" className="text-[20px] font-[400] text-gray-700">
-      Description
-      </label>
-      <textarea
+            <Modal
+              classNames={{
+                modal: "rounded-[10px] overflow-hidden relative",
+              }}
+              open={maintenanceReport}
+              onClose={onCloseMaintenanceReportModal}
+              center
+            >
+              <div className="md:w-[600px] px-2 md:pt-4 md:px-8 pb-4">
+                <div className=" flex justify-center pt-4 pb-4">
+                  <h4 className="text-primary text-[22px] md:text-[24px]">
+                    Maintenance Report
+                  </h4>
+                </div>
+
+                <Formik
+                  initialValues={initialData}
+                  validationSchema={validation}
+                  onSubmit={(values) => onSubmitReport(values, "MAINTENANCE")}
+                >
+                  {({ setFieldValue }) => (
+                    <Form className="">
+                      <div className=" flex flex-col gap-2 body-font font-poppins">
+                        <div className=" mb-3 w-full relative">
+                          <label
+                            className=" text-[#2B2C2B] text-[16px] font-[500] "
+                            htmlFor="cost"
+                          >
+                            Cost
+                          </label>
+                          <Field
+                            className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
+                            name="cost"
+                            type="number"
+                            id="cost"
+                            onChange={(
+                              e: React.ChangeEvent<HTMLInputElement>
+                            ) =>
+                              setFieldValue("cost", parseFloat(e.target.value))
+                            }
+                            placeholder=""
+                          />
+                          <p className="text-red-700 text-xs mt-1 ">
+                            <ErrorMessage name="cost" />
+                          </p>
+                        </div>
+
+                        <div className="flex flex-col space-y-2">
+                          <label
+                            htmlFor="description"
+                            className="text-[20px] font-[400] text-gray-700"
+                          >
+                            Description
+                          </label>
+                          <Field
+                            as="textarea"
+                            id="description"
+                            name="description"
+                            className="w-full p-3 text-sm text-gray-800 border border-[#9B9898] rounded-[10px] focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                            rows="6"
+                            placeholder="Enter your description"
+                          />
+                          <p className="text-red-700 text-xs mt-1 ">
+                            <ErrorMessage name="description" />
+                          </p>
+                          {/* <textarea
         id="message"
         rows={6}
         placeholder="Type your message here..."
         className="w-full p-3 text-sm text-gray-800 border border-[#9B9898] rounded-[10px] focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-      ></textarea>
-    </div>
-    <button className="bg-primary py-3 px-10 text-[20px] w-fit text-white rounded-[10px]">
-      Submit
-    </button>
-          </div>
-        </div>
-      </Modal>
+      ></textarea> */}
+                        </div>
+                        <button
+                          type="submit"
+                          disabled={isLoading}
+                          className="bg-primary disabled:bg-gray-500 py-3 px-10 text-[20px] w-fit text-white rounded-[10px]"
+                        >
+                          {isLoading ? <LoadingSpinner /> : "Submit"}
+                        </button>
+                      </div>
+                    </Form>
+                  )}
+                </Formik>
+              </div>
+            </Modal>
 
-      <Modal
-        classNames={{
-          modal: "rounded-[10px] overflow-hidden relative",
-        }}
-         open={emergencyReport} onClose={onCloseEmergencyReportModal} center>
-        <div className="md:w-[600px] px-2 md:pt-4 md:px-8 pb-4">
-          <div className=" flex justify-center pt-4 pb-4">
-            <h4 className="text-primary text-[22px] md:text-[24px]">
-         Emmergency Report
-            </h4>
-          </div>
-        
-          <div className=" flex flex-col gap-2 body-font font-poppins">
-          <div className="flex flex-col space-y-2">
-      <label htmlFor="message" className="text-[20px] font-[400] text-gray-700">
-      Description
-      </label>
-      <textarea
+            <Modal
+              classNames={{
+                modal: "rounded-[10px] overflow-hidden relative",
+              }}
+              open={emergencyReport}
+              onClose={onCloseEmergencyReportModal}
+              center
+            >
+              <div className="md:w-[600px] px-2 md:pt-4 md:px-8 pb-4">
+                <div className=" flex justify-center pt-4 pb-4">
+                  <h4 className="text-primary text-[22px] md:text-[24px]">
+                    Emergency Report
+                  </h4>
+                </div>
+                <Formik
+                  initialValues={initialData}
+                  validationSchema={validation}
+                  onSubmit={(values) => onSubmitReport(values, "EMERGENCY")}
+                >
+                  {({ setFieldValue }) => (
+                    <Form className="">
+                      <div className=" flex flex-col gap-2 body-font font-poppins">
+                        <div className=" mb-3 w-full relative">
+                          <label
+                            className=" text-[#2B2C2B] text-[16px] font-[500] "
+                            htmlFor="cost"
+                          >
+                            Cost
+                          </label>
+                          <Field
+                            className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
+                            name="cost"
+                            type="number"
+                            id="cost"
+                            onChange={(
+                              e: React.ChangeEvent<HTMLInputElement>
+                            ) =>
+                              setFieldValue("cost", parseFloat(e.target.value))
+                            }
+                            placeholder=""
+                          />
+                          <p className="text-red-700 text-xs mt-1 ">
+                            <ErrorMessage name="cost" />
+                          </p>
+                        </div>
+
+                        <div className="flex flex-col space-y-2">
+                          <label
+                            htmlFor="description"
+                            className="text-[20px] font-[400] text-gray-700"
+                          >
+                            Description
+                          </label>
+                          <Field
+                            as="textarea"
+                            id="description"
+                            name="description"
+                            className="w-full p-3 text-sm text-gray-800 border border-[#9B9898] rounded-[10px] focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                            rows="6"
+                            placeholder="Enter your description"
+                          />
+                          <p className="text-red-700 text-xs mt-1 ">
+                            <ErrorMessage name="description" />
+                          </p>
+                          {/* <textarea
         id="message"
         rows={6}
         placeholder="Type your message here..."
         className="w-full p-3 text-sm text-gray-800 border border-[#9B9898] rounded-[10px] focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-      ></textarea>
-    </div>
-    <button className="bg-primary py-3 px-10 text-[20px] w-fit text-white rounded-[10px]">
-      Submit
-    </button>
+      ></textarea> */}
+                        </div>
+                        <button
+                          type="submit"
+                          disabled={isLoading}
+                          className="bg-primary disabled:bg-gray-500 py-3 px-10 text-[20px] w-fit text-white rounded-[10px]"
+                        >
+                          {isLoading ? <LoadingSpinner /> : "Submit"}
+                        </button>
+                      </div>
+                    </Form>
+                  )}
+                </Formik>
+              </div>
+            </Modal>
           </div>
         </div>
-      </Modal>
-          </div>
-        </div>
+        <ToastContainer
+          position="top-center"
+          autoClose={2000}
+          hideProgressBar={true}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
       </DashboardLayout>
     </div>
   );
-};
+}
 
 export default VehicleReport;

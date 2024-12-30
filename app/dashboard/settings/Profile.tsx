@@ -4,7 +4,10 @@ import React, { useEffect, useState } from "react";
 import { TbUserEdit } from "react-icons/tb";
 import * as Yup from "yup";
 import Image from "next/image";
-import { useUserControllerUpdateCorporateByIdMutation, useUserControllerUpdateIndividualByIdMutation } from "@/store/api";
+import {
+  useUserControllerUpdateCorporateByIdMutation,
+  useUserControllerUpdateIndividualByIdMutation,
+} from "@/store/api";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import LoadingSpinner from "@/components/UI/LoadingSpinner";
@@ -18,19 +21,19 @@ interface UserData {
     lastname: string;
     phone: string;
     city: string;
-    avatar: string | null;
-    id: string
+    avatar: string;
+    id: string;
   };
   corporateBody?: {
     companyName: string;
     companyRC: string;
     phone: string;
     companyAddress: string;
-    avatar: string | null;
-    id: string
+    avatar: string;
+    id: string;
   };
-    // id: string
-    email: string;
+  // id: string
+  email: string;
   // username: string;
   // status: string;
 }
@@ -41,7 +44,7 @@ interface IndividualFormValues {
   lastname: string;
   phone: string;
   city: string;
-  avatar?: string | null;
+  avatar?: string;
   password?: string;
   email?: string;
   role?: string;
@@ -61,42 +64,42 @@ interface CorporateFormValues {
 
 // ImageUpload component definition with proper types
 interface ImageUploadProps {
-  image: string | null; // image can be a string (URL) or null
-  setImage: (image: string | null) => void; // setImage is a function that updates the image state
+  image: string | undefined; // image can be a string (URL) or null
+  setImage: (image: string | undefined) => void; // setImage is a function that updates the image state
 }
 const Profile = () => {
-  const [image, setImage] = useState<string | null>(null);
+  const [image, setImage] = useState<string | undefined>(undefined);
+  const [avatarImage, setAvatarImage] = useState<any>();
   const dispatch = useAppDispatch(); // Access `dispatch`
 
   const [userData, setUserData] = useState<UserData | null>(null);
   const [userToken, setUserToken] = useState("");
   const [update, { isLoading }] =
-  useUserControllerUpdateIndividualByIdMutation();
+    useUserControllerUpdateIndividualByIdMutation();
 
-  const [updateCorporate] =
-  useUserControllerUpdateCorporateByIdMutation();
+  const [updateCorporate] = useUserControllerUpdateCorporateByIdMutation();
 
- useEffect(() => {
+  useEffect(() => {
     const storedUserData = localStorage.getItem("user");
     const storedToken = localStorage.getItem("auth_token");
+    if (storedUserData) {
+      const parsedData = JSON.parse(storedUserData);
+      setUserData(parsedData);
+      setImage(
+        parsedData.individual?.avatar ||
+          parsedData.corporateBody?.avatar ||
+          undefined
+      );
+    }
     if (storedToken) {
       const parsedData = storedToken;
       setUserToken(parsedData);
       // if (parsedData.individual?.avatar) setImage(parsedData.individual.avatar);
     }
-    if (storedUserData) {
-      const parsedData = JSON.parse(storedUserData);
-      setUserData(parsedData);
-      if (parsedData.individual?.avatar) {
-        setImage(parsedData.individual.avatar)
-      } else {
-       setImage(parsedData.corporateBody?.avatar)
-      }
-    }
   }, []);
 
-  console.log(userData);
-  
+  // console.log(userData);
+
   const initialData = {
     firstname: userData?.individual?.firstname || "",
     lastname: userData?.individual?.lastname || "",
@@ -168,6 +171,7 @@ const Profile = () => {
               const reader = new FileReader();
               reader.onloadend = () => {
                 setImage(reader.result as string);
+                setAvatarImage(file);
               };
               reader.readAsDataURL(file);
             }
@@ -177,17 +181,17 @@ const Profile = () => {
     </div>
   );
   // if (!userData) return <div></div>;
-console.log(userData)
+  // console.log(userData)
   // const onSubmit = async (values: any) => {
   //   const payload = {
   //     ...values,
   //     avatar: image, // Include the image in base64 format
   //   };
-  
+
   //   console.log(payload);
   //   try {
   //     const response = await update({ id: userData?.individual?.id, ...payload }).unwrap();
-  
+
   //     // If the request was successful
   //     if (response) {
   //       toast.success("Profile updated successfully!");
@@ -198,44 +202,59 @@ console.log(userData)
   //         individual: { ...userData?.individual, ...payload },
   //       };
   //        dispatch(loginUserSuccess({ auth_token: userToken, user: updatedUserData}));
-  
+
   //       localStorage.setItem("user", JSON.stringify(updatedUserData));
   //       setUserData(updatedUserData); // Update state
   //     }
-  
+
   //   } catch (err) {
   //     toast.error("Unexpected error. Please try again.");
   //   }
   // };
-  
-  const onSubmit = async (values:IndividualFormValues) => {
+
+  const onSubmit = async (values: IndividualFormValues) => {
     if (!userData?.individual?.id) {
       toast.error("User ID is missing. Please reload and try again.");
       return;
     }
-    const payload = {
-      id: userData.individual.id,
-      updateIndividualDto: {
-        ...values,
-        avatar: image,
-        role: values.role as "USER",
-        userType: values.userType as "FLEET_PARTNERS",
-        userCategory: values.userCategory as "PASSENGERS",
-      },
-    };
-  // console.log(payload)
+
+    // Create a FormData object
+    const formData = new FormData();
+
+    // Append other fields dynamically
+    Object.entries(values).forEach(([key, value]) => {
+      if (key !== "role" && key !== "userType" && key !== "userCategory") {
+        formData.append(key, value as string | Blob);
+      }
+    });
+
+    // Append individual fields to FormData
+    formData.append("id", userData.individual.id);
+    formData.append("role", values.role as "USER");
+    formData.append("userType", values.userType as "FLEET_PARTNERS");
+    formData.append("userCategory", values.userCategory as "PASSENGERS");
+
+    // Append avatar image if available
+    if (image) {
+      formData.append("avatar", avatarImage);
+    }
+
     try {
-      const response = await update(payload).unwrap();
-  
+      // Make the API call with the FormData
+      const response = await update({
+        id: userData.individual.id,
+        updateIndividualDto: formData as any,
+      }).unwrap();
+
       if (response) {
         toast.success("Profile updated successfully!");
-  
+
         // Update user data in local storage and global state
         const updatedUserData: UserData = {
           ...userData,
-          individual: { ...userData.individual, ...values, avatar: image },
+          individual: { ...userData.individual, ...values },
         };
-  
+
         // Dispatch updated user data to global store
         dispatch(
           loginUserSuccess({
@@ -243,18 +262,19 @@ console.log(userData)
             user: updatedUserData,
           })
         );
-  
+
         // Update local storage with the updated user data
         localStorage.setItem("user", JSON.stringify(updatedUserData));
-  
+
         // Update the state with new user data
         setUserData(updatedUserData);
       }
-    } catch {
+    } catch (error) {
+      console.error(error);
       toast.error("Unexpected error. Please try again.");
     }
   };
-  
+
   const onSubmitCorporate = async (values: CorporateFormValues) => {
     if (!userData?.corporateBody?.id) {
       toast.error("User ID is missing. Please reload and try again.");
@@ -268,20 +288,19 @@ console.log(userData)
       },
     };
 
-  
     try {
       const response = await updateCorporate(payload).unwrap();
-  
+
       if (response) {
         toast.success("Profile updated successfully!");
-  
+
         // Update user data in local storage and global state
         const updatedUserData: UserData = {
           ...userData,
           email: values.email,
-          corporateBody: { ...userData.corporateBody, ...values, avatar: image },
+          corporateBody: { ...userData.corporateBody, ...values },
         };
-  
+
         // Dispatch updated user data to global store
         dispatch(
           loginUserSuccess({
@@ -289,18 +308,18 @@ console.log(userData)
             user: updatedUserData,
           })
         );
-  
+
         // Update local storage with the updated user data
         localStorage.setItem("user", JSON.stringify(updatedUserData));
-  
+
         // Update the state with new user data
         setUserData(updatedUserData);
       }
-    } catch  {
+    } catch {
       toast.error("Unexpected error. Please try again.");
     }
   };
-  
+
   return (
     <div>
       <div className="border-[#D9D9D9] border rounded-[10px] px-5 py-4">
@@ -324,212 +343,212 @@ console.log(userData)
             Change picture
           </div>
         </div>
-{userData?.individual ? (
-        <div>
-        <Formik
-          enableReinitialize // Allow Formik to update when initialValues changes
-          initialValues={initialData}
-          validationSchema={validation}
-          onSubmit={onSubmit}
-        >
-          {({}) => (
-            <Form className="w-full  mt-10 lg:mt-10 mb-6 flex flex-col justify-between">
-              <div>
-                <div className=" mb-5 relative">
-                  <label
-                    className=" text-[#2B2C2B] text-[16px] font-[500] "
-                    htmlFor="firstname"
-                  >
-                    First Name
-                  </label>
-                  <Field
-                    className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
-                    name="firstname"
-                    type="text"
-                    id="firstname"
-                    placeholder=""
-                  />
-                  <p className="text-red-700 text-xs mt-1 ">
-                    <ErrorMessage name="firstname" />
-                  </p>
-                </div>
-                <div className=" mb-5 relative">
-                  <label
-                    className=" text-[#2B2C2B] text-[16px] font-[500] "
-                    htmlFor="lastname"
-                  >
-                    Last Name
-                  </label>
-                  <Field
-                    className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
-                    name="lastname"
-                    type="text"
-                    id="lastname"
-                    placeholder=""
-                  />
-                  <p className="text-red-700 text-xs mt-1 ">
-                    <ErrorMessage name="lastname" />
-                  </p>
-                </div>
+        {userData?.individual ? (
+          <div>
+            <Formik
+              enableReinitialize // Allow Formik to update when initialValues changes
+              initialValues={initialData}
+              validationSchema={validation}
+              onSubmit={onSubmit}
+            >
+              {({}) => (
+                <Form className="w-full  mt-10 lg:mt-10 mb-6 flex flex-col justify-between">
+                  <div>
+                    <div className=" mb-5 relative">
+                      <label
+                        className=" text-[#2B2C2B] text-[16px] font-[500] "
+                        htmlFor="firstname"
+                      >
+                        First Name
+                      </label>
+                      <Field
+                        className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
+                        name="firstname"
+                        type="text"
+                        id="firstname"
+                        placeholder=""
+                      />
+                      <p className="text-red-700 text-xs mt-1 ">
+                        <ErrorMessage name="firstname" />
+                      </p>
+                    </div>
+                    <div className=" mb-5 relative">
+                      <label
+                        className=" text-[#2B2C2B] text-[16px] font-[500] "
+                        htmlFor="lastname"
+                      >
+                        Last Name
+                      </label>
+                      <Field
+                        className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
+                        name="lastname"
+                        type="text"
+                        id="lastname"
+                        placeholder=""
+                      />
+                      <p className="text-red-700 text-xs mt-1 ">
+                        <ErrorMessage name="lastname" />
+                      </p>
+                    </div>
 
-                <div className=" mb-5 relative">
-                  <label
-                    className=" text-[#2B2C2B] text-[16px] font-[500] "
-                    htmlFor="phone"
-                  >
-                    Phone Number
-                  </label>
-                  <Field
-                    className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
-                    name="phone"
-                    type="number"
-                    id="phone"
-                    placeholder=""
-                  />
-                  <p className="text-red-700 text-xs mt-1 ">
-                    <ErrorMessage name="phone" />
-                  </p>
-                </div>
+                    <div className=" mb-5 relative">
+                      <label
+                        className=" text-[#2B2C2B] text-[16px] font-[500] "
+                        htmlFor="phone"
+                      >
+                        Phone Number
+                      </label>
+                      <Field
+                        className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
+                        name="phone"
+                        type="number"
+                        id="phone"
+                        placeholder=""
+                      />
+                      <p className="text-red-700 text-xs mt-1 ">
+                        <ErrorMessage name="phone" />
+                      </p>
+                    </div>
 
-                <div className=" mb-5 relative">
-                  <label
-                    className=" text-[#2B2C2B] text-[16px] font-[500] "
-                    htmlFor="email"
-                  >
-                    Email Address
-                  </label>
-                  <Field
-                    className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
-                    name="email"
-                    type="email"
-                    id="email"
-                    placeholder=""
-                  />
-                  <p className="text-red-700 text-xs mt-1 ">
-                    <ErrorMessage name="email" />
-                  </p>
-                </div>
-                <div className=" mb-5 relative">
-                  <label
-                    className=" text-[#2B2C2B] text-[16px] font-[500] "
-                    htmlFor="city"
-                  >
-                    City
-                  </label>
-                  <Field
-                    className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
-                    name="city"
-                    type="text"
-                    // id="city"
-                    placeholder=""
-                  />
-                  <p className="text-red-700 text-xs mt-1 ">
-                    <ErrorMessage name="city" />
-                  </p>
-                </div>
-              </div>
+                    <div className=" mb-5 relative">
+                      <label
+                        className=" text-[#2B2C2B] text-[16px] font-[500] "
+                        htmlFor="email"
+                      >
+                        Email Address
+                      </label>
+                      <Field
+                        className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
+                        name="email"
+                        type="email"
+                        id="email"
+                        placeholder=""
+                      />
+                      <p className="text-red-700 text-xs mt-1 ">
+                        <ErrorMessage name="email" />
+                      </p>
+                    </div>
+                    <div className=" mb-5 relative">
+                      <label
+                        className=" text-[#2B2C2B] text-[16px] font-[500] "
+                        htmlFor="city"
+                      >
+                        City
+                      </label>
+                      <Field
+                        className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
+                        name="city"
+                        type="text"
+                        // id="city"
+                        placeholder=""
+                      />
+                      <p className="text-red-700 text-xs mt-1 ">
+                        <ErrorMessage name="city" />
+                      </p>
+                    </div>
+                  </div>
 
-              <div className="flex justify-end">
-                <button
-                type="submit"
-                  // onClick={onSubmit}
-                  disabled={isLoading} // Disable button if no option is selected
-                  className={`disabled:bg-gray-500 py-3 w-fit px-6 bg-[#036E03] text-white rounded-lg  hover:bg-green-700
+                  <div className="flex justify-end">
+                    <button
+                      type="submit"
+                      // onClick={onSubmit}
+                      disabled={isLoading} // Disable button if no option is selected
+                      className={`disabled:bg-gray-500 py-3 w-fit px-6 bg-[#036E03] text-white rounded-lg  hover:bg-green-700
   }`}
-                >
-               {isLoading ? <LoadingSpinner /> : "Save"}  
-                </button>
-              </div>
-            </Form>
-          )}
-        </Formik>
-      </div>
-) : (
-  <div>
-  <Formik
-    enableReinitialize // Allow Formik to update when initialValues changes
-    initialValues={initialDataCorporate}
-    validationSchema={validationCorporate}
-    onSubmit={onSubmitCorporate}
-  >
-    {({isSubmitting}) => (
-      <Form className="w-full  mt-10 lg:mt-10 mb-6 flex flex-col justify-between">
-        <div>
-          <div className=" mb-5 relative">
-            <label
-              className=" text-[#2B2C2B] text-[16px] font-[500] "
-              htmlFor="companyName"
-            >
-              Company Name
-            </label>
-            <Field
-              className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
-              name="companyName"
-              type="text"
-              id="companyName"
-              placeholder=""
-            />
-            <p className="text-red-700 text-xs mt-1 ">
-              <ErrorMessage name="companyName" />
-            </p>
+                    >
+                      {isLoading ? <LoadingSpinner /> : "Save"}
+                    </button>
+                  </div>
+                </Form>
+              )}
+            </Formik>
           </div>
-          <div className=" mb-5 relative">
-            <label
-              className=" text-[#2B2C2B] text-[16px] font-[500] "
-              htmlFor="companyRC"
+        ) : (
+          <div>
+            <Formik
+              enableReinitialize // Allow Formik to update when initialValues changes
+              initialValues={initialDataCorporate}
+              validationSchema={validationCorporate}
+              onSubmit={onSubmitCorporate}
             >
-              Company RC
-            </label>
-            <Field
-              className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
-              name="companyRC"
-              type="text"
-              id="companyRC"
-              placeholder=""
-            />
-            <p className="text-red-700 text-xs mt-1 ">
-              <ErrorMessage name="companyRC" />
-            </p>
-          </div>
+              {({ isSubmitting }) => (
+                <Form className="w-full  mt-10 lg:mt-10 mb-6 flex flex-col justify-between">
+                  <div>
+                    <div className=" mb-5 relative">
+                      <label
+                        className=" text-[#2B2C2B] text-[16px] font-[500] "
+                        htmlFor="companyName"
+                      >
+                        Company Name
+                      </label>
+                      <Field
+                        className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
+                        name="companyName"
+                        type="text"
+                        id="companyName"
+                        placeholder=""
+                      />
+                      <p className="text-red-700 text-xs mt-1 ">
+                        <ErrorMessage name="companyName" />
+                      </p>
+                    </div>
+                    <div className=" mb-5 relative">
+                      <label
+                        className=" text-[#2B2C2B] text-[16px] font-[500] "
+                        htmlFor="companyRC"
+                      >
+                        Company RC
+                      </label>
+                      <Field
+                        className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
+                        name="companyRC"
+                        type="text"
+                        id="companyRC"
+                        placeholder=""
+                      />
+                      <p className="text-red-700 text-xs mt-1 ">
+                        <ErrorMessage name="companyRC" />
+                      </p>
+                    </div>
 
-          <div className=" mb-5 relative">
-            <label
-              className=" text-[#2B2C2B] text-[16px] font-[500] "
-              htmlFor="phone"
-            >
-              Phone Number
-            </label>
-            <Field
-              className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
-              name="phone"
-              type="number"
-              id="phone"
-              placeholder=""
-            />
-            <p className="text-red-700 text-xs mt-1 ">
-              <ErrorMessage name="phone" />
-            </p>
-          </div>
+                    <div className=" mb-5 relative">
+                      <label
+                        className=" text-[#2B2C2B] text-[16px] font-[500] "
+                        htmlFor="phone"
+                      >
+                        Phone Number
+                      </label>
+                      <Field
+                        className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
+                        name="phone"
+                        type="number"
+                        id="phone"
+                        placeholder=""
+                      />
+                      <p className="text-red-700 text-xs mt-1 ">
+                        <ErrorMessage name="phone" />
+                      </p>
+                    </div>
 
-          <div className=" mb-5 relative">
-            <label
-              className=" text-[#2B2C2B] text-[16px] font-[500] "
-              htmlFor="email"
-            >
-              Email Address
-            </label>
-            <Field
-              className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
-              name="email"
-              type="email"
-              id="email"
-              placeholder=""
-            />
-            <p className="text-red-700 text-xs mt-1 ">
-              <ErrorMessage name="email" />
-            </p>
-          </div>
-          {/* <div className=" mb-5 relative">
+                    <div className=" mb-5 relative">
+                      <label
+                        className=" text-[#2B2C2B] text-[16px] font-[500] "
+                        htmlFor="email"
+                      >
+                        Email Address
+                      </label>
+                      <Field
+                        className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
+                        name="email"
+                        type="email"
+                        id="email"
+                        placeholder=""
+                      />
+                      <p className="text-red-700 text-xs mt-1 ">
+                        <ErrorMessage name="email" />
+                      </p>
+                    </div>
+                    {/* <div className=" mb-5 relative">
             <label
               className=" text-[#2B2C2B] text-[16px] font-[500] "
               htmlFor="city"
@@ -547,37 +566,36 @@ console.log(userData)
               <ErrorMessage name="city" />
             </p>
           </div> */}
-        </div>
+                  </div>
 
-        <div className="flex justify-end">
-          <button
-          type="submit"
-            // onClick={onSubmit}
-            disabled={isSubmitting} // Disable button if no option is selected
-            className={`disabled:bg-gray-500 py-3 w-fit px-6 bg-[#036E03] text-white rounded-lg  hover:bg-green-700
+                  <div className="flex justify-end">
+                    <button
+                      type="submit"
+                      // onClick={onSubmit}
+                      disabled={isSubmitting} // Disable button if no option is selected
+                      className={`disabled:bg-gray-500 py-3 w-fit px-6 bg-[#036E03] text-white rounded-lg  hover:bg-green-700
 }`}
-          >
-         {isSubmitting ? <LoadingSpinner /> : "Save"}  
-          </button>
-        </div>
-      </Form>
-    )}
-  </Formik>
-</div>
-)}
-
+                    >
+                      {isSubmitting ? <LoadingSpinner /> : "Save"}
+                    </button>
+                  </div>
+                </Form>
+              )}
+            </Formik>
+          </div>
+        )}
       </div>
-           <ToastContainer
-              position="top-center"
-              autoClose={2000}
-              hideProgressBar={true}
-              newestOnTop={false}
-              closeOnClick
-              rtl={false}
-              pauseOnFocusLoss
-              draggable
-              pauseOnHover
-            />
+      <ToastContainer
+        position="top-center"
+        autoClose={2000}
+        hideProgressBar={true}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
     </div>
   );
 };

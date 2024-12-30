@@ -1,13 +1,63 @@
 "use client"; // Add this for client components in the Next.js app directory
 import DashboardLayout from "@/components/Layout";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import BreadcrumbsDisplay from "../../BreadscrumbsDisplay";
 import Image from "next/image";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import * as Yup from "yup";
 import StatementTable from "./StatementTable";
+import { useLazyVehicleControllerGetVehicleByIdQuery } from "@/store/api";
+
+interface Vehicle {
+  data: {
+    vehicleType: {
+      category: string;
+    };
+    plateNumber: string;
+    providerAgency: string;
+    totalRevenue: string;
+
+    // Add other fields as needed
+  };
+}
+
+interface VehiclesByIdResponse {
+  data: Vehicle;
+  // Add other properties based on your response structure
+}
 
 function VehicleStatement() {
+  const [vehicleId, setVehicleId] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false); // Manage loading state manually
+
+  useEffect(() => {
+    // Retrieve the vehicle ID from sessionStorage
+    const storedId = localStorage.getItem("vehicleId");
+    if (storedId) {
+      setVehicleId(storedId);
+    }
+  }, []);
+
+  console.log(vehicleId);
+
+  const [getVehicleById, { data: vehiclesById }] =
+    useLazyVehicleControllerGetVehicleByIdQuery<VehiclesByIdResponse>();
+
+  useEffect(() => {
+    if (vehicleId) {
+      setIsLoading(true); // Set loading state
+      getVehicleById(vehicleId)
+        .unwrap() // Handle response or errors
+        .finally(() => setIsLoading(false)); // Reset loading state
+    }
+  }, [vehicleId, getVehicleById]);
+
+  if (isLoading) {
+    return <div>Loading...</div>; // Render a loading state
+  }
+
+  // console.log(vehiclesById)
+
   const initialData = {
     email: "",
 
@@ -43,18 +93,21 @@ function VehicleStatement() {
         <div className="bg-white overflow-hidden rounded-[8px] px-3 md:px-8 py-7 md:py-9">
           <BreadcrumbsDisplay />
           <h5 className="text-[16px] md:text-[20px] pt-8 font-light mb-3">
-            Vehicle Type: <span className="text-[18px] md:text-[20px] font-bold">Bus</span>
+            Vehicle Type:{" "}
+            <span className="text-[18px] md:text-[20px] font-bold">
+              {vehiclesById?.data?.vehicleType?.category}
+            </span>
           </h5>
           <h5 className="text-[16px] md:text-[20px] font-light mb-3">
             Number Plate:{" "}
             <span className="text-[18px] md:text-[20px] font-bold text-primary">
-              3547859499399FA
+              {vehiclesById?.data?.plateNumber}
             </span>
           </h5>
           <h5 className="text-[16px] md:text-[20px] font-light mb-4">
             Provider Agency:{" "}
             <span className="text-[18px] md:text-[20px] font-bold text-primary">
-              Shodipe Plc
+              {vehiclesById?.data?.providerAgency || "Nill"}
             </span>
           </h5>
 
@@ -75,7 +128,10 @@ function VehicleStatement() {
                 </div>
 
                 <h4 className="text-[35px] md:text-[48px] text-[#274871] font-[500]">
-                  N234,000.00
+                  ₦
+                  {parseFloat(vehiclesById?.data?.totalRevenue ?? "0").toFixed(
+                    2
+                  )}
                 </h4>
               </div>
 
@@ -99,7 +155,9 @@ function VehicleStatement() {
                   </h4>
                 </div>
 
-                <h4 className="text-[35px] md:text-[48px] text-[#C05406] font-[500]">109</h4>
+                <h4 className="text-[35px] md:text-[48px] text-[#C05406] font-[500]">
+                  109
+                </h4>
               </div>
             </div>
           </section>
@@ -111,7 +169,7 @@ function VehicleStatement() {
                 validationSchema={validation}
                 onSubmit={onSubmit}
               >
-                {({ }) => (
+                {({}) => (
                   <Form className="w-full  mt-5 lg:mt-5 mb-6 flex flex-col justify-between">
                     <div className="">
                       <div className="mb-7  flex justify-between gap-2">
@@ -233,6 +291,6 @@ function VehicleStatement() {
       </DashboardLayout>
     </div>
   );
-};
+}
 
 export default VehicleStatement;

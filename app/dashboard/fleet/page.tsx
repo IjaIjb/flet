@@ -1,44 +1,104 @@
 "use client";
 import DashboardLayout from "@/components/Layout";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import BreadcrumbsDisplay from "../BreadscrumbsDisplay";
 import ActiveFleet from "./ActiveFleet";
 import InActiveFleet from "./InActiveFleet";
 import * as Yup from "yup";
 import Image from "next/image";
-
 import "react-responsive-modal/styles.css";
 import { Modal } from "react-responsive-modal";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { FaAngleDown, FaAngleUp, FaArrowLeft } from "react-icons/fa";
-import { FiPlus, FiTrash, FiUpload } from "react-icons/fi";
+import { FiUpload } from "react-icons/fi";
+import {
+  useLazyVehicleControllerGetAllVehicleTypesQuery,
+  useVehicleControllerCreateVehicleMutation,
+  useVehicleDocumentControllerCreateMutation,
+} from "@/store/api";
+import nigeriaData from "../../../components/assets/states.json"; // Adjust path to your JSON file
+import LoadingSpinner from "@/components/UI/LoadingSpinner";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-
+interface LoginValues {
+  engineNumber: string;
+  engineType: string;
+  color: string;
+  // otherDetail?: string;
+  // uniqueID?: string;
+  plateNumber: string;
+  approvalStatus: "ACCEPTED" | "PROCESSING" | "SUSPENDED" | "REJECTED";
+  status: "ACTIVE" | "INACTIVE" | "PROCESSING" | "CANCELLED"; // Literal type
+  totalRevenue: number;
+  enrollmentCity?: string;
+  registrationDate: string;
+  vehicleTypeId: string;
+  // driverId?: string;
+  // providerAgencyId?: string;
+  // fleetPartnersId?: string;
+}
+export type CreateVehicleDocumentDto = {
+  documentType: string;
+  description?: string;
+  file: string;
+  vehicleId: string;
+  expireAt?: string;
+};
 // Define the types for the component props
 interface BusSideUploadProps {
-  image: string | null; // image can be a string (URL) or null
-  setImage: (image: string | null) => void; // setImage is a function that updates the image state
+  image: string | null;
+  setImage: (image: string | null) => void;
+  vehicleId: string; // Pass vehicle ID
 }
 
 // Define the types for the component props
 interface BusFrontUploadProps {
   image: string | null; // image can be a string (URL) or null
   setImage: (image: string | null) => void; // setImage is a function that updates the image state
+  vehicleId: string; // Pass vehicle ID
 }
 
-interface DocumentUploadProps {
+interface BusTwoSideUploadProps {
+  image: string | null;
+  setImage: (image: string | null) => void;
+  vehicleId: string; // Pass vehicle ID
+}
+
+interface BusRearUploadProps {
   image: string | null; // image can be a string (URL) or null
   setImage: (image: string | null) => void; // setImage is a function that updates the image state
+  vehicleId: string; // Pass vehicle ID
 }
+
+// interface DocumentUploadProps {
+//   image: string | null; // image can be a string (URL) or null
+//   setImage: (image: string | null) => void; // setImage is a function that updates the image state
+// }
+
 const Page = () => {
   const [open, setOpen] = useState(false);
   const [showScreen, setShowScreen] = useState(1);
   const [showBusArchitecture, setBusAchitecture] = useState(false);
+  const [passVehicleID, setPassVehicleID] = useState("");
 
   const [sideBusImage, setSideBusImage] = useState<string | null>(null);
+  const [sideTwoBusImage, setSideTwoBusImage] = useState<string | null>(null);
   const [frontBusImage, setFrontBusImage] = useState<string | null>(null);
   const [rearBusImage, setRearBusImage] = useState<string | null>(null);
-  
+
+  const [getVehicleTypes, { data: vehicleTypes }] =
+    useLazyVehicleControllerGetAllVehicleTypesQuery();
+
+  const [createVehicle, { isLoading }] =
+    useVehicleControllerCreateVehicleMutation();
+
+  // Fetch vehicle types on component mount
+  useEffect(() => {
+    getVehicleTypes(); // Trigger the API call
+  }, [getVehicleTypes]);
+
+  // console.log(vehicleTypes)
   const onOpenModal = () => {
     // e.preventDefault();
     setOpen(true);
@@ -49,145 +109,349 @@ const Page = () => {
     onOpenModal(); // Open the modal
   };
 
-  const BusSideUpload: React.FC<BusSideUploadProps> = ({ image, setImage }) => (
-    <div className="flex justify-center w-full mt-2 text-center">
-      <label className="flex w-full bg-white dotted-border flex-col items-center justify-center rounded-[5px] cursor-pointer relative">
-        <div className="flex flex-col items-center justify-center h-[150px]">
-          {image ? (
-            // <img
-            //   src={image}
-            //   alt="Preview"
-            //   style={{ minHeight: "100px", maxHeight: "100px" }}
-            // />
-            <Image
-            className=""
-            src={image}
-            alt="image"
-            width={100}
-            height={100}
-            priority
-          />
-          ) : (
-            <div className="flex items-center gap-2">
-              <FiUpload />
-              <h4 className="text-[16px] text-[#9F9F9F]">
-                Upload Side bus Image
-              </h4>
-            </div>
-          )}
-        </div>
-        <input
-          id="dropzone22"
-          type="file"
-          accept="image/x-png,image/gif,image/jpeg"
-          className="hidden mb-2 text-sm text-[#6C757D] font-medium"
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            const file = e.target.files?.[0]; // Optional chaining in case files is undefined
-            if (file) {
-              const reader = new FileReader();
-              reader.onloadend = () => {
-                setImage(reader.result as string); // Cast reader.result as string
-              };
-              reader.readAsDataURL(file);
-            }
-          }}
-        />
-      </label>
-    </div>
-  );
+  const BusSideUpload: React.FC<BusSideUploadProps> = ({
+    image,
+    setImage,
+    vehicleId,
+  }) => {
+    const [createVehicleDocument] =
+      useVehicleDocumentControllerCreateMutation();
 
-  const BusFrontUpload: React.FC<BusFrontUploadProps> = ({ image, setImage }) => (
-    <div className="flex justify-center w-full mt-2 text-center">
-      <label className="flex w-full  bg-white dotted-border flex-col items-center justify-center rounded-[5px] cursor-pointer relative">
-        <div className="flex flex-col items-center justify-center h-[150px]">
-          {image ? (
-            // <img
-            //   src={image}
-            //   alt="Preview"
-            //   style={{ minHeight: "100px", maxHeight: "100px" }}
-            // />
-            <Image
-            // className="mt-2 block w-full border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
-                 src={image}
-                 alt="image"
-                 width={50}
-                 height={50}
-                 priority
-               />
-          ) : (
-            <div className="flex items-center gap-2">
-              <FiUpload />
-              <h4 className="text-[16px] text-[#9F9F9F]">
-                Upload Side bus Image
-              </h4>
-            </div>
-          )}
-        </div>
-        <input
-          id="dropzone3"
-          type="file"
-          accept="image/x-png,image/gif,image/jpeg"
-          className="hidden mb-2 text-sm text-[#6C757D] font-medium"
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            const file = e.target.files?.[0]; // Optional chaining in case files is undefined
-            if (file) {
-              const reader = new FileReader();
-              reader.onloadend = () => {
-                setImage(reader.result as string); // Cast reader.result as string
-              };
-              reader.readAsDataURL(file);
-            }
-          }}
-        />
-      </label>
-    </div>
-  );
+    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file) {
+        const fileType = file.type.split("/")[0]; // Get the type (image, video, etc.)
+        const fileURL = URL.createObjectURL(file); // Preview URL
+        setImage(fileURL);
 
-  const DocumentUpload: React.FC<DocumentUploadProps> = ({ image, setImage }) => (
-    <div className="flex justify-center w-full mt-2 text-center h-4">
-      <label className="flex w-full bg-white dotted-border flex-col  items-center justify-center rounded-[5px] cursor-pointer relative">
-        <div className="flex flex-col items-center  justify-center ">
-          {image ? (
-            // <img
-            //   src={image}
-            //   alt="Preview"
-            //   className="mt-2 block w-full border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
-            //   // style={{ minHeight: "50px", maxHeight: "50px", }}
-            // />
-            <Image
-       className="mt-2 block w-full border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
-            src={image}
-            alt="image"
-            width={50}
-            height={50}
-            priority
+        const isConfirmed = window.confirm(
+          `The uploaded file is of type "${fileType}". Do you want to save this document?`
+        );
+
+        if (isConfirmed) {
+          try {
+            const payload: CreateVehicleDocumentDto = {
+              documentType: fileType,
+              file: fileURL, // Replace with actual file upload logic if necessary
+              vehicleId,
+              description: "side",
+            };
+
+            const response = await createVehicleDocument(payload).unwrap();
+            alert("Document saved successfully!");
+            console.log("Document Response:", response);
+          } catch (error: any) {
+            console.error("Error uploading document:", error);
+            alert("Failed to save document. Please try again.");
+          }
+        }
+      }
+    };
+    return (
+      <div className="flex justify-center w-full mt-2 text-center">
+        <label className="flex w-full bg-white dotted-border flex-col items-center justify-center rounded-[5px] cursor-pointer relative">
+          <div className="flex flex-col items-center justify-center h-[150px]">
+            {image ? (
+              <Image
+                className=""
+                src={image}
+                alt="image"
+                width={100}
+                height={100}
+                priority
+              />
+            ) : (
+              <div className="flex items-center gap-2">
+                <FiUpload />
+                <h4 className="text-[16px] text-[#9F9F9F]">
+                  Upload Side Bus Image
+                </h4>
+              </div>
+            )}
+          </div>
+          <input
+            id="dropzone22"
+            type="file"
+            accept="image/x-png,image/gif,image/jpeg,application/pdf,video/*"
+            className="hidden mb-2 text-sm text-[#6C757D] font-medium"
+            onChange={handleFileUpload}
           />
-          ) : (
-            <div className="flex items-center gap-2">
-              <FiUpload />
-              <h4 className="text-sm text-[#9F9F9F]">Upload Side bus Image</h4>
-            </div>
-          )}
-        </div>
-        <input
-          id="dropzone4"
-          type="file"
-          accept="image/x-png,image/gif,image/jpeg"
-          className="hidden mb-2 text-sm  text-[#6C757D] font-medium"
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            const file = e.target.files?.[0]; // Optional chaining in case files is undefined
-            if (file) {
-              const reader = new FileReader();
-              reader.onloadend = () => {
-                setImage(reader.result as string); // Cast reader.result as string
-              };
-              reader.readAsDataURL(file);
-            }
-          }}
-        />
-      </label>
-    </div>
-  );
+        </label>
+      </div>
+    );
+  };
+
+  const BusFrontUpload: React.FC<BusFrontUploadProps> = ({
+    image,
+    setImage,
+    vehicleId,
+  }) => {
+    const [createVehicleDocument] =
+      useVehicleDocumentControllerCreateMutation();
+
+    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file) {
+        const fileType = file.type.split("/")[0]; // Get the type (image, video, etc.)
+        const fileURL = URL.createObjectURL(file); // Preview URL
+        setImage(fileURL);
+
+        const isConfirmed = window.confirm(
+          `The uploaded file is of type "${fileType}". Do you want to save this document?`
+        );
+
+        if (isConfirmed) {
+          try {
+            const payload: CreateVehicleDocumentDto = {
+              documentType: fileType,
+              file: fileURL, // Replace with actual file upload logic if necessary
+              vehicleId,
+              description: "front",
+            };
+
+            const response = await createVehicleDocument(payload).unwrap();
+            alert("Document saved successfully!");
+            console.log("Document Response:", response);
+          } catch (error: any) {
+            console.error("Error uploading document:", error);
+            alert("Failed to save document. Please try again.");
+          }
+        }
+      }
+    };
+    return (
+      <div className="flex justify-center w-full mt-2 text-center">
+        <label className="flex w-full  bg-white dotted-border flex-col items-center justify-center rounded-[5px] cursor-pointer relative">
+          <div className="flex flex-col items-center justify-center h-[150px]">
+            {image ? (
+              // <img
+              //   src={image}
+              //   alt="Preview"
+              //   style={{ minHeight: "100px", maxHeight: "100px" }}
+              // />
+              <Image
+                // className="mt-2 block w-full border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
+                src={image}
+                alt="image"
+                width={50}
+                height={50}
+                priority
+              />
+            ) : (
+              <div className="flex items-center gap-2">
+                <FiUpload />
+                <h4 className="text-[16px] text-[#9F9F9F]">
+                  Upload Side bus Image
+                </h4>
+              </div>
+            )}
+          </div>
+          <input
+            id="dropzone3"
+            type="file"
+            accept="image/x-png,image/gif,image/jpeg"
+            className="hidden mb-2 text-sm text-[#6C757D] font-medium"
+            onChange={handleFileUpload}
+          />
+        </label>
+      </div>
+    );
+  };
+
+  const BusTwoSideUpload: React.FC<BusTwoSideUploadProps> = ({
+    image,
+    setImage,
+    vehicleId,
+  }) => {
+    const [createVehicleDocument] =
+      useVehicleDocumentControllerCreateMutation();
+
+    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file) {
+        const fileType = file.type.split("/")[0]; // Get the type (image, video, etc.)
+        const fileURL = URL.createObjectURL(file); // Preview URL
+        setImage(fileURL);
+
+        const isConfirmed = window.confirm(
+          `The uploaded file is of type "${fileType}". Do you want to save this document?`
+        );
+
+        if (isConfirmed) {
+          try {
+            const payload: CreateVehicleDocumentDto = {
+              documentType: fileType,
+              file: fileURL, // Replace with actual file upload logic if necessary
+              vehicleId,
+              description: "sideTwo",
+            };
+
+            const response = await createVehicleDocument(payload).unwrap();
+            alert("Document saved successfully!");
+            console.log("Document Response:", response);
+          } catch (error: any) {
+            console.error("Error uploading document:", error);
+            alert("Failed to save document. Please try again.");
+          }
+        }
+      }
+    };
+    return (
+      <div className="flex justify-center w-full mt-2 text-center">
+        <label className="flex w-full bg-white dotted-border flex-col items-center justify-center rounded-[5px] cursor-pointer relative">
+          <div className="flex flex-col items-center justify-center h-[150px]">
+            {image ? (
+              <Image
+                className=""
+                src={image}
+                alt="image"
+                width={100}
+                height={100}
+                priority
+              />
+            ) : (
+              <div className="flex items-center gap-2">
+                <FiUpload />
+                <h4 className="text-[16px] text-[#9F9F9F]">
+                  Upload Side Bus Image
+                </h4>
+              </div>
+            )}
+          </div>
+          <input
+            id="dropzone22"
+            type="file"
+            accept="image/x-png,image/gif,image/jpeg,application/pdf,video/*"
+            className="hidden mb-2 text-sm text-[#6C757D] font-medium"
+            onChange={handleFileUpload}
+          />
+        </label>
+      </div>
+    );
+  };
+
+  const BusRearUpload: React.FC<BusRearUploadProps> = ({
+    image,
+    setImage,
+    vehicleId,
+  }) => {
+    const [createVehicleDocument] =
+      useVehicleDocumentControllerCreateMutation();
+
+    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file) {
+        const fileType = file.type.split("/")[0]; // Get the type (image, video, etc.)
+        const fileURL = URL.createObjectURL(file); // Preview URL
+        setImage(fileURL);
+
+        const isConfirmed = window.confirm(
+          `The uploaded file is of type "${fileType}". Do you want to save this document?`
+        );
+
+        if (isConfirmed) {
+          try {
+            const payload: CreateVehicleDocumentDto = {
+              documentType: fileType,
+              file: fileURL, // Replace with actual file upload logic if necessary
+              vehicleId,
+              description: "rear",
+            };
+
+            const response = await createVehicleDocument(payload).unwrap();
+            alert("Document saved successfully!");
+            console.log("Document Response:", response);
+          } catch (error: any) {
+            console.error("Error uploading document:", error);
+            alert("Failed to save document. Please try again.");
+          }
+        }
+      }
+    };
+    return (
+      <div className="flex justify-center w-full mt-2 text-center">
+        <label className="flex w-full  bg-white dotted-border flex-col items-center justify-center rounded-[5px] cursor-pointer relative">
+          <div className="flex flex-col items-center justify-center h-[150px]">
+            {image ? (
+              // <img
+              //   src={image}
+              //   alt="Preview"
+              //   style={{ minHeight: "100px", maxHeight: "100px" }}
+              // />
+              <Image
+                // className="mt-2 block w-full border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
+                src={image}
+                alt="image"
+                width={50}
+                height={50}
+                priority
+              />
+            ) : (
+              <div className="flex items-center gap-2">
+                <FiUpload />
+                <h4 className="text-[16px] text-[#9F9F9F]">
+                  Upload Side bus Image
+                </h4>
+              </div>
+            )}
+          </div>
+          <input
+            id="dropzone3"
+            type="file"
+            accept="image/x-png,image/gif,image/jpeg"
+            className="hidden mb-2 text-sm text-[#6C757D] font-medium"
+            onChange={handleFileUpload}
+          />
+        </label>
+      </div>
+    );
+  };
+
+  // const DocumentUpload: React.FC<DocumentUploadProps> = ({ image, setImage }) => (
+  //   <div className="flex justify-center w-full mt-2 text-center h-4">
+  //     <label className="flex w-full bg-white dotted-border flex-col  items-center justify-center rounded-[5px] cursor-pointer relative">
+  //       <div className="flex flex-col items-center  justify-center ">
+  //         {image ? (
+  //           // <img
+  //           //   src={image}
+  //           //   alt="Preview"
+  //           //   className="mt-2 block w-full border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
+  //           //   // style={{ minHeight: "50px", maxHeight: "50px", }}
+  //           // />
+  //           <Image
+  //      className="mt-2 block w-full border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
+  //           src={image}
+  //           alt="image"
+  //           width={50}
+  //           height={50}
+  //           priority
+  //         />
+  //         ) : (
+  //           <div className="flex items-center gap-2">
+  //             <FiUpload />
+  //             <h4 className="text-sm text-[#9F9F9F]">Upload Side bus Image</h4>
+  //           </div>
+  //         )}
+  //       </div>
+  //       <input
+  //         id="dropzone4"
+  //         type="file"
+  //         accept="image/x-png,image/gif,image/jpeg"
+  //         className="hidden mb-2 text-sm  text-[#6C757D] font-medium"
+  //         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+  //           const file = e.target.files?.[0]; // Optional chaining in case files is undefined
+  //           if (file) {
+  //             const reader = new FileReader();
+  //             reader.onloadend = () => {
+  //               setImage(reader.result as string); // Cast reader.result as string
+  //             };
+  //             reader.readAsDataURL(file);
+  //           }
+  //         }}
+  //       />
+  //     </label>
+  //   </div>
+  // );
 
   const toggleBusArchitecture = () => {
     setBusAchitecture(!showBusArchitecture);
@@ -217,22 +481,26 @@ const Page = () => {
       inActiveElement: true,
     });
   };
-  const initialData = {
-    email: "",
-
-    password: "",
-    remember: "",
-    documents: [
-      { name: "", expiryDate: "", image: null }, // Ensure a default document exists
-    ],
+  const initialData: LoginValues = {
+    engineNumber: "",
+    engineType: "",
+    vehicleTypeId: "",
+    plateNumber: "",
+    enrollmentCity: "",
+    approvalStatus: "PROCESSING",
+    color: "unknown",
+    status: "ACTIVE",
+    totalRevenue: 0.0,
+    registrationDate: "",
+    // documents: [{ name: "", expiryDate: "", image: null }], // Default document
   };
 
   const validation = Yup.object({
-    email: Yup.string().email("Invalid email address").required("Required"),
-    password: Yup.string()
-      .min(6, "Password must be minimum of 6 characters")
-      .max(255)
-      .required("Required"),
+    engineNumber: Yup.string().required("Engine number is required"),
+    engineType: Yup.string().required("Engine type is required"),
+    vehicleTypeId: Yup.string().required("Vehicle type is required"),
+    plateNumber: Yup.string().required("Plate number is required"),
+    enrollmentCity: Yup.string().required("Enrollment city is required"),
     documents: Yup.array().of(
       Yup.object().shape({
         name: Yup.string().required("Document name is required"),
@@ -242,12 +510,47 @@ const Page = () => {
     ),
   });
 
-  const onSubmit = async () => {
-    // e.preventDefault(); // Prevent default browser behavior
-    onOpenModal(); // Open the modal
-    console.log("Form submitted");
+  const onSubmit = async (values: LoginValues) => {
+    const totalRevenueFormatted = parseFloat(values.totalRevenue.toFixed(2));
+
+    const payload = {
+      engineNumber: values.engineNumber,
+      engineType: values.engineType,
+      color: values.color || "Unknown",
+      plateNumber: values.plateNumber,
+      status: values.status || "ACTIVE",
+      totalRevenue: totalRevenueFormatted, // Ensure it's a decimal (e.g., 0.00)
+      // totalRevenue: parseFloat(values.totalRevenue.toFixed(2)), // Ensure it's a valid decimal number
+      enrollmentCity: values.enrollmentCity || undefined, // Optional field
+      registrationDate: values.registrationDate, // Ensure it's a Date instance
+      vehicleTypeId: values.vehicleTypeId,
+      approvalStatus: values.approvalStatus || "PROCESSING",
+    };
+
+    console.log("Payload sent to API:", payload);
+    try {
+      // Map form values to CreateVehicleDto structure
+
+      // Call API to create vehicle
+      const response: any = await createVehicle(payload).unwrap();
+      setPassVehicleID(response?.data?.id);
+      console.log(response);
+
+      // Handle success
+      setShowScreen(2);
+      console.log("Vehicle created successfully");
+      toast.success(response?.message || "Vehicle created successfully");
+    } catch (error: any) {
+      console.error("Error creating vehicle:", error);
+
+      // Handle errors
+      const errorMessage =
+        error?.data?.message || "An error occurred while creating the vehicle";
+      toast.error(errorMessage);
+    }
   };
 
+  console.log(passVehicleID);
   const showProfileConnector = () => {
     return (
       <>
@@ -349,11 +652,14 @@ const Page = () => {
         Thank you for getting back to KwickMall,
       </h5> */}
         </div>
-        <Modal 
+        <Modal
           classNames={{
             modal: "rounded-[10px] overflow-visible relative",
           }}
-          open={open} onClose={onCloseModal} center>
+          open={open}
+          onClose={onCloseModal}
+          center
+        >
           <div className="px-2 md:px-5 pb-4">
             <div className=" flex justify-between pt-2 ">
               {showScreen === 1 ? (
@@ -379,7 +685,7 @@ const Page = () => {
                 validationSchema={validation}
                 onSubmit={onSubmit}
               >
-                {({  values, setFieldValue }) => (
+                {({ setFieldValue }) => (
                   <Form className="w-full  mt-10 lg:mt-10 mb-6 flex flex-col justify-between">
                     <div className={showScreen === 1 ? "block " : "hidden"}>
                       <div className="mb-7">
@@ -387,37 +693,40 @@ const Page = () => {
                           <div className=" mb-3 w-full relative">
                             <label
                               className=" text-[#2B2C2B] text-[16px] font-[500] "
-                              htmlFor="first_name"
+                              htmlFor="engineNumber"
                             >
                               Engine Number
                             </label>
                             <Field
                               className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
-                              name="engine"
+                              name="engineNumber"
                               type="text"
-                              id=""
+                              id="engineNumber"
+                              onChange={(e: any) =>
+                                setFieldValue("engineNumber", e.target.value)
+                              }
                               placeholder=""
                             />
                             <p className="text-red-700 text-xs mt-1 ">
-                              <ErrorMessage name="first_name" />
+                              <ErrorMessage name="engineNumber" />
                             </p>
                           </div>
                           <div className=" mb-3 w-full relative">
                             <label
                               className=" text-[#2B2C2B] text-[16px] font-[500] "
-                              htmlFor="last_name"
+                              htmlFor="engineType"
                             >
                               Engine Type
                             </label>
                             <Field
                               className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
-                              name="last_name"
+                              name="engineType"
                               type="text"
-                              id="last_name"
+                              id="engineType"
                               placeholder=""
                             />
                             <p className="text-red-700 text-xs mt-1 ">
-                              <ErrorMessage name="last_name" />
+                              <ErrorMessage name="engineType" />
                             </p>
                           </div>
                         </div>
@@ -426,89 +735,107 @@ const Page = () => {
                           <div className=" mb-3 w-full relative">
                             <label
                               className=" text-[#2B2C2B] text-[16px] font-[500] "
-                              htmlFor="last_name"
+                              htmlFor="vehicleTypeId"
                             >
                               Vehicle Type
                             </label>
                             <Field
+                              className="mt-2 block w-full h-12 border-[1px] border-[#E4E1E1] px-3 rounded-[10px] focus:outline-primary"
+                              name="vehicleTypeId"
+                              as="select"
+                              // onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
+                              //   setFieldValue("vehicleTypeId", event.target.value);
+                              // }}
+                            >
+                              <option label="Select"></option>
+                              {Array.isArray(vehicleTypes?.data) &&
+                                vehicleTypes.data.map((type: any) => (
+                                  <option key={type.id} value={type.id}>
+                                    {type.category}
+                                  </option>
+                                ))}
+                            </Field>
+
+                            <p className="text-red-700 text-xs mt-1 ">
+                              <ErrorMessage name="vehicleTypeId" />
+                            </p>
+                          </div>
+                          <div className=" mb-3 w-full relative">
+                            <label
+                              className=" text-[#2B2C2B] text-[16px] font-[500] "
+                              htmlFor="plateNumber"
+                            >
+                              Number Plate
+                            </label>
+                            <Field
+                              className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
+                              name="plateNumber"
+                              type="text"
+                              id="plateNumber"
+                              placeholder=""
+                            />
+                            <p className="text-red-700 text-xs mt-1 ">
+                              <ErrorMessage name="plateNumber" />
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="md:flex gap-4">
+                          <div className=" mb-3 w-full relative">
+                            <label
+                              className=" text-[#2B2C2B] text-[16px] font-[500] "
+                              htmlFor="registrationDate"
+                            >
+                              Registration Date
+                            </label>
+                            <Field
+                              className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
+                              name="registrationDate"
+                              type="date"
+                              id="registrationDate"
+                              placeholder=""
+                            />
+                            <p className="text-red-700 text-xs mt-1 ">
+                              <ErrorMessage name="registrationDate" />
+                            </p>
+                          </div>
+
+                          <div className=" mb-3 w-full relative">
+                            <label
+                              className=" text-[#2B2C2B] text-[16px] font-[500] "
+                              htmlFor="enrollmentCity"
+                            >
+                              Enrollment City
+                            </label>
+                            <Field
                               className="mt-2 block w-full h-12 border-[1px] border-[#E4E1E1]  px-3 rounded-[10px] focus:outline-primary "
-                              name="vehicle_type"
+                              name="enrollmentCity"
                               as="select"
                               // type="tel"
-                              onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
+                              onChange={(
+                                event: React.ChangeEvent<HTMLInputElement>
+                              ) => {
                                 setFieldValue(
-                                  "vehicle_type",
+                                  "enrollmentCity",
                                   event.target.value
                                 );
                               }}
                               placeholder=""
                             >
                               <option label="Select"></option>
-                              <option className="text-center" value="Bus (12)">
-                                Bus
-                              </option>
-                              <option className="text-center" value="M Bus (5)">
-                                M Bus (5)
-                              </option>
-                              <option className="text-center" value="Sedan (3)">
-                                Sedan (3)
-                              </option>
+                              {nigeriaData.states.map((state) => (
+                                <option
+                                  key={state.state_code}
+                                  value={state.name}
+                                >
+                                  {state.name}
+                                </option>
+                              ))}
                             </Field>
                             <p className="text-red-700 text-xs mt-1 ">
-                              <ErrorMessage name="last_name" />
+                              <ErrorMessage name="enrollmentCity" />
                             </p>
                           </div>
-                          <div className=" mb-3 w-full relative">
-                            <label
-                              className=" text-[#2B2C2B] text-[16px] font-[500] "
-                              htmlFor="phone"
-                            >
-                              Number Plate
-                            </label>
-                            <Field
-                              className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
-                              name="phone"
-                              type="number"
-                              id="phone"
-                              placeholder=""
-                            />
-                            <p className="text-red-700 text-xs mt-1 ">
-                              <ErrorMessage name="phone" />
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className=" mb-5 w-full relative">
-                          <label
-                            className=" text-[#2B2C2B] text-[16px] font-[500] "
-                            htmlFor="last_name"
-                          >
-                            Enrollment City
-                          </label>
-                          <Field
-                            className=" block w-full h-12 border-[1px] border-[#E4E1E1]  px-3 rounded-[10px] focus:outline-primary "
-                            name="vehicle_type"
-                            as="select"
-                            // type="tel"
-                            onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
-                              setFieldValue("vehicle_type", event.target.value);
-                            }}
-                            placeholder=""
-                          >
-                            <option label="Select"></option>
-                            <option className="text-center" value="Bus (12)">
-                              Bus
-                            </option>
-                            <option className="text-center" value="M Bus (5)">
-                              M Bus (5)
-                            </option>
-                            <option className="text-center" value="Sedan (3)">
-                              Sedan (3)
-                            </option>
-                          </Field>
-                          <p className="text-red-700 text-xs mt-1 ">
-                            <ErrorMessage name="last_name" />
-                          </p>
                         </div>
 
                         <div
@@ -629,6 +956,7 @@ const Page = () => {
                           <BusSideUpload
                             image={sideBusImage}
                             setImage={setSideBusImage}
+                            vehicleId={passVehicleID}
                           />
                         </div>
 
@@ -642,6 +970,7 @@ const Page = () => {
                           <BusFrontUpload
                             image={frontBusImage}
                             setImage={setFrontBusImage}
+                            vehicleId={passVehicleID}
                           />
                         </div>
                       </div>
@@ -654,9 +983,10 @@ const Page = () => {
                           >
                             Upload Side bus image
                           </label>
-                          <BusSideUpload
-                            image={sideBusImage}
-                            setImage={setSideBusImage}
+                          <BusTwoSideUpload
+                            image={sideTwoBusImage}
+                            setImage={setSideTwoBusImage}
+                            vehicleId={passVehicleID}
                           />
                         </div>
 
@@ -667,20 +997,21 @@ const Page = () => {
                           >
                             Upload Rear bus image
                           </label>
-                          <BusFrontUpload
+                          <BusRearUpload
                             image={rearBusImage}
                             setImage={setRearBusImage}
+                            vehicleId={passVehicleID}
                           />
                         </div>
                       </div>
 
-                      <div>
+                      {/* <div>
                         {values.documents.map((doc, index) => (
                           <div key={index}>
                             <hr />
                             <div className="my-3">
                               <div className="grid grid-cols-2 w-full gap-4 mb-5">
-                                {/* Name Field */}
+                         
                                 <div className="w-full relative">
                                   <label
                                     className="text-[#2B2C2B] text-[13px] md:text-[16px] font-[500]"
@@ -700,7 +1031,7 @@ const Page = () => {
                                     />
                                   </p>
                                 </div>
-                                {/* Upload Field */}
+                          
                                 <div className="w-full relative">
                                   <label
                                     className="text-[#2B2C2B] text-[13px] md:text-[16px] font-[500]"
@@ -721,7 +1052,7 @@ const Page = () => {
                               </div>
 
                               <div className="grid grid-cols-2 w-full gap-4 mb-10">
-                                {/* Expiry Date Field */}
+                       
                                 <div className="w-full relative">
                                   <label
                                     className="text-[#2B2C2B] text-[13px] md:text-[16px] font-[500]"
@@ -740,7 +1071,7 @@ const Page = () => {
                                     />
                                   </p>
                                 </div>
-                                {/* Remove Button */}
+                        
                                 {values.documents.length > 1 && (
                                   <div className="flex items-center">
                                     <button
@@ -763,7 +1094,7 @@ const Page = () => {
                             </div>
                           </div>
                         ))}
-                        {/* Add Document Button */}
+                
                         <div className="flex justify-center mb-6">
                           <div
                             className="flex text-primary underline items-center gap-1 cursor-pointer"
@@ -783,12 +1114,12 @@ const Page = () => {
                             Add More Documents
                           </div>
                         </div>
-                      </div>
+                      </div> */}
                     </div>
 
                     {showScreen === 2 ? (
                       <button
-                        onClick={onSubmit}
+                        // onClick={onSubmit}
                         // disabled={!selectedOption} // Disable button if no option is selected
                         className={`py-4 w-full px-6 bg-[#036E03] text-white rounded-lg  hover:bg-green-700
       }`}
@@ -797,12 +1128,14 @@ const Page = () => {
                       </button>
                     ) : (
                       <button
-                        onClick={() => setShowScreen(2)}
+                        // onClick={onSubmit}
+                        type="submit"
+                        disabled={isLoading}
                         // disabled={!selectedOption} // Disable button if no option is selected
-                        className={`py-4 w-full px-6 bg-[#036E03] text-white rounded-lg  hover:bg-green-700
+                        className={`disabled:bg-gray-500 py-4 w-full px-6 bg-[#036E03] text-white rounded-lg  hover:bg-green-700
         }`}
                       >
-                        Proceed
+                        {isLoading ? <LoadingSpinner /> : "Proceed"}
                       </button>
                     )}
                   </Form>
@@ -811,6 +1144,17 @@ const Page = () => {
             </div>
           </div>
         </Modal>
+        <ToastContainer
+          position="top-center"
+          autoClose={2000}
+          hideProgressBar={true}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
       </div>
     </DashboardLayout>
   );

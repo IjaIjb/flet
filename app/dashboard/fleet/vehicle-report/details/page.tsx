@@ -1,8 +1,39 @@
+"use client"; // Add this for client components in the Next.js app directory
 import BreadcrumbsDisplay from "@/app/dashboard/BreadscrumbsDisplay";
 import DashboardLayout from "@/components/Layout";
-import React from "react";
+import { useLazyVehicleControllerGetVehicleReportByIdQuery } from "@/store/api";
+import React, { useEffect, useState } from "react";
 
 function Details() {
+  const [reportId, setReportId] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false); // Manage loading state manually
+
+  useEffect(() => {
+    // Retrieve the vehicle ID from sessionStorage
+    const storedId = localStorage.getItem("vehicleReportId");
+    if (storedId) {
+      setReportId(storedId);
+    }
+  }, []);
+
+  const [getReportById, { data: reportById }] =
+    useLazyVehicleControllerGetVehicleReportByIdQuery<any>();
+
+  useEffect(() => {
+    if (reportId) {
+      setIsLoading(true); // Set loading state
+      getReportById(reportId)
+        .unwrap() // Handle response or errors
+        .finally(() => setIsLoading(false)); // Reset loading state
+    }
+  }, [reportId, getReportById]);
+
+  if (isLoading) {
+    return <div>Loading...</div>; // Render a loading state
+  }
+
+  // console.log(reportById);
+
   return (
     <div>
       <DashboardLayout>
@@ -13,7 +44,9 @@ function Details() {
 
           <div className="flex flex-col gap-4 mb-6 mt-9">
             <div className="grid md:grid-cols-12">
-              <h5 className="text-[18px] font-[400] col-span-2 text-primary ">Title</h5>
+              <h5 className="text-[18px] font-[400] col-span-2 text-primary ">
+                Title
+              </h5>
               <h5 className="text-[18px] font-[400] col-span-10 text-blackText ">
                 Engine
               </h5>
@@ -24,29 +57,25 @@ function Details() {
                 Description
               </h5>
               <h5 className="text-[18px] font-[400] col-span-10 text-blackText ">
-                One of the engine valvesl had to be repair. One of the engine
-                valvesl had to be repair One of the engine valvesl had to be
-                repair, One of the engine valvesl had to be repa..... One of the
-                engine valvesl had to be repair, One of the engine valvesl had
-                to be repa..... One of the engine valvesl had to be repair. One
-                of the engine valvesl had to be repair One of the engine valvesl
-                had to be repair, One of the engine valvesl had to be repa.....
-                One of the engine valvesl had to be repair, One of the engine
-                valvesl had to be repa.....
+                {reportById?.data?.description}
               </h5>
             </div>
 
             <div className="grid md:grid-cols-12">
-              <h5 className="text-[18px]  font-[400] col-span-2 text-primary ">Cost</h5>
+              <h5 className="text-[18px]  font-[400] col-span-2 text-primary ">
+                Cost
+              </h5>
               <h5 className="text-[18px]  font-[400] col-span-10 text-blackText ">
-                N80,000.00
+                {reportById?.data?.cost}
               </h5>
             </div>
 
             <div className="grid md:grid-cols-12">
-              <h5 className="text-[18px]  font-[400] col-span-2 text-primary ">Date</h5>
+              <h5 className="text-[18px]  font-[400] col-span-2 text-primary ">
+                Date
+              </h5>
               <h5 className="text-[18px]  font-[400] col-span-10 text-blackText ">
-                21/05/2024
+                {reportById?.data?.maintenanceDate}
               </h5>
             </div>
           </div>
@@ -133,6 +162,6 @@ function Details() {
       </DashboardLayout>
     </div>
   );
-};
+}
 
 export default Details;

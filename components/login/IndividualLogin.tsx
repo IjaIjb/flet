@@ -125,7 +125,7 @@ const IndividualLogin = () => {
                   type="button"
                   aria-label="Toggle password visibility"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-3"
+                  className="absolute right-4 top-6"
                 >
                   {!showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
                 </button>

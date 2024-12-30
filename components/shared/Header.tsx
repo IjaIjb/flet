@@ -47,7 +47,7 @@ const Header = () => {
         }
       }, []);
       
-      console.log(userData)
+      // console.log(userData)
     const handleLogout = () => {
       dispatch(logoutUser());
       // Clear user data from localStorage

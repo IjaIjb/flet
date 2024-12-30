@@ -52,7 +52,7 @@ const page = () => {
               validationSchema={validation}
               onSubmit={onSubmit}
             >
-              {({  }) => (
+              {({}) => (
                 <Form className="w-full  mt-5 lg:mt-5 mb-6 flex flex-col justify-between">
                   <div className="">
                     <div className="mb-7  flex justify-between gap-2">

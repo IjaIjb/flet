@@ -141,11 +141,11 @@ const TripsRecordTable = () => {
               <td className="px-3 py-4">{datas?.status}</td>
               <td className="px-2 py-4">
                 <div className="relative text-center">
-                <div className="flex justify-center">
-                  <SlOptions
-                    className="cursor-pointer"
-                    onClick={() => toggleDropdown(index)}
-                  />
+                  <div className="flex justify-center">
+                    <SlOptions
+                      className="cursor-pointer"
+                      onClick={() => toggleDropdown(index)}
+                    />
                   </div>
                   {dropdownIndex === index && (
                     <div className="absolute right-0 mt-2 w-48 bg-white border rounded-md shadow-lg z-10">
@@ -203,7 +203,10 @@ const TripsRecordTable = () => {
         classNames={{
           modal: "rounded-[10px] overflow-hidden relative",
         }}
-         open={openDetails} onClose={onCloseDetailsModal} center>
+        open={openDetails}
+        onClose={onCloseDetailsModal}
+        center
+      >
         <div className="md:w-[600px] px-2 md:pt-4 md:px-8 pb-4">
           <div className=" flex justify-center pt-4 pb-4">
             <h4 className="text-primary text-[22px] md:text-[24px]">
@@ -218,9 +221,7 @@ const TripsRecordTable = () => {
           <div className=" flex flex-col gap-2 body-font font-poppins">
             <div>
               <div className="flex gap-2 mt-2">
-                <h4 className="text-blackText text-[20px]">
-                  Vehicle Type:
-                </h4>
+                <h4 className="text-blackText text-[20px]">Vehicle Type:</h4>
                 <h4 className="text-primary text-[20px]">Bus</h4>
               </div>
 
@@ -228,61 +229,37 @@ const TripsRecordTable = () => {
                 <h4 className="text-blackText text-[20px]">
                   Vehicle plate number:
                 </h4>
-                <h4 className="text-primary  text-[20px]">
-                  AD 234567543
-                </h4>
+                <h4 className="text-primary  text-[20px]">AD 234567543</h4>
               </div>
 
               <div className="flex gap-2">
-                <h4 className="text-blackText text-[20px]">
-                  Vehicle color:
-                </h4>
-                <h4 className="text-primary text-[20px]">
-                  Blue
-                </h4>
+                <h4 className="text-blackText text-[20px]">Vehicle color:</h4>
+                <h4 className="text-primary text-[20px]">Blue</h4>
               </div>
               <div className="flex gap-2 ">
-                <h4 className="text-blackText text-[20px]">
-                  Trip Code:
-                </h4>
+                <h4 className="text-blackText text-[20px]">Trip Code:</h4>
                 <h4 className="text-primary text-[20px]">345</h4>
               </div>
             </div>
 
             <div className="mt-3">
               <div className="flex gap-2 mt-2">
-                <h4 className="text-blackText text-[20px]">
-                  Departure Park:
-                </h4>
-                <h4 className="text-primary text-[20px]">
-                  Sagamu
-                </h4>
+                <h4 className="text-blackText text-[20px]">Departure Park:</h4>
+                <h4 className="text-primary text-[20px]">Sagamu</h4>
               </div>
 
               <div className="flex gap-2">
-                <h4 className="text-blackText text-[20px]">
-                  Departure Time:
-                </h4>
-                <h4 className="text-primary text-[20px]">
-                  14:00 PM
-                </h4>
+                <h4 className="text-blackText text-[20px]">Departure Time:</h4>
+                <h4 className="text-primary text-[20px]">14:00 PM</h4>
               </div>
 
               <div className="flex gap-2">
-                <h4 className="text-blackText text-[20px]">
-                  Arrival State:
-                </h4>
-                <h4 className="text-primary text-[20px]">
-                  Abuja
-                </h4>
+                <h4 className="text-blackText text-[20px]">Arrival State:</h4>
+                <h4 className="text-primary text-[20px]">Abuja</h4>
               </div>
               <div className="flex gap-2 ">
-                <h4 className="text-blackText text-[20px]">
-                  Arrival City:
-                </h4>
-                <h4 className="text-primary text-[20px]">
-                  Lagos
-                </h4>
+                <h4 className="text-blackText text-[20px]">Arrival City:</h4>
+                <h4 className="text-primary text-[20px]">Lagos</h4>
               </div>
             </div>
           </div>
@@ -293,7 +270,10 @@ const TripsRecordTable = () => {
         classNames={{
           modal: "rounded-[10px] overflow-visible relative",
         }}
-         open={openEarnings} onClose={onCloseEarningsModal} center>
+        open={openEarnings}
+        onClose={onCloseEarningsModal}
+        center
+      >
         <div className=" md:w-[600px] w-full px-2 md:pt-4 md:px-8 pb-6">
           <div className=" flex justify-center pt-4 pb-4">
             <h4 className="text-primary text-[18px] md:text-[24px]">
