@@ -7,6 +7,9 @@ import { ErrorMessage, Field, Form, Formik } from "formik";
 import * as Yup from "yup";
 import StatementTable from "./StatementTable";
 import { useLazyVehicleControllerGetVehicleByIdQuery } from "@/store/api";
+import "react-responsive-modal/styles.css";
+import { Modal } from "react-responsive-modal";
+import LoadingSpinnerPage from "@/components/UI/LoadingSpinnerPage";
 
 interface Vehicle {
   data: {
@@ -27,6 +30,7 @@ interface VehiclesByIdResponse {
 }
 
 function VehicleStatement() {
+    const [open, setOpen] = useState(false);
   const [vehicleId, setVehicleId] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false); // Manage loading state manually
 
@@ -37,6 +41,12 @@ function VehicleStatement() {
       setVehicleId(storedId);
     }
   }, []);
+
+  const onOpenModal = () => {
+    // e.preventDefault();
+    setOpen(true);
+  };
+  const onCloseModal = () => setOpen(false);
 
   console.log(vehicleId);
 
@@ -52,9 +62,13 @@ function VehicleStatement() {
     }
   }, [vehicleId, getVehicleById]);
 
-  if (isLoading) {
-    return <div>Loading...</div>; // Render a loading state
-  }
+  useEffect(() => {
+    if (isLoading) {
+      onOpenModal();
+    } else {
+      onCloseModal();
+    }
+  }, [isLoading]);
 
   // console.log(vehiclesById)
 
@@ -90,6 +104,7 @@ function VehicleStatement() {
   return (
     <div>
       <DashboardLayout>
+      {isLoading ? null : (
         <div className="bg-white overflow-hidden rounded-[8px] px-3 md:px-8 py-7 md:py-9">
           <BreadcrumbsDisplay />
           <h5 className="text-[16px] md:text-[20px] pt-8 font-light mb-3">
@@ -288,6 +303,21 @@ function VehicleStatement() {
             </div>
           </section>
         </div>
+      )}
+
+<Modal
+        classNames={{
+          modal: "rounded-[10px] overflow-visible relative",
+        }}
+        open={open}
+        onClose={onCloseModal}
+        showCloseIcon={false} // Hides the close button
+        center
+      >
+        <div className="px-2 md:px-5 w-[100px] h-[100px] flex justify-center items-center text-center">
+          <LoadingSpinnerPage />
+        </div>
+      </Modal>
       </DashboardLayout>
     </div>
   );

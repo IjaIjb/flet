@@ -1,5 +1,5 @@
 import { useLazyVehicleControllerGetAllVehicleReportsQuery } from "@/store/api";
-import React, { forwardRef, useEffect } from "react";
+import React, { forwardRef, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import MaterialTable from "@material-table/core";
 import {
@@ -12,6 +12,9 @@ import {
   Save,
 } from "@mui/icons-material";
 import Image from "next/image";
+import LoadingSpinnerPage from "@/components/UI/LoadingSpinnerPage";
+import "react-responsive-modal/styles.css";
+import { Modal } from "react-responsive-modal";
 
 // Define the structure of a row in the data
 interface Row {
@@ -32,8 +35,9 @@ interface Column {
 
 function Delivery() {
   const router = useRouter();
+  const [open, setOpen] = useState(false);
 
-  const [getVehicleReport, { data: vehicleReport }] =
+  const [getVehicleReport, { data: vehicleReport, isLoading  }] =
     useLazyVehicleControllerGetAllVehicleReportsQuery();
 
   const handleVehicleReportDetails = (vehicleReportId: string) => {
@@ -42,6 +46,11 @@ function Delivery() {
     // Navigate to the "fleet/vehicle-statement" page
     router.push("vehicle-report/details");
   };
+  const onOpenModal = () => {
+    // e.preventDefault();
+    setOpen(true);
+  };
+  const onCloseModal = () => setOpen(false);
 
   const data: Row[] = Array.isArray(vehicleReport?.data) // Check if it's an array
     ? vehicleReport.data
@@ -56,6 +65,14 @@ function Delivery() {
           // date: report.registrationDate || "N/A",
         }))
     : [];
+
+             useEffect(() => {
+                    if (isLoading) {
+                      onOpenModal();
+                    } else {
+                      onCloseModal();
+                    }
+                  }, [isLoading]);
 
   useEffect(() => {
     getVehicleReport(); // Trigger the API call
@@ -247,6 +264,9 @@ function Delivery() {
       </h4>
     </div> */}
 
+{isLoading ? null : (
+  
+  <div>
       {data?.length > 0 ? (
         <MaterialTable
           title=""
@@ -297,6 +317,22 @@ function Delivery() {
           </div>
         </div>
       )}
+      </div>
+)}
+
+<Modal
+        classNames={{
+          modal: "rounded-[10px] overflow-visible relative",
+        }}
+        open={open}
+        onClose={onCloseModal}
+        showCloseIcon={false} // Hides the close button
+        center
+      >
+        <div className="px-2 md:px-5 w-[100px] h-[100px] flex justify-center items-center text-center">
+          <LoadingSpinnerPage />
+        </div>
+      </Modal>
     </>
   );
 }

@@ -39,13 +39,18 @@ const Header = () => {
     };
 
     const [userData, setUserData] = useState<UserData | null>(null);
+   
+  
+    useEffect(() => {
     
-      useEffect(() => {
-        const storedUserData = localStorage.getItem("user");
-        if (storedUserData) {
-          setUserData(JSON.parse(storedUserData));
-        }
-      }, []);
+          const storedUserData = localStorage.getItem("user");
+          if (storedUserData) {
+            setUserData(JSON.parse(storedUserData));
+          }
+     
+     
+    }, []);
+  
       
       // console.log(userData)
     const handleLogout = () => {
@@ -63,6 +68,11 @@ const Header = () => {
   return (
     <div className="">
       {/* desktop screen */}
+      {/* {loading ? (
+        <div className="flex justify-center items-center h-screen">
+        loading...
+        </div>
+      ) : ( */}
       <div className="lg:flex hidden justify-between items-center gap-[150px] ">
         <div className="flex items-center gap-2">
         {userData?.individual?.avatar ? (
@@ -93,13 +103,35 @@ const Header = () => {
 </div>
 ) : 
 (
-  <div className="rounded-full bg-gray-200" style={{ width: 60, height: 60 }} />
+  // <div className="rounded-full bg-gray-200" style={{ width: 60, height: 60 }} />
+
+  <div className="  shadow animate-pulse rounded-full" >
+  <div style={{ width: 60, height: 60 }} className="rounded-full bg-gray-200">
+
+  </div>
+
+  <span className="sr-only">Loading...</span>
+</div>
 )}
           <div className="flex flex-col leading-[24px]">
             <h4 className="text-[#1A1A1A]  text-[20px] font-light ">Hello</h4>
+            {userData?.individual ?        
             <h4 className="text-primary whitespace-nowrap font-[400] text-[20px]">
-              {userData?.individual ? userData?.individual?.firstname : userData?.corporateBody?.companyName}
+              {userData?.individual?.firstname}
             </h4>
+             : userData?.corporateBody ?
+             <h4 className="text-primary whitespace-nowrap font-[400] text-[20px]">
+             {userData?.corporateBody?.companyName}
+           </h4>
+           : 
+           <div className=" shadow animate-pulse rounded-full " >
+           <div className="flex justify-center items-center h-4 w-[100px] bg-gray-200 rounded-full ">
+         
+           </div>
+         
+           <span className="sr-only">Loading...</span>
+         </div>
+             }
           </div>
         </div>
 
@@ -114,7 +146,7 @@ const Header = () => {
               </h5>
             </div>
           </div>
-        ) : (
+        ) : userData?.status == "INACTIVE" ? (
           <div className="rounded-full w-full bg-[#F22D351A]/[10%]  px-2 py-3  ">
           <div className="flex gap-2 w-full items-center">
           <IoIosInformationCircle className="w-5 h-5 text-[#F22D35]" />
@@ -124,6 +156,17 @@ const Header = () => {
               Account is yet to be Approved
             </h5>
           </div>
+        </div>
+        ) : (
+          <div className="rounded-full w-full h-10 bg-gray-200 animate-pulse shadow  px-2 py-3  ">
+          {/* <div className="flex gap-2 w-full items-center">
+          <IoIosInformationCircle className="w-5 h-5 text-[#F22D35]" />
+         
+          
+            <h5 className="text-[#FF4848] text-[14px] font-light">
+              Account is yet to be Approved
+            </h5>
+          </div> */}
         </div>
         )}
     
@@ -158,6 +201,7 @@ const Header = () => {
           </div>
         </div>
       </div>
+      {/* )} */}
 
       {/* mobile screen */}
       <div className=" lg:hidden ">

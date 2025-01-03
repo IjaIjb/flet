@@ -20,6 +20,7 @@ import nigeriaData from "../../../components/assets/states.json"; // Adjust path
 import LoadingSpinner from "@/components/UI/LoadingSpinner";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import LoadingSpinnerPage from "@/components/UI/LoadingSpinnerPage";
 
 interface LoginValues {
   engineNumber: string;
@@ -78,6 +79,7 @@ interface BusRearUploadProps {
 
 const Page = () => {
   const [open, setOpen] = useState(false);
+  const [openLoader, setOpenLoader] = useState(false);
   const [showScreen, setShowScreen] = useState(1);
   const [showBusArchitecture, setBusAchitecture] = useState(false);
   const [passVehicleID, setPassVehicleID] = useState("");
@@ -87,27 +89,40 @@ const Page = () => {
   const [frontBusImage, setFrontBusImage] = useState<string | null>(null);
   const [rearBusImage, setRearBusImage] = useState<string | null>(null);
 
-  const [getVehicleTypes, { data: vehicleTypes }] =
-    useLazyVehicleControllerGetAllVehicleTypesQuery();
+ 
 
-  const [createVehicle, { isLoading }] =
-    useVehicleControllerCreateVehicleMutation();
+  const [getVehicleTypes, { data: vehicleTypes, isLoading: isVehicleTypesLoading }] =
+  useLazyVehicleControllerGetAllVehicleTypesQuery();
 
-  // Fetch vehicle types on component mount
-  useEffect(() => {
-    getVehicleTypes(); // Trigger the API call
-  }, [getVehicleTypes]);
+const [createVehicle, { isLoading: isVehicleCreating }] =
+  useVehicleControllerCreateVehicleMutation();
 
-  // console.log(vehicleTypes)
-  const onOpenModal = () => {
-    // e.preventDefault();
-    setOpen(true);
-  };
-  const onCloseModal = () => setOpen(false);
+// Fetch vehicle types on component mount
+useEffect(() => {
+  getVehicleTypes(); // Trigger the API call
+}, [getVehicleTypes]);
 
-  const handleFleet = () => {
-    onOpenModal(); // Open the modal
-  };
+const onOpenModal = () => {
+  setOpen(true);
+};
+const onCloseModal = () => setOpen(false);
+
+const handleFleet = () => {
+  onOpenModal(); // Open the modal
+};
+
+const onOpenModalLoader = () => {
+  setOpenLoader(true);
+};
+const onCloseModalLoader = () => setOpenLoader(false);
+
+    useEffect(() => {
+      if (isVehicleTypesLoading) {
+        onOpenModalLoader();
+      } else {
+        onCloseModalLoader();
+      }
+    }, [isVehicleTypesLoading]);
 
   const BusSideUpload: React.FC<BusSideUploadProps> = ({
     image,
@@ -576,6 +591,8 @@ const Page = () => {
   };
   return (
     <DashboardLayout>
+
+
       <div className="bg-white overflow-hidden rounded-[8px] px-3 md:px-8 py-7 md:py-9">
         <div className="flex w-full gap-5 justify-between items-center">
           <div className="w-full">
@@ -641,9 +658,10 @@ const Page = () => {
               Inactive
             </li>
           </ol>
+      {isVehicleTypesLoading ? null : (
 
           <div className="pt-3">{showProfileConnector()}</div>
-
+      )}
           {/* <h4 className="text-[#000] text-[35px] font-[600] pb-[60px]">Login</h4>
       <h5 className="text-[#958F8F] text-[26px] font-[600]">
         Login into your account
@@ -652,6 +670,19 @@ const Page = () => {
         Thank you for getting back to KwickMall,
       </h5> */}
         </div>
+        <Modal
+        classNames={{
+          modal: "rounded-[10px] overflow-visible relative",
+        }}
+        open={openLoader}
+        onClose={onCloseModalLoader}
+        showCloseIcon={false} // Hides the close button
+        center
+      >
+        <div className="px-2 md:px-5 w-[100px] h-[100px] flex justify-center items-center text-center">
+          <LoadingSpinnerPage />
+        </div>
+      </Modal>
         <Modal
           classNames={{
             modal: "rounded-[10px] overflow-visible relative",
@@ -1130,12 +1161,12 @@ const Page = () => {
                       <button
                         // onClick={onSubmit}
                         type="submit"
-                        disabled={isLoading}
+                        disabled={isVehicleCreating}
                         // disabled={!selectedOption} // Disable button if no option is selected
                         className={`disabled:bg-gray-500 py-4 w-full px-6 bg-[#036E03] text-white rounded-lg  hover:bg-green-700
         }`}
                       >
-                        {isLoading ? <LoadingSpinner /> : "Proceed"}
+                        {isVehicleCreating ? <LoadingSpinner /> : "Proceed"}
                       </button>
                     )}
                   </Form>

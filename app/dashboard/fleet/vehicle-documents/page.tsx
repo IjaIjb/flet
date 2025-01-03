@@ -9,6 +9,9 @@ import {
   useLazyVehicleDocumentControllerSearchQuery,
   useVehicleDocumentControllerCreateMutation,
 } from "@/store/api";
+import LoadingSpinnerPage from "@/components/UI/LoadingSpinnerPage";
+import "react-responsive-modal/styles.css";
+import { Modal } from "react-responsive-modal";
 
 export type CreateVehicleDocumentDto = {
   documentType: string;
@@ -45,6 +48,7 @@ interface BusRearUploadProps {
 }
 
 const Page = () => {
+   const [open, setOpen] = useState(false);
   const [sideBusImage, setSideBusImage] = useState<string | null>(null);
   const [frontBusImage, setFrontBusImage] = useState<string | null>(null);
   const [reportId, setReportId] = useState<string>("");
@@ -70,9 +74,19 @@ const Page = () => {
     }
   }, [reportId, getReportById]);
 
-  if (isLoading) {
-    return <div>Loading...</div>; // Render a loading state
-  }
+  const onOpenModal = () => {
+    // e.preventDefault();
+    setOpen(true);
+  };
+  const onCloseModal = () => setOpen(false);
+
+  useEffect(() => {
+    if (isLoading) {
+      onOpenModal();
+    } else {
+      onCloseModal();
+    }
+  }, [isLoading]);
 
   console.log(reportById);
 
@@ -445,73 +459,88 @@ const Page = () => {
   return (
     <div>
       <DashboardLayout>
-        <div className="bg-white overflow-hidden h-screen rounded-[8px] px-3 md:px-8 py-7 md:py-9">
-          <div className="flex w-full justify-between gap-5 items-center">
-            <div className="w-full">
-              <BreadcrumbsDisplay />
-            </div>
-          </div>
+        {isLoading ? null : (
+  <div className="bg-white overflow-hidden h-screen rounded-[8px] px-3 md:px-8 py-7 md:py-9">
+  <div className="flex w-full justify-between gap-5 items-center">
+    <div className="w-full">
+      <BreadcrumbsDisplay />
+    </div>
+  </div>
 
-          <div className="mb-7 grid grid-cols-12 gap-5 ">
-            <div className="w-full col-span-7">
-              <label
-                className=" text-[#2B2C2B] text-[18px] md:text-[20px] font-[500] "
-                htmlFor="first_name"
-              >
-                Side Bus Image
-              </label>
-              <BusSideUpload
-                image={sideBusImage}
-                setImage={setSideBusImage}
-                vehicleId={reportId}
-              />
-            </div>
+  <div className="mb-7 grid grid-cols-12 gap-5 ">
+    <div className="w-full col-span-7">
+      <label
+        className=" text-[#2B2C2B] text-[18px] md:text-[20px] font-[500] "
+        htmlFor="first_name"
+      >
+        Side Bus Image
+      </label>
+      <BusSideUpload
+        image={sideBusImage}
+        setImage={setSideBusImage}
+        vehicleId={reportId}
+      />
+    </div>
 
-            <div className="w-full col-span-5">
-              <label
-                className=" text-[#2B2C2B] text-[18px] md:text-[20px] font-[500] "
-                htmlFor="first_name"
-              >
-                Front Bus Image
-              </label>
-              <BusFrontUpload
-                image={frontBusImage}
-                setImage={setFrontBusImage}
-                vehicleId={reportId}
-              />
-            </div>
-          </div>
+    <div className="w-full col-span-5">
+      <label
+        className=" text-[#2B2C2B] text-[18px] md:text-[20px] font-[500] "
+        htmlFor="first_name"
+      >
+        Front Bus Image
+      </label>
+      <BusFrontUpload
+        image={frontBusImage}
+        setImage={setFrontBusImage}
+        vehicleId={reportId}
+      />
+    </div>
+  </div>
 
-          <div className="mb-7 grid grid-cols-12 gap-5 ">
-            <div className="w-full col-span-7">
-              <label
-                className=" text-[#2B2C2B] text-[13px] md:text-[16px] font-[500] "
-                htmlFor="first_name"
-              >
-                Side Bus Image
-              </label>
-              <BusTwoSideUpload
-                image={sideBusImage}
-                setImage={setSideBusImage}
-                vehicleId={reportId}
-              />
-            </div>
+  <div className="mb-7 grid grid-cols-12 gap-5 ">
+    <div className="w-full col-span-7">
+      <label
+        className=" text-[#2B2C2B] text-[13px] md:text-[16px] font-[500] "
+        htmlFor="first_name"
+      >
+        Side Bus Image
+      </label>
+      <BusTwoSideUpload
+        image={sideBusImage}
+        setImage={setSideBusImage}
+        vehicleId={reportId}
+      />
+    </div>
 
-            <div className="w-full col-span-5">
-              <label
-                className=" text-[#2B2C2B] text-[13px] md:text-[16px] font-[500] "
-                htmlFor="first_name"
-              >
-                Rear Bus Image
-              </label>
-              <BusRearUpload
-                image={frontBusImage}
-                setImage={setFrontBusImage}
-                vehicleId={reportId}
-              />
-            </div>
-          </div>
+    <div className="w-full col-span-5">
+      <label
+        className=" text-[#2B2C2B] text-[13px] md:text-[16px] font-[500] "
+        htmlFor="first_name"
+      >
+        Rear Bus Image
+      </label>
+      <BusRearUpload
+        image={frontBusImage}
+        setImage={setFrontBusImage}
+        vehicleId={reportId}
+      />
+    </div>
+  </div>
+</div>
+        )}
+            <Modal
+        classNames={{
+          modal: "rounded-[10px] overflow-visible relative",
+        }}
+        open={open}
+        onClose={onCloseModal}
+        showCloseIcon={false} // Hides the close button
+        center
+      >
+        <div className="px-2 md:px-5 w-[100px] h-[100px] flex justify-center items-center text-center">
+          <LoadingSpinnerPage />
         </div>
+      </Modal>
       </DashboardLayout>
     </div>
   );

@@ -12,6 +12,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import * as Yup from "yup";
 import LoadingSpinner from "@/components/UI/LoadingSpinner";
+import LoadingSpinnerPage from "@/components/UI/LoadingSpinnerPage";
 
 interface LoginValues {
   reportType: string;
@@ -23,6 +24,7 @@ interface LoginValues {
 }
 
 function VehicleReport() {
+   const [open, setOpen] = useState(false);
   const [vehicleId, setVehicleId] = useState<string>("");
   // const [isLoading, setIsLoading] = useState<boolean>(false); // Manage loading state manually
 
@@ -56,6 +58,20 @@ function VehicleReport() {
       .required("Description is required")
       .min(10, "Description must be at least 10 characters"),
   });
+
+  const onOpenModal = () => {
+    // e.preventDefault();
+    setOpen(true);
+  };
+  const onCloseModal = () => setOpen(false);
+
+    useEffect(() => {
+      if (isLoading) {
+        onOpenModal();
+      } else {
+        onCloseModal();
+      }
+    }, [isLoading]);
 
   const onOpenReportModal = () => {
     // e.preventDefault();
@@ -207,6 +223,7 @@ function VehicleReport() {
       description: values.description,
       cost: values.cost ? Number(values.cost) : undefined, // Ensure number type
       vehicleId: vehicleId,
+      extraData: []
     };
 
     console.log("Payload sent to API:", payload);
@@ -239,6 +256,8 @@ function VehicleReport() {
   return (
     <div>
       <DashboardLayout>
+      {isLoading ? null : (
+
         <div className="bg-white overflow-hidden rounded-[8px] px-3 md:px-8 py-7 md:py-9">
           <div className="flex w-full justify-between gap-5 items-center">
             <div className="w-full">
@@ -621,6 +640,22 @@ function VehicleReport() {
             </Modal>
           </div>
         </div>
+      )}
+
+<Modal
+        classNames={{
+          modal: "rounded-[10px] overflow-visible relative",
+        }}
+        open={open}
+        onClose={onCloseModal}
+        showCloseIcon={false} // Hides the close button
+        center
+      >
+        <div className="px-2 md:px-5 w-[100px] h-[100px] flex justify-center items-center text-center">
+          <LoadingSpinnerPage />
+        </div>
+      </Modal>
+      
         <ToastContainer
           position="top-center"
           autoClose={2000}

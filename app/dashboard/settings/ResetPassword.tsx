@@ -1,201 +1,192 @@
 "use client"; // Add this for client components in the Next.js app directory
+import { useAuthControllerResetPasswordMutation } from "@/store/api";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import React, { useState } from "react";
 import { AiFillLock, AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import * as Yup from "yup";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ResetPassword = () => {
-    const [showPassword, setShowPassword] = useState(false);
-    const [confirmPassword, setShowConfirmPassword] = useState(false);
-    const [newPassword, setShowNewPassword] = useState(false);
-    const initialData = {
-        email: "",
-    
-        password: "",
-        remember: "",
-        documents: [
-          { name: "", expiryDate: "", image: null }, // Ensure a default document exists
-        ],
+  const [showPassword, setShowPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const [resetPassword, { isLoading }] = useAuthControllerResetPasswordMutation();
+
+  const initialData = {
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  };
+
+  const validationSchema = Yup.object({
+    currentPassword: Yup.string()
+      .min(6, "Password must be a minimum of 6 characters")
+      .max(255)
+      .required("Required"),
+    newPassword: Yup.string()
+      .min(6, "Password must be a minimum of 6 characters")
+      .max(255)
+      .required("Required"),
+    confirmPassword: Yup.string()
+      .nullable() // Allow null values
+      .oneOf([Yup.ref("newPassword"), null], "Passwords must match")
+      .required("Required"),
+  });
+  
+
+  const onSubmit = async (values: typeof initialData, { resetForm }: any) => {
+    try {
+      const { newPassword } = values;
+  
+      // Retrieve the token from localStorage
+      const token = localStorage.getItem("auth_token");
+      if (!token) {
+        alert("No authentication token found. Please log in again.");
+        return;
+      }
+  
+      const payload = {
+        token, // Use the token from localStorage
+        resetPasswordValidateDto: { newPassword },
       };
-    
-      const validation = Yup.object({
-        email: Yup.string().email("Invalid email address").required("Required"),
-        password: Yup.string()
-          .min(6, "Password must be minimum of 6 characters")
-          .max(255)
-          .required("Required"),
-        documents: Yup.array().of(
-          Yup.object().shape({
-            name: Yup.string().required("Document name is required"),
-            expiryDate: Yup.date().required("Expiry date is required"),
-            image: Yup.mixed().required("Document upload is required"),
-          })
-        ),
-      });
-    
-      const onSubmit = async () => {
-        // e.preventDefault(); // Prevent default browser behavior
-    
-        // router.push("/dashboard/home"); // Replace with the actual path
-    
-        console.log("Form submitted");
-      };
+  
+      await resetPassword(payload).unwrap();
+      toast.success("Password reset successful!");
+      resetForm();
+    } catch (error: any) {
+      console.error("Error resetting password:", error);
+      toast.error("Failed to reset password. Please try again.");
+    }
+  };
+  
+
   return (
     <div>
-    <div className="border-[#D9D9D9] border rounded-[10px] px-5 py-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-        <AiFillLock className="text-primary w-6 h-6"/>
-          <h5 className="text-primary  md:text-[20px] text-[18px]">Reset Password</h5>
+      <div className="border-[#D9D9D9] border rounded-[10px] px-5 py-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <AiFillLock className="text-primary w-6 h-6" />
+            <h5 className="text-primary md:text-[20px] text-[18px]">Reset Password</h5>
+          </div>
         </div>
 
-        <h5 className="text-primary text-[18px] underline">Edit</h5>
-      </div>
-
-      <div>
         <Formik
           initialValues={initialData}
-          validationSchema={validation}
+          validationSchema={validationSchema}
           onSubmit={onSubmit}
         >
-          {({  }) => (
-            <Form className="w-full  mt-10 lg:mt-10 mb-6 flex flex-col justify-between">
-              <div>
-              <div className=" mb-5 relative">
-                          <label
-                            className=" text-[#2B2C2B] text-[16px] font-[500] "
-                            htmlFor="password"
-                          >
-                           Current Password
-                          </label>
-                          <div>
-                            <Field
-                              className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
-                              name="password"
-                              id="password"
-                              type={!showPassword ? "password" : "text"}
-                              placeholder=""
-                            />
-                            <button
-                              type="button"
-                              role="button"
-                              aria-label="show password"
-                              title=" show password"
-                              onClick={() =>
-                                setShowPassword(() => !showPassword)
-                              }
-                              className={`absolute right-4 top-12`}
-                            >
-                              {!showPassword ? (
-                                <AiOutlineEyeInvisible className="" />
-                              ) : (
-                                <AiOutlineEye className="" />
-                              )}
-                            </button>
-                          </div>
-                          <p className="text-red-700 text-xs mt-1 ">
-                            <ErrorMessage name="password" />
-                          </p>
-                        </div>
-
-                        <div className=" mb-5 relative">
-                          <label
-                            className=" text-[#2B2C2B] text-[16px] font-[500] "
-                            htmlFor="newPassword"
-                          >
-                           New Password
-                          </label>
-                          <div>
-                            <Field
-                              className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
-                              name="newPassword"
-                              id="newPassword"
-                              type={
-                                !newPassword ? "newPassword" : "text"
-                              }
-                              placeholder=""
-                            />
-                            <button
-                              type="button"
-                              role="button"
-                              aria-label="show password"
-                              title=" show password"
-                              onClick={() =>
-                                setShowNewPassword(() => !newPassword)
-                              }
-                              className={`absolute right-4 top-12`}
-                            >
-                              {!newPassword ? (
-                                <AiOutlineEyeInvisible className="" />
-                              ) : (
-                                <AiOutlineEye className="" />
-                              )}
-                            </button>
-                          </div>
-                          <p className="text-red-700 text-xs mt-1 ">
-                            <ErrorMessage name="newPassword" />
-                          </p>
-                        </div>
-
-                        <div className=" mb-5 relative">
-                          <label
-                            className=" text-[#2B2C2B] text-[16px] font-[500] "
-                            htmlFor="confirmPassword"
-                          >
-                            Confirm Password
-                          </label>
-                          <div>
-                            <Field
-                              className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
-                              name="confirmPassword"
-                              id="confirmPassword"
-                              type={
-                                !confirmPassword ? "confirmPassword" : "text"
-                              }
-                              placeholder=""
-                            />
-                            <button
-                              type="button"
-                              role="button"
-                              aria-label="show password"
-                              title=" show password"
-                              onClick={() =>
-                                setShowConfirmPassword(() => !confirmPassword)
-                              }
-                              className={`absolute right-4 top-12`}
-                            >
-                              {!confirmPassword ? (
-                                <AiOutlineEyeInvisible className="" />
-                              ) : (
-                                <AiOutlineEye className="" />
-                              )}
-                            </button>
-                          </div>
-                          <p className="text-red-700 text-xs mt-1 ">
-                            <ErrorMessage name="confirmPassword" />
-                          </p>
-                        </div>
-        
-
+          {({ isSubmitting }) => (
+            <Form className="w-full mt-10 lg:mt-10 mb-6 flex flex-col justify-between">
+              <div className="mb-5 relative">
+                <label
+                  className="text-[#2B2C2B] text-[16px] font-[500]"
+                  htmlFor="currentPassword"
+                >
+                  Current Password
+                </label>
+                <div>
+                  <Field
+                    className="mt-2 block w-full h-12 border-[0.5px] pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9]"
+                    name="currentPassword"
+                    id="currentPassword"
+                    type={showPassword ? "text" : "password"}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    className="absolute right-4 top-12"
+                  >
+                    {showPassword ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}
+                  </button>
+                </div>
+                <p className="text-red-700 text-xs mt-1">
+                  <ErrorMessage name="currentPassword" />
+                </p>
               </div>
 
-<div className="flex justify-end">
-              <button
-                onClick={onSubmit}
-                // disabled={!selectedOption} // Disable button if no option is selected
-                className={`py-3 w-fit px-6 bg-[#036E03] text-white rounded-lg  hover:bg-green-700
-  }`}
-              >
-                Save
-              </button>
+              <div className="mb-5 relative">
+                <label
+                  className="text-[#2B2C2B] text-[16px] font-[500]"
+                  htmlFor="newPassword"
+                >
+                  New Password
+                </label>
+                <div>
+                  <Field
+                    className="mt-2 block w-full h-12 border-[0.5px] pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9]"
+                    name="newPassword"
+                    id="newPassword"
+                    type={showNewPassword ? "text" : "password"}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowNewPassword((prev) => !prev)}
+                    className="absolute right-4 top-12"
+                  >
+                    {showNewPassword ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}
+                  </button>
+                </div>
+                <p className="text-red-700 text-xs mt-1">
+                  <ErrorMessage name="newPassword" />
+                </p>
+              </div>
+
+              <div className="mb-5 relative">
+                <label
+                  className="text-[#2B2C2B] text-[16px] font-[500]"
+                  htmlFor="confirmPassword"
+                >
+                  Confirm Password
+                </label>
+                <div>
+                  <Field
+                    className="mt-2 block w-full h-12 border-[0.5px] pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9]"
+                    name="confirmPassword"
+                    id="confirmPassword"
+                    type={showConfirmPassword ? "text" : "password"}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword((prev) => !prev)}
+                    className="absolute right-4 top-12"
+                  >
+                    {showConfirmPassword ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}
+                  </button>
+                </div>
+                <p className="text-red-700 text-xs mt-1">
+                  <ErrorMessage name="confirmPassword" />
+                </p>
+              </div>
+
+              <div className="flex justify-end">
+                <button
+                  type="submit"
+                  disabled={isSubmitting || isLoading}
+                  className="py-3 px-6 bg-[#036E03] text-white rounded-lg hover:bg-green-700"
+                >
+                  {isSubmitting || isLoading ? "Saving..." : "Save"}
+                </button>
               </div>
             </Form>
           )}
         </Formik>
       </div>
+            <ToastContainer
+                      position="top-center"
+                      autoClose={2000}
+                      hideProgressBar={true}
+                      newestOnTop={false}
+                      closeOnClick
+                      rtl={false}
+                      pauseOnFocusLoss
+                      draggable
+                      pauseOnHover
+                    />
+          
     </div>
-  </div>
-  )
-}
+  );
+};
 
-export default ResetPassword
+export default ResetPassword;
