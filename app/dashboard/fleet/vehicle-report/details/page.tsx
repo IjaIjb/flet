@@ -1,10 +1,13 @@
 "use client"; // Add this for client components in the Next.js app directory
 import BreadcrumbsDisplay from "@/app/dashboard/BreadscrumbsDisplay";
 import DashboardLayout from "@/components/Layout";
+import LoadingSpinnerPage from "@/components/UI/LoadingSpinnerPage";
 import { useLazyVehicleControllerGetVehicleReportByIdQuery } from "@/store/api";
 import React, { useEffect, useState } from "react";
+import Modal from "react-responsive-modal";
 
 function Details() {
+    const [open, setOpen] = useState(false);
   const [reportId, setReportId] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false); // Manage loading state manually
 
@@ -16,6 +19,20 @@ function Details() {
     }
   }, []);
 
+    const onOpenModal = () => {
+      // e.preventDefault();
+      setOpen(true);
+    };
+    const onCloseModal = () => setOpen(false);
+  
+      useEffect(() => {
+        if (isLoading) {
+          onOpenModal();
+        } else {
+          onCloseModal();
+        }
+      }, [isLoading]);
+  
   const [getReportById, { data: reportById }] =
     useLazyVehicleControllerGetVehicleReportByIdQuery<any>();
 
@@ -28,15 +45,14 @@ function Details() {
     }
   }, [reportId, getReportById]);
 
-  if (isLoading) {
-    return <div>Loading...</div>; // Render a loading state
-  }
+
 
   // console.log(reportById);
 
   return (
     <div>
       <DashboardLayout>
+      {isLoading ? null : (
         <div className="bg-white overflow-hidden rounded-[8px] px-3 md:px-8 py-7 md:py-9">
           <div className="w-full">
             <BreadcrumbsDisplay />
@@ -159,6 +175,21 @@ function Details() {
             </button>
           </div>
         </div>
+      )}
+
+<Modal
+        classNames={{
+          modal: "rounded-[10px] overflow-visible relative",
+        }}
+        open={open}
+        onClose={onCloseModal}
+        showCloseIcon={false} // Hides the close button
+        center
+      >
+        <div className="px-2 md:px-5 w-[100px] h-[100px] flex justify-center items-center text-center">
+          <LoadingSpinnerPage />
+        </div>
+      </Modal>
       </DashboardLayout>
     </div>
   );

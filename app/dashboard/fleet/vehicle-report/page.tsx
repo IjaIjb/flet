@@ -35,7 +35,7 @@ function VehicleReport() {
       setVehicleId(storedId);
     }
   }, []);
-
+console.log(vehicleId)
   const [writeReport, { isLoading }] =
     useVehicleControllerCreateVehicleReportMutation();
 
@@ -223,6 +223,7 @@ function VehicleReport() {
       description: values.description,
       cost: values.cost ? Number(values.cost) : undefined, // Ensure number type
       vehicleId: vehicleId,
+      maintenanceDate:new Date().toISOString(),
       extraData: []
     };
 
@@ -230,7 +231,7 @@ function VehicleReport() {
     try {
       const response: any = await writeReport(payload).unwrap();
       console.log(response);
-
+      localStorage.setItem("vehicleReportId", response?.data?.id);
       // Handle success
       toast.success(response?.message);
 
@@ -303,10 +304,10 @@ function VehicleReport() {
                   vehicleReportValues.repairElement
                     ? "border-primary border-b-[3px] text-[16px] lg:text-[20px] text-primary"
                     : "border-b-[0] text-blackText"
-                }  text-center   px-3 md:px-6 py-2 inline-block text-[16px] lg:text-[20px] font-semibold hover:rounded-[10px] hover:text-[#036E03]/[80%] cursor-pointer`}
+                }  text-center   px-3 md:px-6 py-2 inline-block text-[16px] lg:text-[20px] font-semibold  hover:text-[#036E03]/[80%] cursor-pointer`}
                 onClick={() => handleRepairState()}
               >
-                Repair
+               Maintenance
               </li>
 
               <li
@@ -314,7 +315,7 @@ function VehicleReport() {
                   vehicleReportValues.deliveryElement
                     ? "border-primary border-b-[3px] text-[16px] lg:text-[20px] text-primary "
                     : "border-b-[0] text-blackText"
-                } text-center py-2 px-2 md:px-5 inline-block text-[16px] lg:text-[20px] font-semibold hover:rounded-[10px] hover:text-[#036E03]/[80%] cursor-pointer`}
+                } text-center py-2 px-2 md:px-5 inline-block text-[16px] lg:text-[20px] font-semibold  hover:text-[#036E03]/[80%] cursor-pointer`}
                 onClick={() => handleDeliveryState()}
               >
                 Delivery
@@ -325,7 +326,7 @@ function VehicleReport() {
                   vehicleReportValues.emergencyElement
                     ? "border-primary border-b-[3px] text-[16px] lg:text-[20px] text-primary "
                     : "border-b-[0] text-blackText"
-                } text-center py-2 px-2 md:px-5 inline-block text-[16px] lg:text-[20px] font-semibold hover:rounded-[10px] hover:text-[#036E03]/[80%] cursor-pointer`}
+                } text-center py-2 px-2 md:px-5 inline-block text-[16px] lg:text-[20px] font-semibold  hover:text-[#036E03]/[80%] cursor-pointer`}
                 onClick={() => handleEmergencyState()}
               >
                 Emergency
@@ -359,21 +360,22 @@ function VehicleReport() {
 
                 <div className=" flex flex-col gap-2 body-font font-poppins">
                   <div className="flex text-center flex-col gap-2">
-                    <div
-                      onClick={handleDeliveryReport}
-                      className="text-blackText py-2  hover:bg-primary/[30%] text-[20px]"
-                    >
-                      Delivery Report
-                    </div>
-                    <div
+                  <div
                       onClick={handleMaintenanceReport}
-                      className="text-blackText py-2  hover:bg-primary/[30%] text-[20px]"
+                      className="text-blackText py-2 cursor-pointer hover:bg-primary/[30%] text-[20px]"
                     >
                       Maintenance Report
                     </div>
                     <div
+                      onClick={handleDeliveryReport}
+                      className="text-blackText py-2 cursor-pointer hover:bg-primary/[30%] text-[20px]"
+                    >
+                      Delivery Report
+                    </div>
+               
+                    <div
                       onClick={handleEmergencyReport}
-                      className="text-blackText py-2  hover:bg-primary/[30%] text-[20px]"
+                      className="text-blackText py-2 cursor-pointer hover:bg-primary/[30%] text-[20px]"
                     >
                       Emergency Report
                     </div>

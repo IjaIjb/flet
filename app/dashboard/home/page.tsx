@@ -6,7 +6,7 @@ import Image from "next/image";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import * as Yup from "yup";
 import ActiveFleet from "../fleet/ActiveFleet";
-import { useLazyVehicleControllerGetAllVehiclesQuery } from "@/store/api";
+import { useLazyVehicleControllerGetMyVehiclesQuery } from "@/store/api";
 import "react-responsive-modal/styles.css";
 import { Modal } from "react-responsive-modal";
 import LoadingSpinnerPage from "@/components/UI/LoadingSpinnerPage";
@@ -82,7 +82,7 @@ const Page = () => {
   });
 
   const [getActiveVehicle, { data: activeVehicles, isLoading }] =
-    useLazyVehicleControllerGetAllVehiclesQuery<ActiveVehiclesResponse>();
+  useLazyVehicleControllerGetMyVehiclesQuery<ActiveVehiclesResponse>();
 
   console.log(activeVehicles);
   // Fetch vehicle types on component mount

@@ -61,6 +61,7 @@ function VehicleStatement() {
         .finally(() => setIsLoading(false)); // Reset loading state
     }
   }, [vehicleId, getVehicleById]);
+  console.log(vehiclesById);
 
   useEffect(() => {
     if (isLoading) {
@@ -171,7 +172,7 @@ function VehicleStatement() {
                 </div>
 
                 <h4 className="text-[35px] md:text-[48px] text-[#C05406] font-[500]">
-                  109
+                  0
                 </h4>
               </div>
             </div>

@@ -106,7 +106,7 @@ const Profile = () => {
     phone: userData?.individual?.phone || "",
     email: userData?.email || "",
     city: userData?.individual?.city || "",
-    avatar: image,
+    avatar: image || "",
     // username: userData?.username || "",
     role: "USER",
     userType: "FLEET_PARTNERS",
@@ -118,7 +118,7 @@ const Profile = () => {
     phone: userData?.corporateBody?.phone || "",
     email: userData?.email || "",
     companyAddress: userData?.corporateBody?.companyAddress || "",
-    avatar: image,
+    avatar: image || "",
     // username: userData?.username || "",
   };
 

@@ -48,33 +48,33 @@ export type CreateVehicleDocumentDto = {
 };
 // Define the types for the component props
 interface BusSideUploadProps {
-  image: string | null;
-  setImage: (image: string | null) => void;
+  image: string | undefined;
+  setImage: (image: string | undefined) => void;
   vehicleId: string; // Pass vehicle ID
 }
 
 // Define the types for the component props
 interface BusFrontUploadProps {
-  image: string | null; // image can be a string (URL) or null
-  setImage: (image: string | null) => void; // setImage is a function that updates the image state
+  image: string | undefined; // image can be a string (URL) or undefined
+  setImage: (image: string | undefined) => void; // setImage is a function that updates the image state
   vehicleId: string; // Pass vehicle ID
 }
 
 interface BusTwoSideUploadProps {
-  image: string | null;
-  setImage: (image: string | null) => void;
+  image: string | undefined;
+  setImage: (image: string | undefined) => void;
   vehicleId: string; // Pass vehicle ID
 }
 
 interface BusRearUploadProps {
-  image: string | null; // image can be a string (URL) or null
-  setImage: (image: string | null) => void; // setImage is a function that updates the image state
+  image: string | undefined; // image can be a string (URL) or undefined
+  setImage: (image: string | undefined) => void; // setImage is a function that updates the image state
   vehicleId: string; // Pass vehicle ID
 }
 
 // interface DocumentUploadProps {
-//   image: string | null; // image can be a string (URL) or null
-//   setImage: (image: string | null) => void; // setImage is a function that updates the image state
+//   image: string | undefined; // image can be a string (URL) or undefined
+//   setImage: (image: string | undefined) => void; // setImage is a function that updates the image state
 // }
 
 const Page = () => {
@@ -84,10 +84,11 @@ const Page = () => {
   const [showBusArchitecture, setBusAchitecture] = useState(false);
   const [passVehicleID, setPassVehicleID] = useState("");
 
-  const [sideBusImage, setSideBusImage] = useState<string | null>(null);
-  const [sideTwoBusImage, setSideTwoBusImage] = useState<string | null>(null);
-  const [frontBusImage, setFrontBusImage] = useState<string | null>(null);
-  const [rearBusImage, setRearBusImage] = useState<string | null>(null);
+  const [sideBusImage, setSideBusImage] = useState<string | undefined>(undefined);
+
+  const [sideTwoBusImage, setSideTwoBusImage] = useState<string | undefined>(undefined);
+  const [frontBusImage, setFrontBusImage] = useState<string | undefined>(undefined);
+  const [rearBusImage, setRearBusImage] = useState<string | undefined>(undefined);
 
  
 
@@ -507,7 +508,7 @@ const onCloseModalLoader = () => setOpenLoader(false);
     status: "ACTIVE",
     totalRevenue: 0.0,
     registrationDate: "",
-    // documents: [{ name: "", expiryDate: "", image: null }], // Default document
+    // documents: [{ name: "", expiryDate: "", image: undefined }], // Default document
   };
 
   const validation = Yup.object({
@@ -537,7 +538,7 @@ const onCloseModalLoader = () => setOpenLoader(false);
       totalRevenue: totalRevenueFormatted, // Ensure it's a decimal (e.g., 0.00)
       // totalRevenue: parseFloat(values.totalRevenue.toFixed(2)), // Ensure it's a valid decimal number
       enrollmentCity: values.enrollmentCity || undefined, // Optional field
-      registrationDate: values.registrationDate, // Ensure it's a Date instance
+      registrationDate: new Date().toISOString(), // Convert to ISO string format
       vehicleTypeId: values.vehicleTypeId,
       approvalStatus: values.approvalStatus || "PROCESSING",
     };
@@ -641,7 +642,7 @@ const onCloseModalLoader = () => setOpenLoader(false);
                 statusValues.activeElement
                   ? "border-primary border-b-[3px] text-[16px] lg:text-[20px] text-primary"
                   : "border-b-[0] text-blackText"
-              }  text-center   px-6 py-2 inline-block text-[16px] lg:text-[20px] font-semibold hover:rounded-[10px] hover:text-[#036E03]/[80%] cursor-pointer`}
+              }  text-center   px-6 py-2 inline-block text-[16px] lg:text-[20px] font-semibold  hover:text-[#036E03]/[80%] cursor-pointer`}
               onClick={() => handleActiveState()}
             >
               Active
@@ -652,7 +653,7 @@ const onCloseModalLoader = () => setOpenLoader(false);
                 statusValues.inActiveElement
                   ? "border-primary border-b-[3px] text-[16px] lg:text-[20px] text-primary "
                   : "border-b-[0] text-blackText"
-              } text-center py-2 px-8 inline-block text-[16px] lg:text-[20px] font-semibold hover:rounded-[10px] hover:text-[#036E03]/[80%] cursor-pointer`}
+              } text-center py-2 px-8 inline-block text-[16px] lg:text-[20px] font-semibold hover:text-[#036E03]/[80%] cursor-pointer`}
               onClick={() => handleInActiveState()}
             >
               Inactive
@@ -812,7 +813,7 @@ const onCloseModalLoader = () => setOpenLoader(false);
                         </div>
 
                         <div className="md:flex gap-4">
-                          <div className=" mb-3 w-full relative">
+                          {/* <div className=" mb-3 w-full relative">
                             <label
                               className=" text-[#2B2C2B] text-[16px] font-[500] "
                               htmlFor="registrationDate"
@@ -829,7 +830,7 @@ const onCloseModalLoader = () => setOpenLoader(false);
                             <p className="text-red-700 text-xs mt-1 ">
                               <ErrorMessage name="registrationDate" />
                             </p>
-                          </div>
+                          </div> */}
 
                           <div className=" mb-3 w-full relative">
                             <label

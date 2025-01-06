@@ -11,6 +11,12 @@ const nextConfig: NextConfig = {
   //     },
   //   ];
   // },
+  webpack: (config, { dev }) => {
+    if (dev) {
+      config.devtool = false; // Disables source maps in development
+    }
+    return config;
+  },
 };
 
 export default nextConfig;

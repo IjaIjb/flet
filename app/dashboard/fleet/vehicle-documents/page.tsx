@@ -8,6 +8,7 @@ import { FiUpload } from "react-icons/fi";
 import {
   useLazyVehicleDocumentControllerSearchQuery,
   useVehicleDocumentControllerCreateMutation,
+  useVehicleDocumentControllerUpdateMutation,
 } from "@/store/api";
 import LoadingSpinnerPage from "@/components/UI/LoadingSpinnerPage";
 import "react-responsive-modal/styles.css";
@@ -26,6 +27,7 @@ interface BusSideUploadProps {
   image: string | null;
   setImage: (image: string | null) => void;
   vehicleId: string; // Pass vehicle ID
+  description: string;
 }
 
 // Define the types for the component props
@@ -33,24 +35,29 @@ interface BusFrontUploadProps {
   image: string | null; // image can be a string (URL) or null
   setImage: (image: string | null) => void; // setImage is a function that updates the image state
   vehicleId: string; // Pass vehicle ID
+  description: string;
 }
 
 interface BusTwoSideUploadProps {
   image: string | null;
   setImage: (image: string | null) => void;
   vehicleId: string; // Pass vehicle ID
+  description: string;
 }
 
 interface BusRearUploadProps {
   image: string | null; // image can be a string (URL) or null
   setImage: (image: string | null) => void; // setImage is a function that updates the image state
   vehicleId: string; // Pass vehicle ID
+  description: string;
 }
 
 const Page = () => {
    const [open, setOpen] = useState(false);
   const [sideBusImage, setSideBusImage] = useState<string | null>(null);
+  const [sideTwoBusImage, setSideTwoBusImage] = useState<string | null>(null);
   const [frontBusImage, setFrontBusImage] = useState<string | null>(null);
+  const [rearBusImage, setRearBusImage] = useState<string | null>(null);
   const [reportId, setReportId] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false); // Manage loading state manually
 
@@ -73,7 +80,7 @@ const Page = () => {
         .finally(() => setIsLoading(false)); // Reset loading state
     }
   }, [reportId, getReportById]);
-
+console.log(reportId)
   const onOpenModal = () => {
     // e.preventDefault();
     setOpen(true);
@@ -94,64 +101,96 @@ const Page = () => {
     image,
     setImage,
     vehicleId,
+    description,
   }) => {
-    const [createVehicleDocument] =
-      useVehicleDocumentControllerCreateMutation();
-    // Check if data exists and has the expected structure
+    const [createVehicleDocument] = useVehicleDocumentControllerCreateMutation();
+    const [updateVehicleDocument] = useVehicleDocumentControllerUpdateMutation();
+  
     const sideImages = reportById?.data?.filter(
-      (doc: any) => doc.description === "side"
+      (doc: any) => doc.description === description
     );
+  
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
       if (file) {
         const fileType = file.type.split("/")[0]; // Get the type (image, video, etc.)
         const fileURL = URL.createObjectURL(file); // Preview URL
         setImage(fileURL);
-
+  
         const isConfirmed = window.confirm(
-          `The uploaded file is of type "${fileType}". Do you want to save this document?`
+          `The uploaded file is of type "${fileType}". Do you want to ${
+            sideImages?.length > 0 ? "replace" : "save"
+          } this document?`
         );
-
+  
         if (isConfirmed) {
           try {
-            const payload: CreateVehicleDocumentDto = {
-              documentType: fileType,
-              file: fileURL, // Replace with actual file upload logic if necessary
-              vehicleId,
-              description: "side",
-            };
-
-            const response = await createVehicleDocument(payload).unwrap();
-            alert("Document saved successfully!");
-            console.log("Document Response:", response);
+            if (sideImages?.length > 0) {
+              // Update the existing document
+              const existingDoc = sideImages[0]; // Assume one image for "side"
+              const updatePayload = {
+                ...existingDoc,
+                file: fileURL, // Replace with the new file
+              };
+  
+              const response = await updateVehicleDocument(updatePayload).unwrap();
+              alert("Document updated and replaced successfully!");
+              console.log("Updated Document Response:", response);
+            } else {
+              // Create a new document
+              const createPayload: CreateVehicleDocumentDto = {
+                documentType: fileType,
+                file: fileURL, // Replace with actual file upload logic if necessary
+                vehicleId,
+                description: "side",
+              };
+  
+              const response = await createVehicleDocument(createPayload).unwrap();
+              alert("Document saved successfully!");
+              console.log("New Document Response:", response);
+            }
           } catch (error: any) {
-            console.error("Error uploading document:", error);
+            console.error(
+              `Error ${sideImages?.length > 0 ? "updating" : "creating"} document:`,
+              error
+            );
             alert("Failed to save document. Please try again.");
           }
         }
       }
     };
+  
     return (
       <div className="flex justify-center w-full mt-2 text-center">
         {sideImages?.length > 0 ? (
-          sideImages.map((doc: any) => (
-            <div key={doc.id} className="w-[200px] h-[200px]">
+          <div
+            key={sideImages[0].id}
+            className="w-[200px] h-[200px] cursor-pointer"
+            onClick={() => document.getElementById("file-input")?.click()}
+          >
+            <label className="flex w-full bg-white dotted-border flex-col items-center justify-center rounded-[5px] relative">
               <Image
-                src={doc.file} // Display the existing image
-                alt="Side Bus Image"
+                src={sideImages[0].file} // Display the existing image
+                alt={`${description} Bus Image`}
                 width={200}
                 height={200}
                 className="rounded-lg"
                 priority
               />
-            </div>
-          ))
+              <input
+                id="file-input"
+                type="file"
+                accept="image/x-png,image/gif,image/jpeg,application/pdf,video/*"
+                className="hidden"
+                onChange={handleFileUpload}
+              />
+            </label>
+          </div>
         ) : (
           <label className="flex w-full bg-white dotted-border flex-col items-center justify-center rounded-[5px] cursor-pointer relative">
             <div className="flex flex-col items-center justify-center h-[150px]">
               {image ? (
                 <Image
-                  className=""
                   src={image}
                   alt="image"
                   width={100}
@@ -168,10 +207,10 @@ const Page = () => {
               )}
             </div>
             <input
-              id="dropzone22"
+              id="file-input"
               type="file"
               accept="image/x-png,image/gif,image/jpeg,application/pdf,video/*"
-              className="hidden mb-2 text-sm text-[#6C757D] font-medium"
+              className="hidden"
               onChange={handleFileUpload}
             />
           </label>
@@ -179,16 +218,19 @@ const Page = () => {
       </div>
     );
   };
+  
+  
 
   const BusFrontUpload: React.FC<BusFrontUploadProps> = ({
     image,
     setImage,
     vehicleId,
+    description
   }) => {
     const [createVehicleDocument] =
       useVehicleDocumentControllerCreateMutation();
     const sideImages = reportById?.data?.filter(
-      (doc: any) => doc.description === "front"
+      (doc: any) => doc.description === description
     );
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
@@ -227,7 +269,7 @@ const Page = () => {
             <div key={doc.id} className="w-[200px] h-[200px]">
               <Image
                 src={doc.file} // Display the existing image
-                alt="Side Bus Image"
+                alt={`${description} Bus Image`}
                 width={200}
                 height={200}
                 className="rounded-lg"
@@ -278,11 +320,12 @@ const Page = () => {
     image,
     setImage,
     vehicleId,
+    description
   }) => {
     const [createVehicleDocument] =
       useVehicleDocumentControllerCreateMutation();
     const sideImages = reportById?.data?.filter(
-      (doc: any) => doc.description === "sideTwo"
+      (doc: any) => doc.description === description
     );
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
@@ -321,7 +364,7 @@ const Page = () => {
             <div key={doc.id} className="w-[200px] h-[200px]">
               <Image
                 src={doc.file} // Display the existing image
-                alt="Side Bus Image"
+                alt={`${description} Bus Image`}
                 width={200}
                 height={200}
                 className="rounded-lg"
@@ -367,11 +410,12 @@ const Page = () => {
     image,
     setImage,
     vehicleId,
+    description
   }) => {
     const [createVehicleDocument] =
       useVehicleDocumentControllerCreateMutation();
     const sideImages = reportById?.data?.filter(
-      (doc: any) => doc.description === "rear"
+      (doc: any) => doc.description === description
     );
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
@@ -410,7 +454,7 @@ const Page = () => {
             <div key={doc.id} className="w-[200px] h-[200px]">
               <Image
                 src={doc.file} // Display the existing image
-                alt="Side Bus Image"
+                alt={`${description} Bus Image`}
                 width={200}
                 height={200}
                 className="rounded-lg"
@@ -479,6 +523,7 @@ const Page = () => {
         image={sideBusImage}
         setImage={setSideBusImage}
         vehicleId={reportId}
+        description="side"
       />
     </div>
 
@@ -493,6 +538,7 @@ const Page = () => {
         image={frontBusImage}
         setImage={setFrontBusImage}
         vehicleId={reportId}
+        description="front"
       />
     </div>
   </div>
@@ -506,9 +552,10 @@ const Page = () => {
         Side Bus Image
       </label>
       <BusTwoSideUpload
-        image={sideBusImage}
-        setImage={setSideBusImage}
+        image={sideTwoBusImage}
+        setImage={setSideTwoBusImage}
         vehicleId={reportId}
+        description="sideTwo"
       />
     </div>
 
@@ -520,9 +567,10 @@ const Page = () => {
         Rear Bus Image
       </label>
       <BusRearUpload
-        image={frontBusImage}
-        setImage={setFrontBusImage}
+        image={rearBusImage}
+        setImage={setRearBusImage}
         vehicleId={reportId}
+        description="rear"
       />
     </div>
   </div>

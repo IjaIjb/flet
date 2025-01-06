@@ -424,11 +424,13 @@ function ActiveFleet() {
             sorting: true,
             exportAllData: true, // Exports all rows, not just the visible ones
             rowStyle: {
+              fontWeight: 300,
+              fontSize: "14px",
               alignItems: "center",
             },
             headerStyle: {
               color: "#036E03",
-              fontWeight: 600,
+              // fontWeight: 600,
               fontSize: "14px",
               backgroundColor: "#F9FAFB",
               border: 0,

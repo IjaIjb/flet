@@ -64,6 +64,10 @@ function Delivery() {
           // provider_agency: report.providerAgency || "N/A",
           // date: report.registrationDate || "N/A",
         }))
+        .sort((a, b) => {
+          // Sort by maintenanceDate in ascending order
+          return new Date(a.maintenanceDate).getTime() - new Date(b.maintenanceDate).getTime();
+        })
     : [];
 
              useEffect(() => {
@@ -279,11 +283,13 @@ function Delivery() {
             sorting: true,
             exportAllData: true, // Exports all rows, not just the visible ones
             rowStyle: {
+              fontWeight: 300,
+              fontSize: "14px",
               alignItems: "center",
             },
             headerStyle: {
               color: "#036E03",
-              fontWeight: 600,
+              // fontWeight: 600,
               fontSize: "14px",
               backgroundColor: "#F9FAFB",
               border: 0,
