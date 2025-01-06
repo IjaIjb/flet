@@ -14,6 +14,7 @@ import LoadingSpinnerPage from "@/components/UI/LoadingSpinnerPage";
 import "react-responsive-modal/styles.css";
 import { Modal } from "react-responsive-modal";
 
+
 export type CreateVehicleDocumentDto = {
   documentType: string;
   description?: string;
