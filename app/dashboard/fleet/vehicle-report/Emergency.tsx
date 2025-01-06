@@ -16,6 +16,7 @@ import LoadingSpinnerPage from "@/components/UI/LoadingSpinnerPage";
 import "react-responsive-modal/styles.css";
 import { Modal } from "react-responsive-modal";
 
+
 // Define the structure of a row in the data
 interface Row {
   id: string; // Add the `id` field
