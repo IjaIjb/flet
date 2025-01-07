@@ -54,13 +54,6 @@ const Page = () => {
     setOpen(true);
   };
   const onCloseModal = () => setOpen(false);
-  const [getVehicleTypes, { data: vehicleTypes, isLoading: isVehicleTypesLoading }] =
-  useLazyVehicleControllerGetAllVehicleTypesQuery();
-
-
-useEffect(() => {
-  getVehicleTypes(); // Trigger the API call
-}, [getVehicleTypes]);
 
   console.log(userData);
 
