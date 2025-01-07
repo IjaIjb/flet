@@ -3,7 +3,7 @@ import DashboardLayout from "@/components/Layout";
 import React, { useEffect, useState } from "react";
 import BreadcrumbsDisplay from "../BreadscrumbsDisplay";
 import Image from "next/image";
-import { useLazyVehicleControllerGetAllVehicleTypesQuery, useLazyVehicleControllerGetMyVehiclesQuery } from "@/store/api";
+import { useLazyVehicleControllerGetMyVehiclesQuery } from "@/store/api";
 import "react-responsive-modal/styles.css";
 import { Modal } from "react-responsive-modal";
 import LoadingSpinnerPage from "@/components/UI/LoadingSpinnerPage";
