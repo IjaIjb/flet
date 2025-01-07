@@ -3,13 +3,11 @@ import DashboardLayout from "@/components/Layout";
 import React, { useEffect, useState } from "react";
 import BreadcrumbsDisplay from "../BreadscrumbsDisplay";
 import Image from "next/image";
-import { ErrorMessage, Field, Form, Formik } from "formik";
-import * as Yup from "yup";
-import ActiveFleet from "../fleet/ActiveFleet";
-import { useLazyVehicleControllerGetMyVehiclesQuery } from "@/store/api";
+import { useLazyVehicleControllerGetAllVehicleTypesQuery, useLazyVehicleControllerGetMyVehiclesQuery } from "@/store/api";
 import "react-responsive-modal/styles.css";
 import { Modal } from "react-responsive-modal";
 import LoadingSpinnerPage from "@/components/UI/LoadingSpinnerPage";
+import FilteredFleets from "./FilteredFleets";
 
 interface UserData {
   id: string;
@@ -43,14 +41,7 @@ const Page = () => {
   const [open, setOpen] = useState(false);
 
  const [userData, setUserData] = useState<UserData | null>(null);
-  const initialData = {
-    email: "",
-    password: "",
-    remember: "",
-    documents: [
-      { name: "", expiryDate: "", image: null }, // Ensure a default document exists
-    ],
-  };
+
   useEffect(() => {
     const storedUserData = localStorage.getItem("user");
     if (storedUserData) {
@@ -63,23 +54,16 @@ const Page = () => {
     setOpen(true);
   };
   const onCloseModal = () => setOpen(false);
+  const [getVehicleTypes, { data: vehicleTypes, isLoading: isVehicleTypesLoading }] =
+  useLazyVehicleControllerGetAllVehicleTypesQuery();
 
+
+useEffect(() => {
+  getVehicleTypes(); // Trigger the API call
+}, [getVehicleTypes]);
 
   console.log(userData);
-  const validation = Yup.object({
-    email: Yup.string().email("Invalid email address").required("Required"),
-    password: Yup.string()
-      .min(6, "Password must be minimum of 6 characters")
-      .max(255)
-      .required("Required"),
-    documents: Yup.array().of(
-      Yup.object().shape({
-        name: Yup.string().required("Document name is required"),
-        expiryDate: Yup.date().required("Expiry date is required"),
-        image: Yup.mixed().required("Document upload is required"),
-      })
-    ),
-  });
+
 
   const [getActiveVehicle, { data: activeVehicles, isLoading }] =
   useLazyVehicleControllerGetMyVehiclesQuery<ActiveVehiclesResponse>();
@@ -104,10 +88,7 @@ const Page = () => {
       return sum + revenue;
     }, 0) || 0;
 
-  const onSubmit = async () => {
-    // e.preventDefault(); // Prevent default browser behavior
-    console.log("Form submitted");
-  };
+
   return (
     <DashboardLayout>
       {isLoading ? null : (
@@ -221,128 +202,9 @@ const Page = () => {
           </section>
 
           <section className="overflow-hidden overflow-x-scroll">
-            <div className="flex flex-col    gap-2">
-              <Formik
-                initialValues={initialData}
-                validationSchema={validation}
-                onSubmit={onSubmit}
-              >
-                {({}) => (
-                  <Form className="w-full  mt-5 md:mt-5  flex flex-col justify-between">
-                    <div className="">
-                      <div className="mb-7  flex justify-between gap-2">
-                        <input
-                          type="text"
-                          name="search"
-                          // onChange={handleSearch}
-                          className="px-2 rounded-[15px] h-12 border-[2px] border-primary placeholder:text-[#8A8181] text-sm font-light text-main bg-transparent bg-gray-200 bg-opacity-30 outline-none focus:border-gray-300/60"
-                          // value={query}
-                          placeholder="Search"
-                        />
-                        <div className="  relative">
-                          <Field
-                            className=" block w-full h-12 border-[1px] border-[#D9D9D94D] bg-[#D9D9D94D]/[30%]  px-3 rounded-[10px] focus:outline-primary "
-                            name="vehicle_type"
-                            as="select"
-                            // type="tel"
-                            // onChange={(event: any) => {
-                            //   setFieldValue(
-                            //     "vehicle_type",
-                            //     event.target.value
-                            //   );
-                            // }}
-                            placeholder="Select Vehicle Type"
-                          >
-                            <option label="Select Vehicle Type"></option>
-                            <option className="" value="Bus (12)">
-                              Bus
-                            </option>
-                            <option className="" value="M Bus (5)">
-                              M Bus (5)
-                            </option>
-                            <option className="" value="Sedan (3)">
-                              Sedan (3)
-                            </option>
-                          </Field>
-                          <p className="text-red-700 text-xs mt-1 ">
-                            <ErrorMessage name="last_name" />
-                          </p>
-                        </div>
-
-                        <div className="  relative">
-                          <Field
-                            className=" block w-full h-12 border-[1px] border-[#D9D9D94D] bg-[#D9D9D94D]/[30%]  px-3 rounded-[10px] focus:outline-primary "
-                            name="vehicle_type"
-                            as="select"
-                            // type="tel"
-                            // onChange={(event: any) => {
-                            //   setFieldValue(
-                            //     "vehicle_type",
-                            //     event.target.value
-                            //   );
-                            // }}
-                            placeholder="Status"
-                          >
-                            <option label="Status">Status</option>
-                            <option className="" value="Bus (12)">
-                              Bus
-                            </option>
-                            <option className="" value="M Bus (5)">
-                              M Bus (5)
-                            </option>
-                            <option className="" value="Sedan (3)">
-                              Sedan (3)
-                            </option>
-                          </Field>
-                          <p className="text-red-700 text-xs mt-1 ">
-                            <ErrorMessage name="last_name" />
-                          </p>
-                        </div>
-                        <div className="flex items-center gap-2  relative">
-                          <label
-                            className="whitespace-nowrap text-[#2B2C2B] text-[16px] font-[500] "
-                            htmlFor="last_name"
-                          >
-                            Date From
-                          </label>
-                          <Field
-                            className="block w-full h-12 border-[1px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D94D] bg-[#D9D9D94D]/[30%] "
-                            name="last_name"
-                            type="date"
-                            id="last_name"
-                            placeholder=""
-                          />
-                          <p className="text-red-700 text-xs mt-1 ">
-                            <ErrorMessage name="last_name" />
-                          </p>
-                        </div>
-
-                        <div className="flex  items-center gap-2 relative">
-                          <label
-                            className="whitespace-nowrap text-[#2B2C2B] text-[16px] font-[500] "
-                            htmlFor="last_name"
-                          >
-                            Date To
-                          </label>
-                          <Field
-                            className=" block w-full h-12 border-[1px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D94D] bg-[#D9D9D94D]/[30%] "
-                            name="last_name"
-                            type="date"
-                            id="last_name"
-                            placeholder=""
-                          />
-                          <p className="text-red-700 text-xs mt-1 ">
-                            <ErrorMessage name="last_name" />
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </Form>
-                )}
-              </Formik>
-            </div>
+        
             <div>
-              <ActiveFleet />
+              <FilteredFleets />
             </div>
           </section>
         </div>

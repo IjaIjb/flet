@@ -308,10 +308,10 @@ const Header = () => {
                 modal: "rounded-[10px] overflow-visible relative",
               }}
               open={open} onClose={onCloseModal} center>
-              <div className="w-[500px] flex justify-center px-4 pb-2">
+              <div className="w-[400px] flex justify-center px-4 pb-2">
             
                 <div>
-                  <h4 className="text-primary text-[15px] text-center max-w-[350px] font-[600] mt-5 md:text-[29px] mb-4">
+                  <h4 className="text-primary text-[15px] text-center max-w-[350px] font-[600] mt-5 md:text-[18px] mb-4">
                Are you sure you want to log out?
                   </h4>
                
@@ -321,7 +321,7 @@ const Header = () => {
                <button
                         onClick={onCloseModal}
                         // disabled={!selectedOption} // Disable button if no option is selected
-                        className={`py-4 w-full px-6 bg-gray-300  rounded-lg  
+                        className={`py-2 w-full px-6 bg-gray-300  rounded-lg  
         }`}
                       >
                    Cancel
@@ -330,7 +330,7 @@ const Header = () => {
                <button
                         onClick={handleLogout}
                         // disabled={!selectedOption} // Disable button if no option is selected
-                        className={`py-4 w-full px-6 bg-[#FF4848] text-white rounded-lg  hover:bg-red-700
+                        className={`py-2 w-full px-6 bg-[#FF4848] text-white rounded-lg  hover:bg-red-700
         }`}
                       >
                        Logout

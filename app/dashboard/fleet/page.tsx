@@ -566,7 +566,7 @@ const onCloseModalLoader = () => setOpenLoader(false);
     }
   };
 
-  console.log(passVehicleID);
+  // console.log(passVehicleID);
   const showProfileConnector = () => {
     return (
       <>
@@ -600,7 +600,7 @@ const onCloseModalLoader = () => setOpenLoader(false);
             <BreadcrumbsDisplay />
           </div>
 
-          <div className="relative flex  ">
+          {/* <div className="relative flex  ">
             <div className="absolute inset-y-0 left-2 flex items-center pl-3 pointer-events-none">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -623,7 +623,7 @@ const onCloseModalLoader = () => setOpenLoader(false);
               className=" border h-10 border-[#D9D9D94D]/[30%]  text-blackText bg-[#D9D9D94D]/[30%] text-sm rounded-md block  pl-14 p-1  "
               // required
             />
-          </div>
+          </div> */}
         </div>
         <h5 className="text-blackText text-[20px] py-4 ">
           This is where you see all your fleets info

@@ -6,28 +6,31 @@ import Image from "next/image";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import * as Yup from "yup";
 import StatementTable from "./StatementTable";
-import { useLazyVehicleControllerGetVehicleByIdQuery } from "@/store/api";
+import { useLazyTripControllerFindAllQuery, useLazyVehicleControllerGetVehicleByIdQuery } from "@/store/api";
 import "react-responsive-modal/styles.css";
 import { Modal } from "react-responsive-modal";
 import LoadingSpinnerPage from "@/components/UI/LoadingSpinnerPage";
 
-interface Vehicle {
-  data: {
-    vehicleType: {
-      category: string;
-    };
-    plateNumber: string;
-    providerAgency: string;
-    totalRevenue: string;
+// interface Vehicle {
+//   data: {
+//     vehicleType: {
+//       category: string;
+//     };
+//     trips: {
+// length: number
+//     },
+//     plateNumber: string;
+//     providerAgency: string;
+//     totalRevenue: string;
 
-    // Add other fields as needed
-  };
-}
+//     // Add other fields as needed
+//   };
+// }
 
-interface VehiclesByIdResponse {
-  data: Vehicle;
-  // Add other properties based on your response structure
-}
+// interface VehiclesByIdResponse {
+//   data: Vehicle;
+//   // Add other properties based on your response structure
+// }
 
 function VehicleStatement() {
     const [open, setOpen] = useState(false);
@@ -51,7 +54,7 @@ function VehicleStatement() {
   console.log(vehicleId);
 
   const [getVehicleById, { data: vehiclesById }] =
-    useLazyVehicleControllerGetVehicleByIdQuery<VehiclesByIdResponse>();
+    useLazyVehicleControllerGetVehicleByIdQuery<any>();
 
   useEffect(() => {
     if (vehicleId) {
@@ -71,7 +74,44 @@ function VehicleStatement() {
     }
   }, [isLoading]);
 
-  // console.log(vehiclesById)
+     const [getVehicleTrips, { data: vehicleTrips }] =
+     useLazyTripControllerFindAllQuery();
+
+     useEffect(() => {
+      if (vehiclesById) {
+        setIsLoading(true); // Set loading state
+    
+        // Construct the query argument for the API
+        const queryArg = {
+          description: vehiclesById.data?.trips?.description,
+ 
+  uniqueId: vehiclesById.data?.trips?.uniqueID,
+
+  driverId: vehiclesById.data?.trips?.driverId,
+ 
+  departureId: vehiclesById.data?.trips?.departureId,
+ 
+  destinationId: vehiclesById.data?.trips?.destinationId,
+
+  vehicleId: vehiclesById.data?.trips?.vehicleId,
+
+  // vehicleType?: vehiclesById.data?.vehicleType?.
+ 
+  // departureState?: string;
+  // destinationState?: string;
+  departureDate: vehiclesById.data?.trips?.departureDate,
+  limit: 10,
+  offset: 0,
+      
+        };
+    
+        // Make the API call with the constructed query argument
+        getVehicleTrips(queryArg)
+          .unwrap() // Handle response or errors
+          .finally(() => setIsLoading(false)); // Reset loading state
+      }
+    }, [vehiclesById, getVehicleTrips]);
+  console.log(vehicleTrips)
 
   const initialData = {
     email: "",
@@ -108,19 +148,19 @@ function VehicleStatement() {
       {isLoading ? null : (
         <div className="bg-white overflow-hidden rounded-[8px] px-3 md:px-8 py-7 md:py-9">
           <BreadcrumbsDisplay />
-          <h5 className="text-[16px] md:text-[20px] pt-8 font-light mb-3">
+          <h5 className="text-[16px] md:text-[20px] pt-8 font-[200] mb-3">
             Vehicle Type:{" "}
             <span className="text-[18px] md:text-[20px] font-bold">
               {vehiclesById?.data?.vehicleType?.category}
             </span>
           </h5>
-          <h5 className="text-[16px] md:text-[20px] font-light mb-3">
+          <h5 className="text-[16px] md:text-[20px] font-[200] mb-3">
             Number Plate:{" "}
             <span className="text-[18px] md:text-[20px] font-bold text-primary">
               {vehiclesById?.data?.plateNumber}
             </span>
           </h5>
-          <h5 className="text-[16px] md:text-[20px] font-light mb-4">
+          <h5 className="text-[16px] md:text-[20px] font-[200] mb-4">
             Provider Agency:{" "}
             <span className="text-[18px] md:text-[20px] font-bold text-primary">
               {vehiclesById?.data?.providerAgency || "Nill"}
@@ -172,7 +212,7 @@ function VehicleStatement() {
                 </div>
 
                 <h4 className="text-[35px] md:text-[48px] text-[#C05406] font-[500]">
-                  0
+           {vehiclesById?.data?.trips?.length ?? 0}
                 </h4>
               </div>
             </div>

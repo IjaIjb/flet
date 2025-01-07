@@ -44,14 +44,27 @@ function ActiveFleet() {
   const data: Row[] = Array.isArray(activeVehicles?.data) // Check if it's an array
     ? activeVehicles.data
         .filter((vehicle: any) => vehicle.status === "ACTIVE") // Filter for active vehicles
-        .map((vehicle: any) => ({
+        .map((vehicle: any) => {
+          const rawDate = vehicle.registrationDate;
+          const formattedDate = rawDate
+            ? new Date(rawDate).toLocaleString("en-GB", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+              }).replace(",", "") // Format with date and time (e.g., 2025-01-07 12:34:56)
+            : "N/A";
+        return {
           id: vehicle?.id || "N/A",
           vehicle_plate_no: vehicle.plateNumber || "N/A",
           vehicle_type: vehicle.vehicleType?.category || "N/A",
           engine_no: vehicle.engineNumber || "N/A",
           provider_agency: vehicle.providerAgency || "N/A",
-          date: vehicle.registrationDate || "N/A",
-        }))
+          date: formattedDate || "N/A",
+        };
+        })
     : [];
 
   // Fetch vehicle types on component mount
@@ -296,122 +309,7 @@ function ActiveFleet() {
   icons.Save.displayName = "SaveIcon";
   return (
     <div>
-      {/* <div className="">
-      <table className="w-full text-[18px] text-center overflow-hidden overflow-x-scroll ">
-        <thead className=" text-primary bg-gray-50 ">
-          <tr>
-            <th scope="col" className="px-6 py-3">
-              S/N
-            </th>
-            <th scope="col" className="px-6 py-3">
-              Vehicle Plate No
-            </th>
-            <th scope="col" className="px-6 py-3">
-              Vehicle Type
-            </th>
-            <th scope="col" className="px-6 py-3">
-              Engine Number
-            </th>
-            <th scope="col" className="px-6 py-3">
-              Provider Agency
-            </th>
-
-            <th scope="col" className="px-6 py-3">
-              Enrolment Date
-            </th>
-            <th scope="col" className="px-6 py-3">
-              Action
-            </th>
-
- 
-          </tr>
-        </thead>
-
-        <tbody>
-          {dataa.map((datas, index) => (
-            <tr
-              key={index}
-              className={`bg-white ${
-                index % 2 === 0 ? "" : "bg-[#D9D9D930]/[19%]"
-              }`} // Apply bg-gray-200 to even rows
-            >
-              <td className="px-6 py-4">{index + 1}</td>
-
-              <td className="px-6 py-4">{datas?.vehicle_plate_no}</td>
-              <td className="px-6 py-4">{datas?.vehicle_type}</td>
-              <td className="px-6 py-4">{datas?.engine_no}</td>
-              <td className="px-6 py-4">{datas?.provider_agency}</td>
-              <td className="px-6 py-4">{datas?.date}</td>
-              <td className="px-6 py-4">
-                <div className="relative">
-                  <div className="flex justify-center">
-                  <SlOptions
-                    className="cursor-pointer"
-                    onClick={() => toggleDropdown(index)}
-                  />
-                  </div>
-                  {dropdownIndex === index && (
-                    <div className="absolute right-0 mt-2 w-48 bg-white border rounded-md shadow-lg z-10">
-                      <ul className="py-1">
-                        <li>
-                          <div
-                            onClick={handleVehicleStatement}
-                            className="px-4 py-2 text-sm text-primary hover:bg-[#9F9F9F33] text-center cursor-pointer"
-                          >
-                            See Statement
-                          </div>
-                        </li>
-                        <li>
-                          <div
-                            onClick={handleVehicleReport}
-                            className="px-4 py-2 text-sm text-primary hover:bg-[#9F9F9F33] text-center cursor-pointer"
-                          >
-                            Vehicle Report
-                          </div>
-                        </li>
-                        <li>
-                          <div
-                            onClick={handleVehicleDocuments}
-                            className="px-4 py-2 text-sm text-primary hover:bg-[#9F9F9F33] text-center cursor-pointer"
-                          >
-                           See Documents
-                          </div>
-                        </li>
-                      </ul>
-                    </div>
-                  )}
-                </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      <div className="flex gap-4 justify-center mt-7 mb-3 items-center">
-        <h4 className="text-blackText font-[500] text-[13px]">Page 1 of 30</h4>
-
-        <div className="flex items-center gap-1">
-          <div className="text-[#98A2B3] px-3 py-2 ">1</div>
-          <div className="text-[#98A2B3] px-3 py-2 ">2</div>
-          <div className=" px-3 py-2 bg-primary text-white rounded-[6px]">
-            3
-          </div>
-          <div className="text-[#98A2B3] px-3 py-2 ">4</div>
-          <div className="text-[#98A2B3] px-3 py-2 ">5</div>
-          <div className="text-[#98A2B3] px-3 py-2 ">6</div>
-        </div>
-
-        <div className="flex gap-2">
-          <div className="bg-[#D9D9D9] py-2 px-2 rounded-[6px]">
-            <MdChevronLeft className="text-white w-7 h-7 " />
-          </div>
-          <div className="bg-[#D9D9D9] py-2 px-2 rounded-[6px]">
-            <MdChevronRight className="text-white w-7 h-7 " />
-          </div>
-        </div>
-      </div>
-    </div> */}
-
+    
       {data?.length > 0 ? (
         <MaterialTable
           title=""

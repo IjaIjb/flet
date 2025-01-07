@@ -40,17 +40,33 @@ function InActiveFleet() {
   const [getInctiveVehicle, { data: activeVehicles }] =
     useLazyVehicleControllerGetAllVehiclesQuery();
 
-  const data: Row[] = Array.isArray(activeVehicles?.data) // Check if it's an array
+    const data: Row[] = Array.isArray(activeVehicles?.data) // Check if it's an array
     ? activeVehicles.data
         .filter((vehicle: any) => vehicle.status === "INACTIVE") // Filter for active vehicles
-        .map((vehicle: any) => ({
+        .map((vehicle: any) => {
+          const rawDate = vehicle.registrationDate;
+          const formattedDate = rawDate
+            ? new Date(rawDate).toLocaleString("en-GB", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+              }).replace(",", "") // Format with date and time (e.g., 2025-01-07 12:34:56)
+            : "N/A";
+        return {
+          id: vehicle?.id || "N/A",
           vehicle_plate_no: vehicle.plateNumber || "N/A",
           vehicle_type: vehicle.vehicleType?.category || "N/A",
           engine_no: vehicle.engineNumber || "N/A",
           provider_agency: vehicle.providerAgency || "N/A",
-          date: vehicle.registrationDate || "N/A",
-        }))
+          date: formattedDate || "N/A",
+        };
+        })
     : [];
+
+
 
   // Fetch vehicle types on component mount
   useEffect(() => {

@@ -45,7 +45,17 @@ function Details() {
     }
   }, [reportId, getReportById]);
 
-
+  const rawDate = reportById?.data?.maintenanceDate;
+              const formattedDate = rawDate
+                ? new Date(rawDate).toLocaleString("en-GB", {
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit",
+                  }).replace(",", "") // Format with date and time (e.g., 2025-01-07 12:34:56)
+                : "N/A";
 
   // console.log(reportById);
 
@@ -91,7 +101,7 @@ function Details() {
                 Date
               </h5>
               <h5 className="text-[18px]  font-[400] col-span-10 text-blackText ">
-                {reportById?.data?.maintenanceDate}
+                {formattedDate}
               </h5>
             </div>
           </div>

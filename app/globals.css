@@ -47,6 +47,17 @@ body.no-scroll {
   text-align: center;
 }
 
+/* Remove increment and decrement buttons for number input */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* For Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
 
 
 /* :root {

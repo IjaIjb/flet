@@ -67,22 +67,36 @@ console.log(vehicleId)
   const onCloseModal = () => setOpen(false);
 
   const data: Row[] = Array.isArray(vehicleReport?.data) // Check if it's an array
-    ? vehicleReport.data
-        .filter((report: any) => report.reportType === "MAINTENANCE") // Filter for active vehicles
-        .map((report: any, index: number) => ({
+  ? vehicleReport.data
+      .filter((report: any) => report.reportType === "MAINTENANCE") // Filter for active vehicles
+      .map((report: any, index: number) => {
+        const rawDate = report.maintenanceDate;
+        const formattedDate = rawDate
+          ? new Date(rawDate).toLocaleString("en-GB", {
+              year: "numeric",
+              month: "2-digit",
+              day: "2-digit",
+              hour: "2-digit",
+              minute: "2-digit",
+              second: "2-digit",
+            }).replace(",", "") // Format with date and time (e.g., 2025-01-07 12:34:56)
+          : "N/A";
+
+        return {
           index: index + 1, // Add a 1-based index
           id: report?.id || "N/A",
           description: report.description || "N/A",
           cost: report.cost || "N/A",
-          maintenanceDate: report.maintenanceDate || "N/A",
-          // provider_agency: report.providerAgency || "N/A",
-          // date: report.registrationDate || "N/A",
-        }))
-        .sort((a, b) => {
-          // Sort by maintenanceDate in ascending order
-          return new Date(a.maintenanceDate).getTime() - new Date(b.maintenanceDate).getTime();
-        })
-    : [];
+          maintenanceDate: formattedDate, // Use formatted date and time
+        };
+      })
+      .sort((a, b) => {
+        // Sort by maintenanceDate in ascending order
+        return new Date(a.maintenanceDate).getTime() - new Date(b.maintenanceDate).getTime();
+      })
+  : [];
+
+
 
 
       useEffect(() => {

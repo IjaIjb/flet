@@ -265,7 +265,7 @@ console.log(vehicleId)
               <BreadcrumbsDisplay />
             </div>
 
-            <div className="relative flex  ">
+            {/* <div className="relative flex  ">
               <div className="absolute inset-y-0 left-2 flex items-center pl-3 pointer-events-none">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -288,7 +288,7 @@ console.log(vehicleId)
                 className=" border h-10 border-[#D9D9D94D]/[30%]  text-blackText bg-[#D9D9D94D]/[30%] text-sm rounded-md block pl-10 md:pl-14 p-1  "
                 //   required
               />
-            </div>
+            </div> */}
           </div>
 
           <div
