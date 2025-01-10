@@ -283,9 +283,15 @@ const FilteredFleets = () => {
   return (
     <div>
         <div className="flex flex-col    gap-2">
+        <div className="grid md:grid-cols-12 items-center gap-4">
+<div className="col-span-5">
+<div></div>
+</div>
+{/* <div></div> */}
+<div className="col-span-7">
             <div className="mb-5 flex gap-6">
         <select
-          className="block w-full h-12 border px-3 rounded-md focus:outline-primary"
+          className="block h-12 border text-[14px] font-[300] px-3 rounded-md focus:outline-primary"
           value={vehicleType}
           onChange={(e) => setVehicleType(e.target.value)}
         >
@@ -298,16 +304,18 @@ const FilteredFleets = () => {
         </select>
         <input
           type="date"
-          className="block w-full h-12 border px-3 rounded-md focus:outline-primary"
+          className="block  text-[14px] font-[300] h-12 border px-3 rounded-md focus:outline-primary"
           value={dateFrom}
           onChange={(e) => setDateFrom(e.target.value)}
         />
         <input
           type="date"
-          className="block w-full h-12 border px-3 rounded-md focus:outline-primary"
+          className="block  text-[14px] font-[300] h-12 border px-3 rounded-md focus:outline-primary"
           value={dateTo}
           onChange={(e) => setDateTo(e.target.value)}
         />
+      </div>
+      </div>
       </div>
             </div>
       {filteredData?.length > 0 ? (
