@@ -117,7 +117,6 @@ function ActiveFleet() {
   };
 
   // Define columns with correct types
-
   const columns: Column[] = [
     {
       title: "Vehicle Plate No",

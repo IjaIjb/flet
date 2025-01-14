@@ -330,6 +330,12 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: () => ({ url: `/vehicle-requests` }),
     }),
+    vehicleControllerGetAllVehicleRequestsByVehicleId: build.query<
+      VehicleControllerGetAllVehicleRequestsByVehicleIdApiResponse,
+      VehicleControllerGetAllVehicleRequestsByVehicleIdApiArg
+    >({
+      query: (queryArg) => ({ url: `/vehicle-requests/vehicle/${queryArg}` }),
+    }),
     vehicleControllerGetVehicleRequestById: build.query<
       VehicleControllerGetVehicleRequestByIdApiResponse,
       VehicleControllerGetVehicleRequestByIdApiArg
@@ -371,6 +377,12 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: () => ({ url: `/vehicle-reports` }),
     }),
+    vehicleControllerGetAllVehicleReportsByVehicleId: build.query<
+      VehicleControllerGetAllVehicleReportsByVehicleIdApiResponse,
+      VehicleControllerGetAllVehicleReportsByVehicleIdApiArg
+    >({
+      query: (queryArg) => ({ url: `/vehicle-reports/vehicle/${queryArg}` }),
+    }),
     vehicleControllerGetVehicleReportById: build.query<
       VehicleControllerGetVehicleReportByIdApiResponse,
       VehicleControllerGetVehicleReportByIdApiArg
@@ -406,18 +418,17 @@ const injectedRtkApi = api.injectEndpoints({
         body: queryArg,
       }),
     }),
-    vehicleDocumentControllerSearch: build.query<
-      VehicleDocumentControllerSearchApiResponse,
-      VehicleDocumentControllerSearchApiArg
+    vehicleDocumentControllerFindAll: build.query<
+      VehicleDocumentControllerFindAllApiResponse,
+      VehicleDocumentControllerFindAllApiArg
     >({
-      query: (queryArg) => ({
-        url: `/vehicle-documents`,
-        params: {
-          documentType: queryArg.documentType,
-          vehicleId: queryArg.vehicleId,
-          description: queryArg.description,
-        },
-      }),
+      query: () => ({ url: `/vehicle-documents` }),
+    }),
+    vehicleDocumentControllerFindAllByVehicleId: build.query<
+      VehicleDocumentControllerFindAllByVehicleIdApiResponse,
+      VehicleDocumentControllerFindAllByVehicleIdApiArg
+    >({
+      query: (queryArg) => ({ url: `/vehicle-documents/vehicle/${queryArg}` }),
     }),
     vehicleDocumentControllerUpdate: build.mutation<
       VehicleDocumentControllerUpdateApiResponse,
@@ -435,6 +446,41 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/vehicle-documents/${queryArg}`,
+        method: "DELETE",
+      }),
+    }),
+    vehicleReportCommentControllerCreate: build.mutation<
+      VehicleReportCommentControllerCreateApiResponse,
+      VehicleReportCommentControllerCreateApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/vehicle-report-comments`,
+        method: "POST",
+        body: queryArg,
+      }),
+    }),
+    vehicleReportCommentControllerFindAll: build.query<
+      VehicleReportCommentControllerFindAllApiResponse,
+      VehicleReportCommentControllerFindAllApiArg
+    >({
+      query: () => ({ url: `/vehicle-report-comments` }),
+    }),
+    vehicleReportCommentControllerUpdate: build.mutation<
+      VehicleReportCommentControllerUpdateApiResponse,
+      VehicleReportCommentControllerUpdateApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/vehicle-report-comments/${queryArg.id}`,
+        method: "PUT",
+        body: queryArg.updateVehicleReportCommentDto,
+      }),
+    }),
+    vehicleReportCommentControllerDelete: build.mutation<
+      VehicleReportCommentControllerDeleteApiResponse,
+      VehicleReportCommentControllerDeleteApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/vehicle-report-comments/${queryArg}`,
         method: "DELETE",
       }),
     }),
@@ -550,6 +596,18 @@ const injectedRtkApi = api.injectEndpoints({
       TripControllerDeleteTripApiArg
     >({
       query: (queryArg) => ({ url: `/trips/${queryArg}`, method: "DELETE" }),
+    }),
+    tripControllerGetTripsByVehicleId: build.query<
+      TripControllerGetTripsByVehicleIdApiResponse,
+      TripControllerGetTripsByVehicleIdApiArg
+    >({
+      query: (queryArg) => ({ url: `/trips/vehicle/${queryArg}` }),
+    }),
+    tripControllerGetTripsByVehicleOwnerId: build.query<
+      TripControllerGetTripsByVehicleOwnerIdApiResponse,
+      TripControllerGetTripsByVehicleOwnerIdApiArg
+    >({
+      query: (queryArg) => ({ url: `/trips/vehicle/owner/${queryArg}` }),
     }),
     bookingControllerCreateBooking: build.mutation<
       BookingControllerCreateBookingApiResponse,
@@ -1539,6 +1597,42 @@ const injectedRtkApi = api.injectEndpoints({
         method: "DELETE",
       }),
     }),
+    transactionControllerCreate: build.mutation<
+      TransactionControllerCreateApiResponse,
+      TransactionControllerCreateApiArg
+    >({
+      query: (queryArg) => ({ url: `/transaction`, method: "POST" }),
+    }),
+    transactionControllerFindAll: build.query<
+      TransactionControllerFindAllApiResponse,
+      TransactionControllerFindAllApiArg
+    >({
+      query: () => ({ url: `/transaction` }),
+    }),
+    transactionControllerFindById: build.query<
+      TransactionControllerFindByIdApiResponse,
+      TransactionControllerFindByIdApiArg
+    >({
+      query: (queryArg) => ({ url: `/transaction/${queryArg}` }),
+    }),
+    transactionControllerFindMe: build.query<
+      TransactionControllerFindMeApiResponse,
+      TransactionControllerFindMeApiArg
+    >({
+      query: () => ({ url: `/transaction/me` }),
+    }),
+    transactionControllerFindByQuery: build.query<
+      TransactionControllerFindByQueryApiResponse,
+      TransactionControllerFindByQueryApiArg
+    >({
+      query: (queryArg) => ({ url: `/transaction/search/${queryArg}` }),
+    }),
+    transactionControllerCheckUniqueId: build.query<
+      TransactionControllerCheckUniqueIdApiResponse,
+      TransactionControllerCheckUniqueIdApiArg
+    >({
+      query: (queryArg) => ({ url: `/transaction/check-unique/${queryArg}` }),
+    }),
     appControllerGetHello: build.query<
       AppControllerGetHelloApiResponse,
       AppControllerGetHelloApiArg
@@ -1700,6 +1794,9 @@ export type VehicleControllerCreateVehicleRequestApiArg =
 export type VehicleControllerGetAllVehicleRequestsApiResponse =
   /** status 200 List of vehicle requests */ VehicleRequestArrayResponseDto;
 export type VehicleControllerGetAllVehicleRequestsApiArg = void;
+export type VehicleControllerGetAllVehicleRequestsByVehicleIdApiResponse =
+  /** status 200 List of vehicle requests */ VehicleRequestArrayResponseDto;
+export type VehicleControllerGetAllVehicleRequestsByVehicleIdApiArg = string;
 export type VehicleControllerGetVehicleRequestByIdApiResponse =
   /** status 200 Vehicle request found */ VehicleRequestResponseDto;
 export type VehicleControllerGetVehicleRequestByIdApiArg =
@@ -1720,6 +1817,9 @@ export type VehicleControllerCreateVehicleReportApiArg = CreateVehicleReportDto;
 export type VehicleControllerGetAllVehicleReportsApiResponse =
   /** status 200 List of vehicle reports */ VehicleReportArrayResponseDto;
 export type VehicleControllerGetAllVehicleReportsApiArg = void;
+export type VehicleControllerGetAllVehicleReportsByVehicleIdApiResponse =
+  /** status 200 List of vehicle reports */ VehicleReportArrayResponseDto;
+export type VehicleControllerGetAllVehicleReportsByVehicleIdApiArg = string;
 export type VehicleControllerGetVehicleReportByIdApiResponse =
   /** status 200 Vehicle report found */ VehicleReportResponseDto;
 export type VehicleControllerGetVehicleReportByIdApiArg =
@@ -1737,16 +1837,12 @@ export type VehicleControllerDeleteVehicleReportApiArg =
 export type VehicleDocumentControllerCreateApiResponse =
   /** status 201 Vehicle document created successfully */ VehicleDocumentResponseDto;
 export type VehicleDocumentControllerCreateApiArg = CreateVehicleDocumentDto;
-export type VehicleDocumentControllerSearchApiResponse =
+export type VehicleDocumentControllerFindAllApiResponse =
   /** status 200 Vehicle documents retrieved successfully */ VehicleDocumentArrayResponseDto;
-export type VehicleDocumentControllerSearchApiArg = {
-  /** Filter by document type */
-  documentType?: string;
-  /** Filter by associated vehicle ID */
-  vehicleId?: string;
-  /** Search by document description */
-  description?: string;
-};
+export type VehicleDocumentControllerFindAllApiArg = void;
+export type VehicleDocumentControllerFindAllByVehicleIdApiResponse =
+  /** status 200 Vehicle documents retrieved successfully */ VehicleDocumentArrayResponseDto;
+export type VehicleDocumentControllerFindAllByVehicleIdApiArg = string;
 export type VehicleDocumentControllerUpdateApiResponse =
   /** status 200 Vehicle document updated successfully */ VehicleDocumentResponseDto;
 export type VehicleDocumentControllerUpdateApiArg = {
@@ -1756,6 +1852,22 @@ export type VehicleDocumentControllerUpdateApiArg = {
 export type VehicleDocumentControllerDeleteApiResponse =
   /** status 200 Vehicle document deleted successfully */ VehicleDocumentResponseDto;
 export type VehicleDocumentControllerDeleteApiArg = string;
+export type VehicleReportCommentControllerCreateApiResponse =
+  /** status 201 Vehicle report comment created successfully */ VehicleReportCommentResponseDto;
+export type VehicleReportCommentControllerCreateApiArg =
+  CreateVehicleReportCommentDto;
+export type VehicleReportCommentControllerFindAllApiResponse =
+  /** status 200 Vehicle report comment retrieved successfully */ VehicleReportCommentArrayResponseDto;
+export type VehicleReportCommentControllerFindAllApiArg = void;
+export type VehicleReportCommentControllerUpdateApiResponse =
+  /** status 200 Vehicle report comment updated successfully */ VehicleReportCommentResponseDto;
+export type VehicleReportCommentControllerUpdateApiArg = {
+  id: string;
+  updateVehicleReportCommentDto: UpdateVehicleReportCommentDto;
+};
+export type VehicleReportCommentControllerDeleteApiResponse =
+  /** status 200 Vehicle report comment deleted successfully */ VehicleReportCommentResponseDto;
+export type VehicleReportCommentControllerDeleteApiArg = string;
 export type ParkControllerCreateParkApiResponse =
   /** status 201 Park created successfully */ ParkResponseDto;
 export type ParkControllerCreateParkApiArg = CreateParkDto;
@@ -1840,7 +1952,7 @@ export type TripControllerFindAllCustomApiArg = {
   vehicleType?: string;
 };
 export type TripControllerFindOneApiResponse =
-  /** status 200 Trip details */ Trip;
+  /** status 200 Trip details */ TripResponseDto;
 export type TripControllerFindOneApiArg = /** Trip ID */ string;
 export type TripControllerUpdateTripApiResponse =
   /** status 200 Trip updated successfully */ TripResponseDto;
@@ -1851,6 +1963,14 @@ export type TripControllerUpdateTripApiArg = {
 };
 export type TripControllerDeleteTripApiResponse = unknown;
 export type TripControllerDeleteTripApiArg = /** Trip ID */ string;
+export type TripControllerGetTripsByVehicleIdApiResponse =
+  /** status 200 Trip details */ TripArrayResponseDto;
+export type TripControllerGetTripsByVehicleIdApiArg =
+  /** id of vehicle */ string;
+export type TripControllerGetTripsByVehicleOwnerIdApiResponse =
+  /** status 200 Trip details */ TripArrayResponseDto;
+export type TripControllerGetTripsByVehicleOwnerIdApiArg =
+  /** id of vehicle owner */ string;
 export type BookingControllerCreateBookingApiResponse =
   /** status 201 Booking successfully created */ BookingResponseDto;
 export type BookingControllerCreateBookingApiArg = CreateBookingDto;
@@ -2338,6 +2458,27 @@ export type UrbanCardControllerUpdateApiArg = {
 export type UrbanCardControllerRemoveApiResponse =
   /** status 200 Urban card deleted successfully */ UrbanCardResponseDto;
 export type UrbanCardControllerRemoveApiArg = string;
+export type TransactionControllerCreateApiResponse =
+  /** status 201 Transactions created successfully */ TransactionResponseDto;
+export type TransactionControllerCreateApiArg = /** ID of the booking */ string;
+export type TransactionControllerFindAllApiResponse =
+  /** status 200 Fuel agencies retrieved successfully */ TransactionArrayResponseDto;
+export type TransactionControllerFindAllApiArg = void;
+export type TransactionControllerFindByIdApiResponse =
+  /** status 200 Transactions retrieved successfully */ TransactionResponseDto;
+export type TransactionControllerFindByIdApiArg =
+  /** ID of the transaction */ string;
+export type TransactionControllerFindMeApiResponse =
+  /** status 200 Transactions retrieved successfully */ TransactionArrayResponseDto;
+export type TransactionControllerFindMeApiArg = void;
+export type TransactionControllerFindByQueryApiResponse =
+  /** status 200 Fuel agencies retrieved successfully by searchQuery */ TransactionArrayResponseDto;
+export type TransactionControllerFindByQueryApiArg =
+  /** Query to search for transactions */ string;
+export type TransactionControllerCheckUniqueIdApiResponse =
+  /** status 200 Unique ID existence checked successfully */ TransactionResponseDto;
+export type TransactionControllerCheckUniqueIdApiArg =
+  /** Unique ID to check */ string;
 export type AppControllerGetHelloApiResponse = unknown;
 export type AppControllerGetHelloApiArg = void;
 export type User = {
@@ -2351,12 +2492,8 @@ export type User = {
   status: string;
 };
 export type UserLoginResponse = {
-  status: number;
-  data: {
-    user: User;
-    token: string;
-  };
-  message: string;
+  user: User;
+  token: string;
 };
 export type LoginUserDto = {
   email: string;
@@ -2814,6 +2951,22 @@ export type Park = {
   /** Users associated with this park */
   otherUsers: User;
 };
+export type BusStop = {
+  id: string;
+  name: string;
+  uniqueID: string;
+  coordinate: string;
+  locationCityId: string;
+  /** The date when the user was created */
+  createdAt: string;
+  /** The date when the user was last updated */
+  updatedAt: string;
+  userId: string;
+  /** The user who owns this resource */
+  user: User;
+  /** The city that this bus stop belongs to */
+  locationCity: LocationCity;
+};
 export type Driver = {
   id: string;
   userId: string;
@@ -2849,11 +3002,14 @@ export type Trip = {
   driverId: string;
   departureId: string;
   destinationId: string;
+  finalBusStopId: string;
   vehicleId: string;
   /** Departure location of the trip */
   departure: Park;
   /** Destination location of the trip */
   destination: Park;
+  /** Destination location Bus Stop of the trip */
+  finalBusStop: BusStop;
   uniqueID: string;
   cost: number;
   /** Driver of the trip */
@@ -2904,7 +3060,7 @@ export type Vehicle = {
   fleetPartners: FleetPartners;
   providerAgency: ProviderAgency;
   driver: ProviderAgency;
-  trips: Trip;
+  trips: Trip[];
 };
 export type VehicleResponseDto = {
   status: number;
@@ -3013,9 +3169,26 @@ export type UpdateVehicleRequestDto = {
 };
 export type Decimal = {};
 export type Date = {};
+export type VehicleReportComment = {
+  id: string;
+  vehicleReportId: string;
+  /** The content of the comment */
+  content: Text;
+  userId: string;
+  /** The date when the request was created */
+  createdAt: string;
+  /** The date when the request was last updated */
+  updatedAt: string;
+  /** Instance of the VehicleReport */
+  vehicleReport: VehicleReport;
+  /** The user who owns this resource */
+  user: User;
+};
 export type VehicleReport = {
   id: string;
   reportType: string;
+  /** The title of the report */
+  title?: String;
   /** The content of the report */
   description: Text;
   /** The cost for for repair */
@@ -3033,6 +3206,8 @@ export type VehicleReport = {
   vehicle: Vehicle;
   /** The user who owns this resource */
   user: User;
+  /** The comments for this report */
+  vehicleReportComment: VehicleReportComment[];
 };
 export type VehicleReportResponseDto = {
   status: number;
@@ -3042,6 +3217,7 @@ export type VehicleReportResponseDto = {
 };
 export type CreateVehicleReportDto = {
   reportType: string;
+  title: string;
   description: string;
   cost?: number;
   maintenanceDate?: string;
@@ -3056,6 +3232,7 @@ export type VehicleReportArrayResponseDto = {
 };
 export type UpdateVehicleReportDto = {
   reportType?: string;
+  title?: string;
   description?: string;
   cost?: number;
   maintenanceDate?: string;
@@ -3117,6 +3294,30 @@ export type UpdateVehicleDocumentDto = {
   vehicleId?: string;
   /** The expiration date of the document (optional) */
   expireAt?: string;
+};
+export type VehicleReportCommentResponseDto = {
+  status: number;
+  error?: string;
+  message?: string;
+  data: VehicleReportComment;
+};
+export type CreateVehicleReportCommentDto = {
+  /** The ID of the vehicle report the comment belongs to */
+  vehicleReportId: string;
+  /** The content of the comment */
+  content: string;
+};
+export type VehicleReportCommentArrayResponseDto = {
+  status: number;
+  error?: string;
+  message?: string;
+  data: VehicleReportComment[];
+};
+export type UpdateVehicleReportCommentDto = {
+  /** The ID of the vehicle report the comment belongs to */
+  vehicleReportId?: string;
+  /** The content of the comment */
+  content?: string;
 };
 export type ParkResponseDto = {
   status: number;
@@ -3182,7 +3383,8 @@ export type CreateTripDto = {
   description: string;
   driverId: string;
   departureId: string;
-  destinationId: string;
+  destinationId?: string;
+  finalBusStopId: string;
   /** trip status */
   status?:
     | "STARTED"
@@ -3216,6 +3418,7 @@ export type UpdateTripDto = {
   driverId?: string;
   departureId?: string;
   destinationId?: string;
+  finalBusStopId?: string;
   /** trip status */
   status?:
     | "STARTED"
@@ -3243,6 +3446,7 @@ export type Booking = {
   /** extra detail of trip */
   extraDetail: Text;
   seatNumber: string;
+  status: string;
   nextOfKinName: string;
   nextOfKinPhone: string;
   costOfExtraLuggage: number;
@@ -4100,22 +4304,6 @@ export type UpdateCarouselDto = {
   status: "ACTIVE" | "IN_ACTIVE";
   coordinate?: string;
 };
-export type BusStop = {
-  id: string;
-  name: string;
-  uniqueID: string;
-  coordinate: string;
-  locationCityId: string;
-  /** The date when the user was created */
-  createdAt: string;
-  /** The date when the user was last updated */
-  updatedAt: string;
-  userId: string;
-  /** The user who owns this resource */
-  user: User;
-  /** The city that this bus stop belongs to */
-  locationCity: LocationCity;
-};
 export type BusStopResponseDto = {
   status: number;
   error?: string;
@@ -4182,6 +4370,35 @@ export type UpdateUrbanCardDto = {
   title?: string;
   file?: string;
 };
+export type Transaction = {
+  id: string;
+  description: string;
+  amount: number;
+  uniqueID: string;
+  status: string;
+  /** The date when the user was created */
+  createdAt: string;
+  /** The date when the user was last updated */
+  updatedAt: string;
+  userId: string;
+  bookingId: string;
+  /** The user who owns this resource */
+  user: User;
+  /** Booking linked to this transaction */
+  booking: Booking;
+};
+export type TransactionResponseDto = {
+  status: number;
+  error?: string;
+  message?: string;
+  data: Transaction;
+};
+export type TransactionArrayResponseDto = {
+  status: number;
+  error?: string;
+  message?: string;
+  data: Transaction[];
+};
 export const {
   useAuthControllerLoginMutation,
   useAuthControllerVerifyEmailQuery,
@@ -4236,6 +4453,8 @@ export const {
   useVehicleControllerCreateVehicleRequestMutation,
   useVehicleControllerGetAllVehicleRequestsQuery,
   useLazyVehicleControllerGetAllVehicleRequestsQuery,
+  useVehicleControllerGetAllVehicleRequestsByVehicleIdQuery,
+  useLazyVehicleControllerGetAllVehicleRequestsByVehicleIdQuery,
   useVehicleControllerGetVehicleRequestByIdQuery,
   useLazyVehicleControllerGetVehicleRequestByIdQuery,
   useVehicleControllerUpdateVehicleRequestMutation,
@@ -4243,15 +4462,24 @@ export const {
   useVehicleControllerCreateVehicleReportMutation,
   useVehicleControllerGetAllVehicleReportsQuery,
   useLazyVehicleControllerGetAllVehicleReportsQuery,
+  useVehicleControllerGetAllVehicleReportsByVehicleIdQuery,
+  useLazyVehicleControllerGetAllVehicleReportsByVehicleIdQuery,
   useVehicleControllerGetVehicleReportByIdQuery,
   useLazyVehicleControllerGetVehicleReportByIdQuery,
   useVehicleControllerUpdateVehicleReportMutation,
   useVehicleControllerDeleteVehicleReportMutation,
   useVehicleDocumentControllerCreateMutation,
-  useVehicleDocumentControllerSearchQuery,
-  useLazyVehicleDocumentControllerSearchQuery,
+  useVehicleDocumentControllerFindAllQuery,
+  useLazyVehicleDocumentControllerFindAllQuery,
+  useVehicleDocumentControllerFindAllByVehicleIdQuery,
+  useLazyVehicleDocumentControllerFindAllByVehicleIdQuery,
   useVehicleDocumentControllerUpdateMutation,
   useVehicleDocumentControllerDeleteMutation,
+  useVehicleReportCommentControllerCreateMutation,
+  useVehicleReportCommentControllerFindAllQuery,
+  useLazyVehicleReportCommentControllerFindAllQuery,
+  useVehicleReportCommentControllerUpdateMutation,
+  useVehicleReportCommentControllerDeleteMutation,
   useParkControllerCreateParkMutation,
   useParkControllerFindAllParksQuery,
   useLazyParkControllerFindAllParksQuery,
@@ -4268,6 +4496,10 @@ export const {
   useLazyTripControllerFindOneQuery,
   useTripControllerUpdateTripMutation,
   useTripControllerDeleteTripMutation,
+  useTripControllerGetTripsByVehicleIdQuery,
+  useLazyTripControllerGetTripsByVehicleIdQuery,
+  useTripControllerGetTripsByVehicleOwnerIdQuery,
+  useLazyTripControllerGetTripsByVehicleOwnerIdQuery,
   useBookingControllerCreateBookingMutation,
   useBookingControllerFindAllBookingsQuery,
   useLazyBookingControllerFindAllBookingsQuery,
@@ -4441,6 +4673,17 @@ export const {
   useLazyUrbanCardControllerFindOneQuery,
   useUrbanCardControllerUpdateMutation,
   useUrbanCardControllerRemoveMutation,
+  useTransactionControllerCreateMutation,
+  useTransactionControllerFindAllQuery,
+  useLazyTransactionControllerFindAllQuery,
+  useTransactionControllerFindByIdQuery,
+  useLazyTransactionControllerFindByIdQuery,
+  useTransactionControllerFindMeQuery,
+  useLazyTransactionControllerFindMeQuery,
+  useTransactionControllerFindByQueryQuery,
+  useLazyTransactionControllerFindByQueryQuery,
+  useTransactionControllerCheckUniqueIdQuery,
+  useLazyTransactionControllerCheckUniqueIdQuery,
   useAppControllerGetHelloQuery,
   useLazyAppControllerGetHelloQuery,
 } = injectedRtkApi;

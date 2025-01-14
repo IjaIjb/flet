@@ -19,19 +19,20 @@ import { Modal } from "react-responsive-modal";
 // Define the structure of a row in the data
 interface Row {
   id: string; // Add the `id` field
+  title: string; // Add the `id` field
   description: string;
   cost: string;
   maintenanceDate: string;
   index: number; // Add the index property
 }
 // Define the structure of a column in the table
-interface Column {
-  title: string;
-  field: keyof Row | string; // Ensure `field` matches the keys of `Row`
-  headerStyle?: React.CSSProperties;
-  cellStyle?: React.CSSProperties;
-  render?: (rowData: Row) => React.JSX.Element;
-}
+// interface Column {
+//   title: string;
+//   field: keyof Row | string; // Ensure `field` matches the keys of `Row`
+//   headerStyle?: React.CSSProperties;
+//   cellStyle?: React.CSSProperties;
+//   render?: (rowData: Row) => React.JSX.Element;
+// }
 
 function Delivery() {
   const router = useRouter();
@@ -71,6 +72,7 @@ function Delivery() {
         return {
           index: index + 1, // Add a 1-based index
           id: report?.id || "N/A",
+          title: report.title || "N/A",
           description: report.description || "N/A",
           cost: report.cost || "N/A",
           maintenanceDate: formattedDate, // Use formatted date and time
@@ -128,11 +130,11 @@ function Delivery() {
 
   const exportToCsv = () => {
     // Fixing the error here by ensuring the `row[col.field]` is typed correctly
-    const headers = columns.map((col) => col.title).join(",") + "\n";
+    const headers = columns.map((col:any) => col.title).join(",") + "\n";
     const rows = data
       .map((row) => {
         return columns
-          .map((col) => row[col.field as keyof Row]) // Ensure `col.field` is typed as keyof Row
+          .map((col:any) => row[col.field as keyof Row]) // Ensure `col.field` is typed as keyof Row
           .join(",");
       })
       .join("\n");
@@ -146,18 +148,36 @@ function Delivery() {
     link.click();
   };
 
-  const columns: Column[] = [
+  const formatToNaira = (amount: number | undefined | null): string => {
+    if (amount == null) return '₦0.00';
+    return new Intl.NumberFormat('en-NG', {
+      style: 'currency',
+      currency: 'NGN',
+    }).format(amount);
+  };
+
+  
+  const columns: any = [
     {
       title: "S/N",
       field: "index",
-      render: (rowData) => <div>{rowData.index}</div>,
+      render: (rowData:any) => <div>{rowData.index}</div>,
+    },
+    {
+      title: "Title",
+      field: "title",
+      // headerStyle: {  textAlign: "center" } as React.CSSProperties,
+      // cellStyle: { paddingLeft: "2%" } as React.CSSProperties,
+      render: (rowData:any) => (
+        <div className="">{rowData.title}</div>
+      ),
     },
     {
       title: "Description",
       field: "description",
       // headerStyle: { textAlign: "center" } as React.CSSProperties,
       // cellStyle: { textAlign: "center" } as React.CSSProperties,
-      render: (rowData) => (
+      render: (rowData:any) => (
         <div className="truncate max-w-[200px]">{rowData.description}</div>
       ),
     },
@@ -166,14 +186,14 @@ function Delivery() {
       field: "cost",
       // headerStyle: {  textAlign: "center" } as React.CSSProperties,
       // cellStyle: { paddingLeft: "2%" } as React.CSSProperties,
-      render: (rowData) => <div className="">{rowData.cost}</div>,
+      render: (rowData) => <div className="">{formatToNaira(rowData.cost)}</div>,
     },
     {
       title: "Date",
       field: "maintenanceDate",
       // headerStyle: {  textAlign: "center" } as React.CSSProperties,
       // cellStyle: { paddingLeft: "2%" } as React.CSSProperties,
-      render: (rowData) => <div className="">{rowData.maintenanceDate}</div>,
+      render: (rowData:any) => <div className="">{rowData.maintenanceDate}</div>,
     },
 
     {
@@ -181,7 +201,7 @@ function Delivery() {
       field: "actions",
       // headerStyle: { textAlign: "center" } as React.CSSProperties,
       // cellStyle: { textAlign: "center" } as React.CSSProperties,
-      render: (rowData) => {
+      render: (rowData:any) => {
         return (
           <div
             onClick={() => handleVehicleReportDetails(rowData?.id)}

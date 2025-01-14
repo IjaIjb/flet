@@ -43,21 +43,21 @@ interface BusFrontUploadProps {
 // }
 
 
-interface LoginValues {
-  title?: string;
-  firstname: string;
-  lastname: string;
-  phone: string;
-  city: string;
-  avatar?: string;
-  password: string;
-  email: string;
-  role?: string;
-  userId?: string;
-  parkId?: string;
-  userType: string;
-  userCategory: string;
-}
+// interface LoginValues {
+//   title?: string;
+//   firstname: string;
+//   lastname: string;
+//   phone: string;
+//   city: string;
+//   avatar?: string;
+//   password: string;
+//   email: string;
+//   role?: string;
+//   userId?: string;
+//   parkId?: string;
+//   userType: string;
+//   userCategory: string;
+// }
 const RegisterIndividual = () => {
   const router = useRouter();
     const dispatch = useAppDispatch(); // Access `dispatch`
@@ -385,7 +385,7 @@ const RegisterIndividual = () => {
   // };
 
 
-const onSubmit = async (values: LoginValues) => {
+const onSubmit = async (values: any) => {
   if (showScreen === 1) {
     setShowScreen(2);
   } else {
@@ -412,7 +412,7 @@ const onSubmit = async (values: LoginValues) => {
 
         // Perform login
         try {
-          const loginResponse = await login(loginCredentials).unwrap();
+          const loginResponse:any = await login(loginCredentials).unwrap();
 
           if (loginResponse?.status === 200) {
             // Store token and user data in localStorage

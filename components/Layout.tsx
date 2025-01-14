@@ -8,7 +8,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/navigation";
 import "react-responsive-modal/styles.css";
-import { Modal } from "react-responsive-modal";
+// import { Modal } from "react-responsive-modal";
 interface DashboardLayoutProps {
   children: ReactNode;
 }
@@ -18,7 +18,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const [openDrawer, setOpenDrawer] = useState(false);
   const [showSideBar, setShowSideBar] = useState(false);
   // const [showNotification, setShowNotification] = useState<boolean>(false);
-  const [openM, setOpen] = useState(false);
+  // const [openM, setOpen] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("auth_token");
@@ -30,17 +30,17 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     }
   }, [router]);
 
-  const onOpenModal = () => {
-    // e.preventDefault();
-    setOpen(true);
-  };
-  const onCloseModal = () => setOpen(false);
+  // const onOpenModal = () => {
+  //   // e.preventDefault();
+  //   setOpen(true);
+  // };
+  // const onCloseModal = () => setOpen(false);
 
-    useEffect(() => {
-      // if (isLoading) {
-        onOpenModal();
+    // useEffect(() => {
+    //   // if (isLoading) {
+    //     onOpenModal();
      
-    }, []);
+    // }, []);
   // Toggle Side Drawer
   const toggleDrawer = () => {
     setOpenDrawer((prev) => !prev);
@@ -114,7 +114,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           {/* Render children */}
           {children}
         </div>
-        <Modal
+        {/* <Modal
   classNames={{
     modal: "rounded-[16px] overflow-visible relative bg-white shadow-lg p-8",
   }}
@@ -132,7 +132,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       We’re working hard to bring this feature to you. Stay tuned for updates!
     </p>
   </div>
-</Modal>
+</Modal> */}
 
 
       </div>

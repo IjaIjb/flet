@@ -20,20 +20,20 @@ interface ImageUploadProps {
   // setFile: (file: File | undefined) => void; // Passes the File to the parent for submission
 }
 
-interface LoginValues {
-  companyName: string;
-  companyAddress: string;
-  companyRC: string;
-  phone: string;
-  avatar?: string;
-  password: string;
-  email: string;
-  userId?: string;
-  parkId?: string;
-  role?: string;
-  userType?: string;
-  userCategory?: string;
-}
+// interface LoginValues {
+//   companyName: string;
+//   companyAddress: string;
+//   companyRC: string;
+//   phone: string;
+//   avatar?: string;
+//   password: string;
+//   email: string;
+//   userId?: string;
+//   parkId?: string;
+//   role?: string;
+//   userType?: string;
+//   userCategory?: string;
+// }
 
 const Page = () => {
       const dispatch = useAppDispatch(); // Access `dispatch`
@@ -118,7 +118,7 @@ const Page = () => {
     phone: Yup.string().required("Phone number is required"),
   });
 
-  const onSubmit = async (values: LoginValues) => {
+  const onSubmit = async (values: any) => {
     if (showScreen === 1) {
       setShowScreen(2);
     } else {
@@ -146,7 +146,7 @@ const Page = () => {
           // Perform login
           try {
             // Use the correct type here for loginResponse
-            const loginResponse = await login(loginCredentials).unwrap();
+            const loginResponse: any = await login(loginCredentials).unwrap();
   
             if (loginResponse.status >= 200 || loginResponse.status < 300) {
               // Store token and user data in localStorage

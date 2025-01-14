@@ -15,6 +15,7 @@ import LoadingSpinner from "@/components/UI/LoadingSpinner";
 import LoadingSpinnerPage from "@/components/UI/LoadingSpinnerPage";
 
 interface LoginValues {
+  title: string;
   reportType: string;
   description: string;
   cost?: number;
@@ -24,7 +25,7 @@ interface LoginValues {
 }
 
 function VehicleReport() {
-   const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false);
   const [vehicleId, setVehicleId] = useState<string>("");
   // const [isLoading, setIsLoading] = useState<boolean>(false); // Manage loading state manually
 
@@ -35,7 +36,7 @@ function VehicleReport() {
       setVehicleId(storedId);
     }
   }, []);
-console.log(vehicleId)
+  console.log(vehicleId);
   const [writeReport, { isLoading }] =
     useVehicleControllerCreateVehicleReportMutation();
 
@@ -45,6 +46,7 @@ console.log(vehicleId)
   const [emergencyReport, setEmergencyReport] = useState(false);
 
   const initialData = {
+    title: "",
     reportType: "",
     description: "",
     cost: 0,
@@ -65,13 +67,13 @@ console.log(vehicleId)
   };
   const onCloseModal = () => setOpen(false);
 
-    useEffect(() => {
-      if (isLoading) {
-        onOpenModal();
-      } else {
-        onCloseModal();
-      }
-    }, [isLoading]);
+  useEffect(() => {
+    if (isLoading) {
+      onOpenModal();
+    } else {
+      onCloseModal();
+    }
+  }, [isLoading]);
 
   const onOpenReportModal = () => {
     // e.preventDefault();
@@ -219,12 +221,13 @@ console.log(vehicleId)
 
   const onSubmitReport = async (values: LoginValues, reportType: string) => {
     const payload = {
+      title: values.title,
       reportType: reportType,
       description: values.description,
       cost: values.cost ? Number(values.cost) : undefined, // Ensure number type
       vehicleId: vehicleId,
-      maintenanceDate:new Date().toISOString(),
-      extraData: []
+      maintenanceDate: new Date().toISOString(),
+      extraData: [],
     };
 
     console.log("Payload sent to API:", payload);
@@ -257,15 +260,14 @@ console.log(vehicleId)
   return (
     <div>
       <DashboardLayout>
-      {isLoading ? null : (
+        {isLoading ? null : (
+          <div className="bg-white overflow-hidden rounded-[8px] px-3 md:px-8 py-7 md:py-9">
+            <div className="flex w-full justify-between gap-5 items-center">
+              <div className="w-full">
+                <BreadcrumbsDisplay />
+              </div>
 
-        <div className="bg-white overflow-hidden rounded-[8px] px-3 md:px-8 py-7 md:py-9">
-          <div className="flex w-full justify-between gap-5 items-center">
-            <div className="w-full">
-              <BreadcrumbsDisplay />
-            </div>
-
-            {/* <div className="relative flex  ">
+              {/* <div className="relative flex  ">
               <div className="absolute inset-y-0 left-2 flex items-center pl-3 pointer-events-none">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -289,53 +291,53 @@ console.log(vehicleId)
                 //   required
               />
             </div> */}
-          </div>
+            </div>
 
-          <div
-            onClick={handleWriteReport}
-            className="py-3 w-fit mt-7 cursor-pointer px-7 bg-[#036E030F]/[6%] rounded-[10px] text-primary"
-          >
-            Write Report
-          </div>
-          <div className=" pt-[40px]">
-            <ol className="list-none flex items-center md:gap-9 mb-5  border-b-[1px] w-fit border-[#D4CECE] gap-4 ">
-              <li
-                className={`${
-                  vehicleReportValues.repairElement
-                    ? "border-primary border-b-[3px] text-[16px] lg:text-[20px] text-primary"
-                    : "border-b-[0] text-blackText"
-                }  text-center   px-3 md:px-6 py-2 inline-block text-[16px] lg:text-[20px] font-semibold  hover:text-[#036E03]/[80%] cursor-pointer`}
-                onClick={() => handleRepairState()}
-              >
-               Maintenance
-              </li>
+            <div
+              onClick={handleWriteReport}
+              className="py-3 w-fit mt-7 cursor-pointer px-7 bg-[#036E030F]/[6%] rounded-[10px] text-primary"
+            >
+              Write Report
+            </div>
+            <div className=" pt-[40px]">
+              <ol className="list-none flex items-center md:gap-9 mb-5  border-b-[1px] w-fit border-[#D4CECE] gap-4 ">
+                <li
+                  className={`${
+                    vehicleReportValues.repairElement
+                      ? "border-primary border-b-[3px] text-[16px] lg:text-[20px] text-primary"
+                      : "border-b-[0] text-blackText"
+                  }  text-center   px-3 md:px-6 py-2 inline-block text-[16px] lg:text-[20px] font-semibold  hover:text-[#036E03]/[80%] cursor-pointer`}
+                  onClick={() => handleRepairState()}
+                >
+                  Maintenance
+                </li>
 
-              <li
-                className={`${
-                  vehicleReportValues.deliveryElement
-                    ? "border-primary border-b-[3px] text-[16px] lg:text-[20px] text-primary "
-                    : "border-b-[0] text-blackText"
-                } text-center py-2 px-2 md:px-5 inline-block text-[16px] lg:text-[20px] font-semibold  hover:text-[#036E03]/[80%] cursor-pointer`}
-                onClick={() => handleDeliveryState()}
-              >
-                Delivery
-              </li>
+                <li
+                  className={`${
+                    vehicleReportValues.deliveryElement
+                      ? "border-primary border-b-[3px] text-[16px] lg:text-[20px] text-primary "
+                      : "border-b-[0] text-blackText"
+                  } text-center py-2 px-2 md:px-5 inline-block text-[16px] lg:text-[20px] font-semibold  hover:text-[#036E03]/[80%] cursor-pointer`}
+                  onClick={() => handleDeliveryState()}
+                >
+                  Delivery
+                </li>
 
-              <li
-                className={`${
-                  vehicleReportValues.emergencyElement
-                    ? "border-primary border-b-[3px] text-[16px] lg:text-[20px] text-primary "
-                    : "border-b-[0] text-blackText"
-                } text-center py-2 px-2 md:px-5 inline-block text-[16px] lg:text-[20px] font-semibold  hover:text-[#036E03]/[80%] cursor-pointer`}
-                onClick={() => handleEmergencyState()}
-              >
-                Emergency
-              </li>
-            </ol>
+                <li
+                  className={`${
+                    vehicleReportValues.emergencyElement
+                      ? "border-primary border-b-[3px] text-[16px] lg:text-[20px] text-primary "
+                      : "border-b-[0] text-blackText"
+                  } text-center py-2 px-2 md:px-5 inline-block text-[16px] lg:text-[20px] font-semibold  hover:text-[#036E03]/[80%] cursor-pointer`}
+                  onClick={() => handleEmergencyState()}
+                >
+                  Emergency
+                </li>
+              </ol>
 
-            <div className="pt-3">{showDefaultConnector()}</div>
+              <div className="pt-3">{showDefaultConnector()}</div>
 
-            {/* <h4 className="text-[#000] text-[35px] font-[600] pb-[60px]">Login</h4>
+              {/* <h4 className="text-[#000] text-[35px] font-[600] pb-[60px]">Login</h4>
       <h5 className="text-[#958F8F] text-[26px] font-[600]">
         Login into your account
       </h5>
@@ -343,321 +345,404 @@ console.log(vehicleId)
         Thank you for getting back to KwickMall,
       </h5> */}
 
-            <Modal
-              classNames={{
-                modal: "rounded-[10px] overflow-hidden relative",
-              }}
-              open={openReport}
-              onClose={onCloseReportModal}
-              center
-            >
-              <div className="md:w-[600px] px-2 md:pt-4 md:px-8 pb-4">
-                <div className=" flex justify-center pt-4 pb-4">
-                  <h4 className="text-primary text-[22px] md:text-[24px]">
-                    Select the type of report you want to write
-                  </h4>
-                </div>
+              <Modal
+                classNames={{
+                  modal: "rounded-[10px] overflow-hidden relative",
+                }}
+                open={openReport}
+                onClose={onCloseReportModal}
+                center
+              >
+                <div className="md:w-[600px] px-2 md:pt-4 md:px-8 pb-4">
+                  <div className=" flex justify-center pt-4 pb-4">
+                    <h4 className="text-primary text-[22px] md:text-[24px]">
+                      Select the type of report you want to write
+                    </h4>
+                  </div>
 
-                <div className=" flex flex-col gap-2 body-font font-poppins">
-                  <div className="flex text-center flex-col gap-2">
-                  <div
-                      onClick={handleMaintenanceReport}
-                      className="text-blackText py-2 cursor-pointer hover:bg-primary/[30%] text-[20px]"
-                    >
-                      Maintenance Report
-                    </div>
-                    <div
-                      onClick={handleDeliveryReport}
-                      className="text-blackText py-2 cursor-pointer hover:bg-primary/[30%] text-[20px]"
-                    >
-                      Delivery Report
-                    </div>
-               
-                    <div
-                      onClick={handleEmergencyReport}
-                      className="text-blackText py-2 cursor-pointer hover:bg-primary/[30%] text-[20px]"
-                    >
-                      Emergency Report
+                  <div className=" flex flex-col gap-2 body-font font-poppins">
+                    <div className="flex text-center flex-col gap-2">
+                      <div
+                        onClick={handleMaintenanceReport}
+                        className="text-blackText py-2 cursor-pointer hover:bg-primary/[30%] text-[20px]"
+                      >
+                        Maintenance Report
+                      </div>
+                      <div
+                        onClick={handleDeliveryReport}
+                        className="text-blackText py-2 cursor-pointer hover:bg-primary/[30%] text-[20px]"
+                      >
+                        Delivery Report
+                      </div>
+
+                      <div
+                        onClick={handleEmergencyReport}
+                        className="text-blackText py-2 cursor-pointer hover:bg-primary/[30%] text-[20px]"
+                      >
+                        Emergency Report
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </Modal>
+              </Modal>
 
-            <Modal
-              classNames={{
-                modal: "rounded-[10px] overflow-hidden relative",
-              }}
-              open={deliveryReport}
-              onClose={onCloseDeliveryReportModal}
-              center
-            >
-              <div className="md:w-[600px] px-2 md:pt-4 md:px-8 pb-4">
-                <div className=" flex justify-center pt-4 pb-4">
-                  <h4 className="text-primary text-[22px] md:text-[24px]">
-                    Delivery Report
-                  </h4>
-                </div>
+              <Modal
+                classNames={{
+                  modal: "rounded-[10px] overflow-hidden relative",
+                }}
+                open={deliveryReport}
+                onClose={onCloseDeliveryReportModal}
+                center
+              >
+                <div className="md:w-[600px] px-2 md:pt-4 md:px-8 pb-4">
+                  <div className=" flex justify-center pt-4 pb-4">
+                    <h4 className="text-primary text-[22px] md:text-[24px]">
+                      Delivery Report
+                    </h4>
+                  </div>
 
-                <Formik
-                  initialValues={initialData}
-                  validationSchema={validation}
-                  onSubmit={(values: any) => onSubmitReport(values, "DELIVERY")}
-                >
-                  {({ setFieldValue }) => (
-                    <Form className="">
-                      <div className=" flex flex-col gap-2 body-font font-poppins">
-                        <div className=" mb-3 w-full relative">
-                          <label
-                            className=" text-[#2B2C2B] text-[16px] font-[500] "
-                            htmlFor="cost"
-                          >
-                            Cost
-                          </label>
-                          <Field
-                            className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
-                            name="cost"
-                            type="number"
-                            id="cost"
-                            onChange={(
-                              e: React.ChangeEvent<HTMLInputElement>
-                            ) =>
-                              setFieldValue("cost", parseFloat(e.target.value))
-                            }
-                            placeholder=""
-                          />
-                          <p className="text-red-700 text-xs mt-1 ">
-                            <ErrorMessage name="cost" />
-                          </p>
-                        </div>
+                  <Formik
+                    initialValues={initialData}
+                    validationSchema={validation}
+                    onSubmit={(values: any) =>
+                      onSubmitReport(values, "DELIVERY")
+                    }
+                  >
+                    {({ setFieldValue }) => (
+                      <Form className="">
+                        <div className=" flex flex-col gap-2 body-font font-poppins">
+                          <div className=" mb-3 w-full relative">
+                            <label
+                              className=" text-[#2B2C2B] text-[16px] font-[500] "
+                              htmlFor="title"
+                            >
+                              Title
+                            </label>
+                            <Field
+                              className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
+                              name="title"
+                              type="text"
+                              id="title"
+                              // onChange={(
+                              //   e: React.ChangeEvent<HTMLInputElement>
+                              // ) =>
+                              //   setFieldValue("title", parseFloat(e.target.value))
+                              // }
+                              placeholder=""
+                            />
+                            <p className="text-red-700 text-xs mt-1 ">
+                              <ErrorMessage name="title" />
+                            </p>
+                          </div>
 
-                        <div className="flex flex-col space-y-2">
-                          <label
-                            htmlFor="description"
-                            className="text-[20px] font-[400] text-gray-700"
-                          >
-                            Description
-                          </label>
-                          <Field
-                            as="textarea"
-                            id="description"
-                            name="description"
-                            className="w-full p-3 text-sm text-gray-800 border border-[#9B9898] rounded-[10px] focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-                            rows="6"
-                            placeholder="Enter your description"
-                          />
-                          <p className="text-red-700 text-xs mt-1 ">
-                            <ErrorMessage name="description" />
-                          </p>
-                          {/* <textarea
+                          <div className=" mb-3 w-full relative">
+                            <label
+                              className=" text-[#2B2C2B] text-[16px] font-[500] "
+                              htmlFor="cost"
+                            >
+                              Cost
+                            </label>
+                            <Field
+                              className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
+                              name="cost"
+                              type="number"
+                              id="cost"
+                              onChange={(
+                                e: React.ChangeEvent<HTMLInputElement>
+                              ) => {
+                                const value = e.target.value; // Get the raw input value as a string
+                                const parsedValue =
+                                  value === "" ? 0 : parseFloat(value); // Default to 0 if the input is empty
+                                setFieldValue("cost", parsedValue); // Always pass a number
+                              }}
+                              placeholder=""
+                            />
+                            <p className="text-red-700 text-xs mt-1 ">
+                              <ErrorMessage name="cost" />
+                            </p>
+                          </div>
+
+                          <div className="flex flex-col space-y-2">
+                            <label
+                              htmlFor="description"
+                              className="text-[20px] font-[400] text-gray-700"
+                            >
+                              Description
+                            </label>
+                            <Field
+                              as="textarea"
+                              id="description"
+                              name="description"
+                              className="w-full p-3 text-sm text-gray-800 border border-[#9B9898] rounded-[10px] focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                              rows="6"
+                              placeholder="Enter your description"
+                            />
+                            <p className="text-red-700 text-xs mt-1 ">
+                              <ErrorMessage name="description" />
+                            </p>
+                            {/* <textarea
         id="message"
         rows={6}
         placeholder="Type your message here..."
         className="w-full p-3 text-sm text-gray-800 border border-[#9B9898] rounded-[10px] focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
       ></textarea> */}
+                          </div>
+                          <button
+                            type="submit"
+                            disabled={isLoading}
+                            className="bg-primary disabled:bg-gray-500 py-3 px-10 text-[20px] w-fit text-white rounded-[10px]"
+                          >
+                            {isLoading ? <LoadingSpinner /> : "Submit"}
+                          </button>
                         </div>
-                        <button
-                          type="submit"
-                          disabled={isLoading}
-                          className="bg-primary disabled:bg-gray-500 py-3 px-10 text-[20px] w-fit text-white rounded-[10px]"
-                        >
-                          {isLoading ? <LoadingSpinner /> : "Submit"}
-                        </button>
-                      </div>
-                    </Form>
-                  )}
-                </Formik>
-              </div>
-            </Modal>
-
-            <Modal
-              classNames={{
-                modal: "rounded-[10px] overflow-hidden relative",
-              }}
-              open={maintenanceReport}
-              onClose={onCloseMaintenanceReportModal}
-              center
-            >
-              <div className="md:w-[600px] px-2 md:pt-4 md:px-8 pb-4">
-                <div className=" flex justify-center pt-4 pb-4">
-                  <h4 className="text-primary text-[22px] md:text-[24px]">
-                    Maintenance Report
-                  </h4>
+                      </Form>
+                    )}
+                  </Formik>
                 </div>
+              </Modal>
 
-                <Formik
-                  initialValues={initialData}
-                  validationSchema={validation}
-                  onSubmit={(values) => onSubmitReport(values, "MAINTENANCE")}
-                >
-                  {({ setFieldValue }) => (
-                    <Form className="">
-                      <div className=" flex flex-col gap-2 body-font font-poppins">
-                        <div className=" mb-3 w-full relative">
-                          <label
-                            className=" text-[#2B2C2B] text-[16px] font-[500] "
-                            htmlFor="cost"
-                          >
-                            Cost
-                          </label>
-                          <Field
-                            className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
-                            name="cost"
-                            type="number"
-                            id="cost"
-                            onChange={(
-                              e: React.ChangeEvent<HTMLInputElement>
-                            ) =>
-                              setFieldValue("cost", parseFloat(e.target.value))
-                            }
-                            placeholder=""
-                          />
-                          <p className="text-red-700 text-xs mt-1 ">
-                            <ErrorMessage name="cost" />
-                          </p>
-                        </div>
+              <Modal
+                classNames={{
+                  modal: "rounded-[10px] overflow-hidden relative",
+                }}
+                open={maintenanceReport}
+                onClose={onCloseMaintenanceReportModal}
+                center
+              >
+                <div className="md:w-[600px] px-2 md:pt-4 md:px-8 pb-4">
+                  <div className=" flex justify-center pt-4 pb-4">
+                    <h4 className="text-primary text-[22px] md:text-[24px]">
+                      Maintenance Report
+                    </h4>
+                  </div>
 
-                        <div className="flex flex-col space-y-2">
-                          <label
-                            htmlFor="description"
-                            className="text-[20px] font-[400] text-gray-700"
-                          >
-                            Description
-                          </label>
-                          <Field
-                            as="textarea"
-                            id="description"
-                            name="description"
-                            className="w-full p-3 text-sm text-gray-800 border border-[#9B9898] rounded-[10px] focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-                            rows="6"
-                            placeholder="Enter your description"
-                          />
-                          <p className="text-red-700 text-xs mt-1 ">
-                            <ErrorMessage name="description" />
-                          </p>
-                          {/* <textarea
+                  <Formik
+                    initialValues={initialData}
+                    validationSchema={validation}
+                    onSubmit={(values) => onSubmitReport(values, "MAINTENANCE")}
+                  >
+                    {({ setFieldValue }) => (
+                      <Form className="">
+                        <div className=" flex flex-col gap-2 body-font font-poppins">
+                          <div className=" mb-3 w-full relative">
+                            <label
+                              className=" text-[#2B2C2B] text-[16px] font-[500] "
+                              htmlFor="title"
+                            >
+                              Title
+                            </label>
+                            <Field
+                              className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
+                              name="title"
+                              type="text"
+                              id="title"
+                              // onChange={(
+                              //   e: React.ChangeEvent<HTMLInputElement>
+                              // ) =>
+                              //   setFieldValue("title", parseFloat(e.target.value))
+                              // }
+                              placeholder=""
+                            />
+                            <p className="text-red-700 text-xs mt-1 ">
+                              <ErrorMessage name="title" />
+                            </p>
+                          </div>
+
+                          <div className=" mb-3 w-full relative">
+                            <label
+                              className=" text-[#2B2C2B] text-[16px] font-[500] "
+                              htmlFor="cost"
+                            >
+                              Cost
+                            </label>
+                            <Field
+                              className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
+                              name="cost"
+                              type="number"
+                              id="cost"
+                              onChange={(
+                                e: React.ChangeEvent<HTMLInputElement>
+                              ) => {
+                                const value = e.target.value; // Get the raw input value as a string
+                                const parsedValue =
+                                  value === "" ? 0 : parseFloat(value); // Default to 0 if the input is empty
+                                setFieldValue("cost", parsedValue); // Always pass a number
+                              }}
+                              placeholder=""
+                            />
+                            <p className="text-red-700 text-xs mt-1 ">
+                              <ErrorMessage name="cost" />
+                            </p>
+                          </div>
+
+                          <div className="flex flex-col space-y-2">
+                            <label
+                              htmlFor="description"
+                              className="text-[20px] font-[400] text-gray-700"
+                            >
+                              Description
+                            </label>
+                            <Field
+                              as="textarea"
+                              id="description"
+                              name="description"
+                              className="w-full p-3 text-sm text-gray-800 border border-[#9B9898] rounded-[10px] focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                              rows="6"
+                              placeholder="Enter your description"
+                            />
+                            <p className="text-red-700 text-xs mt-1 ">
+                              <ErrorMessage name="description" />
+                            </p>
+                            {/* <textarea
         id="message"
         rows={6}
         placeholder="Type your message here..."
         className="w-full p-3 text-sm text-gray-800 border border-[#9B9898] rounded-[10px] focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
       ></textarea> */}
+                          </div>
+                          <button
+                            type="submit"
+                            disabled={isLoading}
+                            className="bg-primary disabled:bg-gray-500 py-3 px-10 text-[20px] w-fit text-white rounded-[10px]"
+                          >
+                            {isLoading ? <LoadingSpinner /> : "Submit"}
+                          </button>
                         </div>
-                        <button
-                          type="submit"
-                          disabled={isLoading}
-                          className="bg-primary disabled:bg-gray-500 py-3 px-10 text-[20px] w-fit text-white rounded-[10px]"
-                        >
-                          {isLoading ? <LoadingSpinner /> : "Submit"}
-                        </button>
-                      </div>
-                    </Form>
-                  )}
-                </Formik>
-              </div>
-            </Modal>
-
-            <Modal
-              classNames={{
-                modal: "rounded-[10px] overflow-hidden relative",
-              }}
-              open={emergencyReport}
-              onClose={onCloseEmergencyReportModal}
-              center
-            >
-              <div className="md:w-[600px] px-2 md:pt-4 md:px-8 pb-4">
-                <div className=" flex justify-center pt-4 pb-4">
-                  <h4 className="text-primary text-[22px] md:text-[24px]">
-                    Emergency Report
-                  </h4>
+                      </Form>
+                    )}
+                  </Formik>
                 </div>
-                <Formik
-                  initialValues={initialData}
-                  validationSchema={validation}
-                  onSubmit={(values) => onSubmitReport(values, "EMERGENCY")}
-                >
-                  {({ setFieldValue }) => (
-                    <Form className="">
-                      <div className=" flex flex-col gap-2 body-font font-poppins">
-                        <div className=" mb-3 w-full relative">
-                          <label
-                            className=" text-[#2B2C2B] text-[16px] font-[500] "
-                            htmlFor="cost"
-                          >
-                            Cost
-                          </label>
-                          <Field
-                            className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
-                            name="cost"
-                            type="number"
-                            id="cost"
-                            onChange={(
-                              e: React.ChangeEvent<HTMLInputElement>
-                            ) =>
-                              setFieldValue("cost", parseFloat(e.target.value))
-                            }
-                            placeholder=""
-                          />
-                          <p className="text-red-700 text-xs mt-1 ">
-                            <ErrorMessage name="cost" />
-                          </p>
-                        </div>
+              </Modal>
 
-                        <div className="flex flex-col space-y-2">
-                          <label
-                            htmlFor="description"
-                            className="text-[20px] font-[400] text-gray-700"
-                          >
-                            Description
-                          </label>
-                          <Field
-                            as="textarea"
-                            id="description"
-                            name="description"
-                            className="w-full p-3 text-sm text-gray-800 border border-[#9B9898] rounded-[10px] focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-                            rows="6"
-                            placeholder="Enter your description"
-                          />
-                          <p className="text-red-700 text-xs mt-1 ">
-                            <ErrorMessage name="description" />
-                          </p>
-                          {/* <textarea
+              <Modal
+                classNames={{
+                  modal: "rounded-[10px] overflow-hidden relative",
+                }}
+                open={emergencyReport}
+                onClose={onCloseEmergencyReportModal}
+                center
+              >
+                <div className="md:w-[600px] px-2 md:pt-4 md:px-8 pb-4">
+                  <div className=" flex justify-center pt-4 pb-4">
+                    <h4 className="text-primary text-[22px] md:text-[24px]">
+                      Emergency Report
+                    </h4>
+                  </div>
+                  <Formik
+                    initialValues={initialData}
+                    validationSchema={validation}
+                    onSubmit={(values) => onSubmitReport(values, "EMERGENCY")}
+                  >
+                    {({ setFieldValue }) => (
+                      <Form className="">
+                        <div className=" flex flex-col gap-2 body-font font-poppins">
+                          <div className=" mb-3 w-full relative">
+                            <label
+                              className=" text-[#2B2C2B] text-[16px] font-[500] "
+                              htmlFor="title"
+                            >
+                              Title
+                            </label>
+                            <Field
+                              className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
+                              name="title"
+                              type="text"
+                              id="title"
+                              // onChange={(
+                              //   e: React.ChangeEvent<HTMLInputElement>
+                              // ) =>
+                              //   setFieldValue("title", parseFloat(e.target.value))
+                              // }
+                              placeholder=""
+                            />
+                            <p className="text-red-700 text-xs mt-1 ">
+                              <ErrorMessage name="title" />
+                            </p>
+                          </div>
+
+                          <div className=" mb-3 w-full relative">
+                            <label
+                              className=" text-[#2B2C2B] text-[16px] font-[500] "
+                              htmlFor="cost"
+                            >
+                              Cost
+                            </label>
+                            <Field
+                              className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
+                              name="cost"
+                              type="number"
+                              id="cost"
+                              onChange={(
+                                e: React.ChangeEvent<HTMLInputElement>
+                              ) => {
+                                const value = e.target.value; // Get the raw input value as a string
+                                const parsedValue =
+                                  value === "" ? 0 : parseFloat(value); // Default to 0 if the input is empty
+                                setFieldValue("cost", parsedValue); // Always pass a number
+                              }}
+                              placeholder=""
+                            />
+                            <p className="text-red-700 text-xs mt-1 ">
+                              <ErrorMessage name="cost" />
+                            </p>
+                          </div>
+
+                          <div className="flex flex-col space-y-2">
+                            <label
+                              htmlFor="description"
+                              className="text-[20px] font-[400] text-gray-700"
+                            >
+                              Description
+                            </label>
+                            <Field
+                              as="textarea"
+                              id="description"
+                              name="description"
+                              className="w-full p-3 text-sm text-gray-800 border border-[#9B9898] rounded-[10px] focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                              rows="6"
+                              placeholder="Enter your description"
+                            />
+                            <p className="text-red-700 text-xs mt-1 ">
+                              <ErrorMessage name="description" />
+                            </p>
+                            {/* <textarea
         id="message"
         rows={6}
         placeholder="Type your message here..."
         className="w-full p-3 text-sm text-gray-800 border border-[#9B9898] rounded-[10px] focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
       ></textarea> */}
+                          </div>
+                          <button
+                            type="submit"
+                            disabled={isLoading}
+                            className="bg-primary disabled:bg-gray-500 py-3 px-10 text-[20px] w-fit text-white rounded-[10px]"
+                          >
+                            {isLoading ? <LoadingSpinner /> : "Submit"}
+                          </button>
                         </div>
-                        <button
-                          type="submit"
-                          disabled={isLoading}
-                          className="bg-primary disabled:bg-gray-500 py-3 px-10 text-[20px] w-fit text-white rounded-[10px]"
-                        >
-                          {isLoading ? <LoadingSpinner /> : "Submit"}
-                        </button>
-                      </div>
-                    </Form>
-                  )}
-                </Formik>
-              </div>
-            </Modal>
+                      </Form>
+                    )}
+                  </Formik>
+                </div>
+              </Modal>
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-<Modal
-        classNames={{
-          modal: "rounded-[10px] overflow-visible relative",
-        }}
-        open={open}
-        onClose={onCloseModal}
-        showCloseIcon={false} // Hides the close button
-        center
-      >
-        <div className="px-2 md:px-5 w-[100px] h-[100px] flex justify-center items-center text-center">
-          <LoadingSpinnerPage />
-        </div>
-      </Modal>
-      
+        <Modal
+          classNames={{
+            modal: "rounded-[10px] overflow-visible relative",
+          }}
+          open={open}
+          onClose={onCloseModal}
+          showCloseIcon={false} // Hides the close button
+          center
+        >
+          <div className="px-2 md:px-5 w-[100px] h-[100px] flex justify-center items-center text-center">
+            <LoadingSpinnerPage />
+          </div>
+        </Modal>
+
         <ToastContainer
           position="top-center"
           autoClose={2000}

@@ -3,39 +3,8 @@ import DashboardLayout from "@/components/Layout";
 import React from "react";
 import BreadcrumbsDisplay from "../BreadscrumbsDisplay";
 import TripsRecordTable from "./TripsRecordTable";
-import { ErrorMessage, Field, Form, Formik } from "formik";
-import * as Yup from "yup";
 
 const page = () => {
-  const initialData = {
-    email: "",
-
-    password: "",
-    remember: "",
-    documents: [
-      { name: "", expiryDate: "", image: null }, // Ensure a default document exists
-    ],
-  };
-
-  const validation = Yup.object({
-    email: Yup.string().email("Invalid email address").required("Required"),
-    password: Yup.string()
-      .min(6, "Password must be minimum of 6 characters")
-      .max(255)
-      .required("Required"),
-    documents: Yup.array().of(
-      Yup.object().shape({
-        name: Yup.string().required("Document name is required"),
-        expiryDate: Yup.date().required("Expiry date is required"),
-        image: Yup.mixed().required("Document upload is required"),
-      })
-    ),
-  });
-
-  const onSubmit = async () => {
-    // e.preventDefault(); // Prevent default browser behavior
-    console.log("Form submitted");
-  };
 
   return (
     <DashboardLayout>
@@ -46,7 +15,7 @@ const page = () => {
           These are all your Trips records
         </h5>
         <section className="overflow-hidden overflow-x-scroll">
-          <div className="flex flex-col  gap-2">
+          {/* <div className="flex flex-col  gap-2">
             <Formik
               initialValues={initialData}
               validationSchema={validation}
@@ -165,7 +134,7 @@ const page = () => {
                 </Form>
               )}
             </Formik>
-          </div>
+          </div> */}
           <div>
             <TripsRecordTable />
           </div>

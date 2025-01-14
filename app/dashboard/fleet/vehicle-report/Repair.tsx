@@ -12,7 +12,7 @@ import {
   Save,
 } from "@mui/icons-material";
 import Image from "next/image";
-import { useLazyVehicleControllerGetAllVehicleReportsQuery } from "@/store/api";
+import { useLazyVehicleControllerGetAllVehicleReportsByVehicleIdQuery } from "@/store/api";
 import LoadingSpinnerPage from "@/components/UI/LoadingSpinnerPage";
 import "react-responsive-modal/styles.css";
 import { Modal } from "react-responsive-modal";
@@ -20,19 +20,20 @@ import { Modal } from "react-responsive-modal";
 // Define the structure of a row in the data
 interface Row {
   id: string; // Add the `id` field
+  title: string; // Add the `id` field
   description: string;
   cost: string;
   maintenanceDate: string;
   index: number; // Add the index property
 }
 // Define the structure of a column in the table
-interface Column {
-  title: string;
-  field: keyof Row | string; // Ensure `field` matches the keys of `Row`
-  headerStyle?: React.CSSProperties;
-  cellStyle?: React.CSSProperties;
-  render?: (rowData: Row) => React.JSX.Element;
-}
+// interface Column {
+//   title: string;
+//   field: keyof Row | string; // Ensure `field` matches the keys of `Row`
+//   headerStyle?: React.CSSProperties;
+//   cellStyle?: React.CSSProperties;
+//   render?: (rowData: Row) => React.JSX.Element;
+// }
 function Repair() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -46,13 +47,16 @@ function Repair() {
       setVehicleId(storedId);
     }
   }, []);
-console.log(vehicleId)
+  
+  console.log(vehicleId);
   // const [getVehicleById, { data: vehiclesById }] =
   //   useLazyVehicleControllerGetVehicleByIdQuery<VehiclesByIdResponse>();
 
-  const [getVehicleReport, { data: vehicleReport, isLoading  }] =
-    useLazyVehicleControllerGetAllVehicleReportsQuery();
-
+  const [getVehicleReport, { data: vehicleReport, isLoading }] =
+  useLazyVehicleControllerGetAllVehicleReportsByVehicleIdQuery();
+  useEffect(() => {
+    getVehicleReport(vehicleId); // Trigger the API call
+  }, [getVehicleReport, vehicleId]);
   const handleVehicleReportDetails = (vehicleReportId: string) => {
     // Store the vehicle ID in sessionStorage
     localStorage.setItem("vehicleReportId", vehicleReportId);
@@ -67,49 +71,50 @@ console.log(vehicleId)
   const onCloseModal = () => setOpen(false);
 
   const data: Row[] = Array.isArray(vehicleReport?.data) // Check if it's an array
-  ? vehicleReport.data
-      .filter((report: any) => report.reportType === "MAINTENANCE") // Filter for active vehicles
-      .map((report: any, index: number) => {
-        const rawDate = report.maintenanceDate;
-        const formattedDate = rawDate
-          ? new Date(rawDate).toLocaleString("en-GB", {
-              year: "numeric",
-              month: "2-digit",
-              day: "2-digit",
-              hour: "2-digit",
-              minute: "2-digit",
-              second: "2-digit",
-            }).replace(",", "") // Format with date and time (e.g., 2025-01-07 12:34:56)
-          : "N/A";
+    ? vehicleReport.data
+        .filter((report: any) => report.reportType === "MAINTENANCE") // Filter for active vehicles
+        .map((report: any, index: number) => {
+          const rawDate = report.maintenanceDate;
+          const formattedDate = rawDate
+            ? new Date(rawDate)
+                .toLocaleString("en-GB", {
+                  year: "numeric",
+                  month: "2-digit",
+                  day: "2-digit",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  second: "2-digit",
+                })
+                .replace(",", "") // Format with date and time (e.g., 2025-01-07 12:34:56)
+            : "N/A";
 
-        return {
-          index: index + 1, // Add a 1-based index
-          id: report?.id || "N/A",
-          description: report.description || "N/A",
-          cost: report.cost || "N/A",
-          maintenanceDate: formattedDate, // Use formatted date and time
-        };
-      })
-      .sort((a, b) => {
-        // Sort by maintenanceDate in ascending order
-        return new Date(a.maintenanceDate).getTime() - new Date(b.maintenanceDate).getTime();
-      })
-  : [];
+          return {
+            index: index + 1, // Add a 1-based index
+            id: report?.id || "N/A",
+            title: report.title || "N/A",
+            description: report.description || "N/A",
+            cost: report.cost || "N/A",
+            maintenanceDate: formattedDate, // Use formatted date and time
+          };
+        })
+        .sort((a, b) => {
+          // Sort by maintenanceDate in ascending order
+          return (
+            new Date(a.maintenanceDate).getTime() -
+            new Date(b.maintenanceDate).getTime()
+          );
+        })
+    : [];
 
-
-
-
-      useEffect(() => {
-        if (isLoading) {
-          onOpenModal();
-        } else {
-          onCloseModal();
-        }
-      }, [isLoading]);
-      
   useEffect(() => {
-    getVehicleReport(); // Trigger the API call
-  }, [getVehicleReport]);
+    if (isLoading) {
+      onOpenModal();
+    } else {
+      onCloseModal();
+    }
+  }, [isLoading]);
+
+
   console.log(vehicleReport);
 
   const exportToCsv = () => {
@@ -132,18 +137,33 @@ console.log(vehicleId)
     link.click();
   };
 
-  const columns: Column[] = [
+  const formatToNaira = (amount: number | undefined | null): string => {
+    if (amount == null) return "₦0.00";
+    return new Intl.NumberFormat("en-NG", {
+      style: "currency",
+      currency: "NGN",
+    }).format(amount);
+  };
+
+  const columns: any = [
     {
       title: "S/N",
       field: "index",
-      render: (rowData) => <div className="">{rowData.index}</div>,
+      render: (rowData: any) => <div className="">{rowData.index}</div>,
+    },
+    {
+      title: "Title",
+      field: "title",
+      // headerStyle: {  textAlign: "center" } as React.CSSProperties,
+      // cellStyle: { paddingLeft: "2%" } as React.CSSProperties,
+      render: (rowData: any) => <div className="">{rowData.title}</div>,
     },
     {
       title: "Description",
       field: "description",
       // headerStyle: { textAlign: "center" } as React.CSSProperties,
       // cellStyle: { textAlign: "center" } as React.CSSProperties,
-      render: (rowData) => (
+      render: (rowData: any) => (
         <div className="truncate max-w-[200px]">{rowData.description}</div>
       ),
     },
@@ -152,8 +172,8 @@ console.log(vehicleId)
       field: "cost",
       // headerStyle: {  textAlign: "center" } as React.CSSProperties,
       // cellStyle: { paddingLeft: "2%" } as React.CSSProperties,
-      render: (rowData) => (
-        <div className="whitespace-nowrap">{rowData.cost}</div>
+      render: (rowData: any) => (
+        <div className="whitespace-nowrap">{formatToNaira(rowData.cost)}</div>
       ),
     },
     {
@@ -161,7 +181,9 @@ console.log(vehicleId)
       field: "maintenanceDate",
       // headerStyle: {  textAlign: "center" } as React.CSSProperties,
       // cellStyle: { paddingLeft: "2%" } as React.CSSProperties,
-      render: (rowData) => <div className="">{rowData.maintenanceDate}</div>,
+      render: (rowData: any) => (
+        <div className="">{rowData.maintenanceDate}</div>
+      ),
     },
 
     {
@@ -169,7 +191,7 @@ console.log(vehicleId)
       field: "actions",
       // headerStyle: { textAlign: "center" } as React.CSSProperties,
       // cellStyle: { textAlign: "center" } as React.CSSProperties,
-      render: (rowData) => {
+      render: (rowData: any) => {
         return (
           <div
             onClick={() => handleVehicleReportDetails(rowData?.id)}
@@ -304,64 +326,63 @@ console.log(vehicleId)
        View All
      </h4>
    </div> */}
-{isLoading ? null : (
-  
-<div>
-      {data?.length > 0 ? (
-        <MaterialTable
-          title=""
-          columns={columns}
-          data={data}
-          icons={icons}
-          options={{
-            search: true,
-            paging: true,
-            sorting: true,
-            exportAllData: true, // Exports all rows, not just the visible ones
-            rowStyle: {
-              fontWeight: 300,
-              fontSize: "14px",
-              alignItems: "center",
-            },
-            headerStyle: {
-              color: "#036E03",
-              // fontWeight: 600,
-              fontSize: "14px",
-              backgroundColor: "#F9FAFB",
-              border: 0,
-              borderBottom: "1px solid #E8E9ED",
-            },
-            tableLayout: "fixed",
-          }}
-          actions={[
-            {
-              icon: () => <Save />, // Use a function to render the Save icon
-              tooltip: "Export to CSV",
-              isFreeAction: true,
-              onClick: () => exportToCsv(),
-            },
-          ]}
-        />
-      ) : (
-        <div className="py-10">
-          <div className="flex justify-center">
-            <Image
-              className=""
-              src="/dashboard/stars.svg"
-              alt="image"
-              width={40}
-              height={40}
-              priority
+      {isLoading ? null : (
+        <div>
+          {data?.length > 0 ? (
+            <MaterialTable
+              title=""
+              columns={columns}
+              data={data}
+              icons={icons}
+              options={{
+                search: true,
+                paging: true,
+                sorting: true,
+                exportAllData: true, // Exports all rows, not just the visible ones
+                rowStyle: {
+                  fontWeight: 300,
+                  fontSize: "14px",
+                  alignItems: "center",
+                },
+                headerStyle: {
+                  color: "#036E03",
+                  // fontWeight: 600,
+                  fontSize: "14px",
+                  backgroundColor: "#F9FAFB",
+                  border: 0,
+                  borderBottom: "1px solid #E8E9ED",
+                },
+                tableLayout: "fixed",
+              }}
+              actions={[
+                {
+                  icon: () => <Save />, // Use a function to render the Save icon
+                  tooltip: "Export to CSV",
+                  isFreeAction: true,
+                  onClick: () => exportToCsv(),
+                },
+              ]}
             />
-          </div>
-          <div className="flex justify-center pt-4 text-[#141313] text-[20px] font-[400]">
-            Sorry, No information yet, Add fleet to start
-          </div>
+          ) : (
+            <div className="py-10">
+              <div className="flex justify-center">
+                <Image
+                  className=""
+                  src="/dashboard/stars.svg"
+                  alt="image"
+                  width={40}
+                  height={40}
+                  priority
+                />
+              </div>
+              <div className="flex justify-center pt-4 text-[#141313] text-[20px] font-[400]">
+                Sorry, No information yet, Add fleet to start
+              </div>
+            </div>
+          )}
         </div>
       )}
-</div>
-)}
-<Modal
+      <Modal
         classNames={{
           modal: "rounded-[10px] overflow-visible relative",
         }}

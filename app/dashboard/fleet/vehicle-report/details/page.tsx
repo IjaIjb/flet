@@ -58,7 +58,14 @@ function Details() {
                 : "N/A";
 
   // console.log(reportById);
-
+  const formatToNaira = (amount: number | undefined | null): string => {
+    if (amount == null) return '₦0.00';
+    return new Intl.NumberFormat('en-NG', {
+      style: 'currency',
+      currency: 'NGN',
+    }).format(amount);
+  };
+  
   return (
     <div>
       <DashboardLayout>
@@ -74,7 +81,7 @@ function Details() {
                 Title
               </h5>
               <h5 className="text-[18px] font-[400] col-span-10 text-blackText ">
-                Engine
+              {reportById?.data?.title || "N/A"}
               </h5>
             </div>
 
@@ -92,7 +99,7 @@ function Details() {
                 Cost
               </h5>
               <h5 className="text-[18px]  font-[400] col-span-10 text-blackText ">
-                {reportById?.data?.cost}
+                {formatToNaira(reportById?.data?.cost)}
               </h5>
             </div>
 

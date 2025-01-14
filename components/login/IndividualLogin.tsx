@@ -41,7 +41,7 @@ const IndividualLogin = () => {
 
   const onSubmit = async (values: LoginValues) => {
     try {
-      const response = await login(values).unwrap();
+      const response:any = await login(values).unwrap();
       console.log(response);
   
       if (response?.status === 200) {

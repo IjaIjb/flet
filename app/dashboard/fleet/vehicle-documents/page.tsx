@@ -6,7 +6,7 @@ import BreadcrumbsDisplay from "../../BreadscrumbsDisplay";
 import Image from "next/image";
 import { FiUpload } from "react-icons/fi";
 import {
-  useLazyVehicleDocumentControllerSearchQuery,
+  useLazyVehicleDocumentControllerFindAllByVehicleIdQuery,
   useVehicleDocumentControllerCreateMutation,
   useVehicleDocumentControllerUpdateMutation,
 } from "@/store/api";
@@ -71,12 +71,12 @@ const Page = () => {
   }, []);
 
   const [getReportById, { data: reportById }] =
-    useLazyVehicleDocumentControllerSearchQuery<any>();
+  useLazyVehicleDocumentControllerFindAllByVehicleIdQuery<any>();
 
   useEffect(() => {
     if (reportId) {
       setIsLoading(true); // Set loading state
-      getReportById({ vehicleId: reportId })
+      getReportById(reportId)
         .unwrap() // Handle response or errors
         .finally(() => setIsLoading(false)); // Reset loading state
     }
