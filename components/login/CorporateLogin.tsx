@@ -66,8 +66,8 @@ const CorporateLogin = () => {
   
 
   return (
-    <div className="pt-10">
-      <div className="mb-10">
+    <div className="pt-3">
+      <div className="mb-5">
         <h3 className="text-[#1A1A1A] text-[18px] lg:text-[24px] font-light">
           Welcome to <span className="text-[#036E03] font-bold">Urban</span>
         </h3>
@@ -82,7 +82,7 @@ const CorporateLogin = () => {
         onSubmit={onSubmit}
       >
         {({}) => (
-          <Form className="w-full flex flex-col gap-6">
+          <Form className="w-full flex flex-col gap-4">
             {/* Email Field */}
             <div>
               <label
@@ -175,15 +175,15 @@ const CorporateLogin = () => {
             {/* NDPC Complaint Section */}
             <div className="flex items-center justify-center gap-3 my-4">
               <div className="border-2 p-1 rounded-full border-[#ECEBEB]">
-                <div className="flex items-center px-3 gap-3">
+                <div className="flex items-center px-2 gap-2">
                   <Image
                     src="/onboarding/ndpc.png"
                     alt="NDPC Logo"
-                    width={45}
-                    height={45}
+                    width={30}
+                    height={30}
                     priority
                   />
-                  <h6 className="text-[#000000] text-[18px] font-bold">
+                  <h6 className="text-[#000000] text-[14px] ">
                     NDPC <span className="font-normal">Complaint</span>
                   </h6>
                 </div>

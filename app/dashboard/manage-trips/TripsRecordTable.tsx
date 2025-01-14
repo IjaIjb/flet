@@ -1,4 +1,4 @@
-import React, { useEffect, forwardRef, useState } from "react";
+import React, { useEffect, forwardRef, useState, useMemo } from "react";
 import { SlOptions } from "react-icons/sl";
 import "react-responsive-modal/styles.css";
 import { Modal } from "react-responsive-modal";
@@ -27,6 +27,7 @@ interface Row {
   date: string;
   tripCost: string;
   tripStatus: string;
+  tripId;
 }
 
 // Define the structure of a column in the table
@@ -74,68 +75,73 @@ const TripsRecordTable = () => {
 
   console.log(userTripsById);
 
-  const data: any = Array.isArray(userTripsById?.data) // Check if it's an array
-    ? userTripsById.data.map((trip: any) => {
-        // const rawDate = trip.registrationDate;
-        const departureDate = trip.departureDate
-          ? new Date(trip.departureDate)
-              .toLocaleDateString("en-GB", {
+  const [filteredData, setFilteredData] = useState([]);
+
+  // Memoize raw data to prevent re-calculation on every render
+  const rawData = useMemo(() => {
+    return Array.isArray(userTripsById?.data)
+      ? userTripsById.data.map((trip:any) => {
+          const departureDate = trip.departureDate
+            ? new Date(trip.departureDate).toLocaleDateString("en-US", {
                 year: "numeric",
                 month: "2-digit",
                 day: "2-digit",
               })
-              .replace(",", "") // Format with date and time (e.g., 2025-01-07 12:34:56)
-          : "N/A";
-        const departureTime = trip.departureTime || "N/A";
-        const destinationState =
-          trip.finalBusStop?.locationCity?.locationState?.name || "N/A";
-        const destinationPark = trip.departure?.city || "N/A";
-        const departureCity = trip.departure?.city || "N/A";
-        const departureAddress = trip.departure?.address || "N/A";
-        const departurePhone = trip.departure?.phone || "N/A";
-        const finalBusStop = trip.finalBusStop?.name || "N/A";
-        const tripStatus = trip.status || "N/A";
-        const tripCost = trip.cost || "N/A";
-        const vehicleType = trip?.tripVehicle?.vehicleType?.category || "N/A";
-        // Handle bookings status (combine statuses if multiple bookings exist)
-        const bookingStatus = trip.bookings?.length
-          ? trip.bookings.map((booking: any) => booking.status).join(", ")
-          : "N/A";
-        return {
-          departureCity,
-          destinationState,
-          destinationPark,
-          departureDate,
-          departureTime,
-          departureAddress,
-          departurePhone,
-          finalBusStop,
-          bookingStatus,
-          tripStatus,
-          tripCost,
-          vehicleType,
-        };
-      })
-    : [];
+            : "N/A";
+          const destinationState =
+            trip.finalBusStop?.locationCity?.locationState?.name || "N/A";
+          const destinationPark = trip.departure?.city || "N/A";
+          const departureCity = trip.departure?.city || "N/A";
+          const finalBusStop = trip.finalBusStop?.name || "N/A";
+          const tripStatus = trip.status || "N/A";
+          const tripCost = trip.cost || "N/A";
+          const tripId = trip.id || "N/A";
+          const vehicleType = trip?.tripVehicle?.vehicleType?.category || "N/A";
+          const bookingStatus = trip.bookings?.length
+            ? trip.bookings.map((b) => b.status).join(", ")
+            : "N/A";
+          return {
+            departureCity,
+            destinationState,
+            destinationPark,
+            departureDate,
+            finalBusStop,
+            bookingStatus,
+            tripStatus,
+            tripCost,
+            tripId,
+            vehicleType,
+          };
+        })
+      : [];
+  }, [userTripsById]);
 
-  const filteredData = data.filter((row) => {
-    const matchesType = !vehicleType || row.vehicleType === vehicleType;
-    // Parse the row.departureDate string into a Date object
-    const rowDate =
-      row.departureDate !== "N/A"
-        ? new Date(
-            row.departureDate.split("/").reverse().join("-") // Convert "DD/MM/YYYY" to "YYYY-MM-DD"
-          )
-        : null;
-    // Convert dateFrom and dateTo to Date objects
-    const fromDate = dateFrom ? new Date(dateFrom) : null;
-    const toDate = dateTo ? new Date(dateTo) : null;
-    // Check date validity and filter
-    const matchesDateFrom = !fromDate || (rowDate && rowDate >= fromDate);
-    const matchesDateTo = !toDate || (rowDate && rowDate <= toDate);
+  // Filter data whenever filters or rawData change
+  useEffect(() => {
+    const newFilteredData = rawData.filter((row) => {
+      const rowDate =
+        row.departureDate !== "N/A"
+          ? new Date(row.departureDate)
+          : null;
+      const fromDate = dateFrom ? new Date(dateFrom) : null;
+      const toDate = dateTo ? new Date(dateTo) : null;
 
-    return matchesType && matchesDateFrom && matchesDateTo;
-  });
+      const matchesType = !vehicleType || row.vehicleType === vehicleType;
+      const matchesDateFrom = fromDate ? rowDate && rowDate >= fromDate : true;
+      const matchesDateTo = toDate ? rowDate && rowDate <= toDate : true;
+
+      return matchesType && matchesDateFrom && matchesDateTo;
+    });
+
+    setFilteredData(newFilteredData);
+  }, [vehicleType, dateFrom, dateTo, rawData]);
+
+    
+    // Debugging: Log the filtered data to ensure correctness
+    console.log("Filtered Data:", filteredData);
+    
+    
+    
 
   const onOpenDetailsModal = () => {
     // e.preventDefault();
@@ -156,6 +162,7 @@ const TripsRecordTable = () => {
   const handleEarnings = () => {
     onOpenEarningsModal(); // Open the modal
   };
+  
   const toggleDropdown = (index: number) => {
     setDropdownIndex(dropdownIndex === index ? null : index); // Toggle dropdown visibility
   };
@@ -163,14 +170,14 @@ const TripsRecordTable = () => {
   // Define columns with correct types
   const columns: Column[] = [
     {
-      title: "Destination Park",
+      title: "Dest. Park",
       field: "destinationPark",
       // headerStyle: { textAlign: "center" } as React.CSSProperties,
       // cellStyle: { textAlign: "center" } as React.CSSProperties,
       // render: (rowData) => <div className="">{rowData.departureCity}</div>,
     },
     {
-      title: "Destination State",
+      title: "Dest. State",
       field: "destinationState",
       // headerStyle: {  textAlign: "center" } as React.CSSProperties,
       // cellStyle: { paddingLeft: "2%" } as React.CSSProperties,
@@ -237,22 +244,20 @@ const TripsRecordTable = () => {
     {
       title: "Action",
       field: "actions",
-      // headerStyle: { textAlign: "center" } as React.CSSProperties,
-      // cellStyle: { textAlign: "center" } as React.CSSProperties,
       render: (rowData) => {
-        const index = data.findIndex(
-          (row) => row.departureCity === rowData.departureCity
+        const index = rawData.findIndex(
+          (row) => row.tripId === rowData.tripId
         );
-
+  
         return (
           <div className="relative text-center">
-            <div className="flex justify-center">
+            <div className="">
               <SlOptions
                 className="cursor-pointer"
-                onClick={() => toggleDropdown(index)}
+                onClick={() => toggleDropdown(index)} // Toggle dropdown for specific index
               />
             </div>
-            {dropdownIndex === index && (
+            {dropdownIndex === index && ( // Only show the dropdown for the clicked row
               <div className="absolute right-0 mt-2 w-48 bg-white border rounded-md shadow-lg z-10">
                 <ul className="py-1">
                   <li>
@@ -283,7 +288,7 @@ const TripsRecordTable = () => {
   const exportToCsv = () => {
     // Fixing the error here by ensuring the `row[col.field]` is typed correctly
     const headers = columns.map((col) => col.title).join(",") + "\n";
-    const rows = data
+    const rows = rawData
       .map((row) => {
         return columns
           .map((col) => row[col.field as keyof Row]) // Ensure `col.field` is typed as keyof Row
@@ -504,7 +509,7 @@ const TripsRecordTable = () => {
           <div className="col-span-7">
             <div className="mb-5 flex gap-6 w-full">
               <select
-                className="block h-12 border text-[14px] font-[300] px-3 rounded-md focus:outline-primary"
+                className="block h-12 w-full border text-[14px] font-[300] px-3 rounded-md focus:outline-primary"
                 value={vehicleType}
                 onChange={(e) => setVehicleType(e.target.value)}
               >
@@ -525,7 +530,7 @@ const TripsRecordTable = () => {
 
                 <input
                   type="date"
-                  className="block text-[14px] font-[300] h-12 border px-3 rounded-md focus:outline-primary"
+                  className="block w-full text-[14px] font-[300] h-12 border px-3 rounded-md focus:outline-primary"
                   value={dateFrom}
                   onChange={(e) => setDateFrom(e.target.value)}
                 />
@@ -539,7 +544,7 @@ const TripsRecordTable = () => {
                 </label> */}
                 <input
                   type="date"
-                  className="block text-[14px] font-[300] h-12 border px-3 rounded-md focus:outline-primary"
+                  className="block w-full text-[14px] font-[300] h-12 border px-3 rounded-md focus:outline-primary"
                   value={dateTo}
                   onChange={(e) => setDateTo(e.target.value)}
                 />
@@ -552,7 +557,7 @@ const TripsRecordTable = () => {
         <MaterialTable
           title=""
           columns={columns}
-          data={data}
+          data={filteredData}
           icons={icons}
           options={{
             search: true,

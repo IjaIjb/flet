@@ -220,7 +220,7 @@ const Page = () => {
                     // objectFit="cover"
                   />
                   <h4 className="text-white text-center md:text-[48px] font-[700] text-[36px] leading-[55px] max-w-[400px]">
-                    Urban Experience Centre (UEC)
+                  Urban Fleet Partners (UFP)
                   </h4>
                   <div className="flex py-10 justify-center">
                     <Image

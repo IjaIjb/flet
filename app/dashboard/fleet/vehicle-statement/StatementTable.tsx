@@ -335,7 +335,7 @@ function StatementTable({ vehicleId }: StatementTableProps) {
         <MaterialTable
           title=""
           columns={columns}
-          data={data}
+          data={filteredData}
           icons={icons}
           options={{
             search: true,
