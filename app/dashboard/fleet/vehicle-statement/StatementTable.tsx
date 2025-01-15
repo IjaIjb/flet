@@ -96,6 +96,7 @@ function StatementTable({ vehicleId }: StatementTableProps) {
         const finalBusStop = trip.finalBusStop?.name || "N/A";
         const tripStatus = trip.status || "N/A";
         const tripCost = trip.cost || "N/A";
+        const tripCode = trip.uniqueID || "N/A";
 
         // Handle bookings status (combine statuses if multiple bookings exist)
         const bookingStatus = trip.bookings?.length
@@ -111,6 +112,7 @@ function StatementTable({ vehicleId }: StatementTableProps) {
           bookingStatus,
           tripStatus,
           tripCost,
+          tripCode,
         };
       })
     : [];
@@ -167,8 +169,8 @@ function StatementTable({ vehicleId }: StatementTableProps) {
       // render: (rowData) => <div className="">{rowData.provider_agency}</div>,
     },
     {
-      title: "Booking Code",
-      field: "date",
+      title: "Trip Code",
+      field: "tripCode",
       // headerStyle: {  textAlign: "center"} as React.CSSProperties,
       // cellStyle: { paddingLeft: "2%" } as React.CSSProperties,
       // render: (rowData) => (

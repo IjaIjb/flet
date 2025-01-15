@@ -27,6 +27,8 @@ interface Row {
   date: string;
   tripCost: string;
   tripStatus: string;
+  destinationCity: string;
+  destinationPark: string;
   tripId;
 }
 
@@ -47,6 +49,7 @@ const TripsRecordTable = () => {
   const [dateFrom, setDateFrom] = useState<string>("");
   const [dateTo, setDateTo] = useState<string>("");
   const [vehicleType, setVehicleType] = useState<string>("");
+  const [selectedRow, setSelectedRow] = useState<any>(null); // State to hold selected row data
 
   useEffect(() => {
     const storedUserData = localStorage.getItem("user");
@@ -90,13 +93,22 @@ const TripsRecordTable = () => {
             : "N/A";
           const destinationState =
             trip.finalBusStop?.locationCity?.locationState?.name || "N/A";
-          const destinationPark = trip.departure?.city || "N/A";
-          const departureCity = trip.departure?.city || "N/A";
-          const finalBusStop = trip.finalBusStop?.name || "N/A";
+          const departurePark = trip.departure?.city || "N/A";
+          const departureTime = trip.departureTime || "N/A";
+          const departureCity = trip.departure?.locationCity?.name || "N/A";
+          const destinationPark = trip.finalBusStop?.name || "N/A";
+          const destinationCity = trip.finalBusStop?.locationCity?.name || "N/A";
+          // const destinationPark = trip.finalBusStop?.name || "N/A";
           const tripStatus = trip.status || "N/A";
           const tripCost = trip.cost || "N/A";
           const tripId = trip.id || "N/A";
+        const tripCode = trip.uniqueID || "N/A";
+
           const vehicleType = trip?.tripVehicle?.vehicleType?.category || "N/A";
+          const vehiclePlateNumber = trip?.tripVehicle?.plateNumber || "N/A";
+          const vehicleColor = trip?.tripVehicle?.color || "N/A";
+          const bookings = trip?.bookings || "N/A";
+          // const vehicleType = trip?.tripVehicle?.vehicleType?.category || "N/A";
           const bookingStatus = trip.bookings?.length
             ? trip.bookings.map((b) => b.status).join(", ")
             : "N/A";
@@ -104,13 +116,19 @@ const TripsRecordTable = () => {
             departureCity,
             destinationState,
             destinationPark,
+            departureTime,
             departureDate,
-            finalBusStop,
+            departurePark,
             bookingStatus,
+            destinationCity,
             tripStatus,
             tripCost,
+            tripCode,
             tripId,
             vehicleType,
+            vehiclePlateNumber,
+            vehicleColor,
+            bookings
           };
         })
       : [];
@@ -136,37 +154,39 @@ const TripsRecordTable = () => {
     setFilteredData(newFilteredData);
   }, [vehicleType, dateFrom, dateTo, rawData]);
 
-    
     // Debugging: Log the filtered data to ensure correctness
     console.log("Filtered Data:", filteredData);
     
-    
-    
-
-  const onOpenDetailsModal = () => {
-    // e.preventDefault();
-    setOpenDetails(true);
-  };
+  // const onOpenDetailsModal = () => {
+  //   // e.preventDefault();
+  //   setOpenDetails(true);
+  // };
   const onCloseDetailsModal = () => setOpenDetails(false);
 
-  const handleDetails = () => {
-    onOpenDetailsModal(); // Open the modal
+  // const handleDetails = () => {
+  //   onOpenDetailsModal(); // Open the modal
+  // };
+
+  const handleDetails = (rowData:any) => {
+    setSelectedRow(rowData); // Set the row data
+    setOpenDetails(true); // Open the modal
   };
 
-  const onOpenEarningsModal = () => {
-    // e.preventDefault();
-    setOpenEarnings(true);
-  };
+  // const onOpenEarningsModal = () => {
+  //   // e.preventDefault();
+  //   setOpenEarnings(true);
+  // };
   const onCloseEarningsModal = () => setOpenEarnings(false);
 
-  const handleEarnings = () => {
-    onOpenEarningsModal(); // Open the modal
+  const handleEarnings = (rowData:any) => {
+    setSelectedRow(rowData); // Set the row data
+   setOpenEarnings(true); // Open the modal
   };
   
   const toggleDropdown = (index: number) => {
     setDropdownIndex(dropdownIndex === index ? null : index); // Toggle dropdown visibility
   };
-
+console.log(selectedRow)
   // Define columns with correct types
   const columns: Column[] = [
     {
@@ -174,7 +194,7 @@ const TripsRecordTable = () => {
       field: "destinationPark",
       // headerStyle: { textAlign: "center" } as React.CSSProperties,
       // cellStyle: { textAlign: "center" } as React.CSSProperties,
-      // render: (rowData) => <div className="">{rowData.departureCity}</div>,
+      render: (rowData) => <div className="">{rowData.destinationPark}, {rowData.destinationCity}</div>,
     },
     {
       title: "Dest. State",
@@ -262,7 +282,7 @@ const TripsRecordTable = () => {
                 <ul className="py-1">
                   <li>
                     <div
-                      onClick={handleDetails}
+                      onClick={() => handleDetails(rowData)} // Pass the row data here
                       className="px-4 py-2 text-sm text-primary hover:bg-[#9F9F9F33] text-center cursor-pointer"
                     >
                       View Details
@@ -270,7 +290,7 @@ const TripsRecordTable = () => {
                   </li>
                   <li>
                     <div
-                      onClick={handleEarnings}
+                      onClick={() => handleEarnings(rowData)}
                       className="px-4 py-2 text-sm text-primary hover:bg-[#9F9F9F33] text-center cursor-pointer"
                     >
                       Earnings
@@ -504,7 +524,7 @@ const TripsRecordTable = () => {
         <div className="grid md:grid-cols-12 items-center gap-4">
           <div className="col-span-5">
             <div></div>
-          </div>
+            </div>
           {/* <div></div> */}
           <div className="col-span-7">
             <div className="mb-5 flex gap-6 w-full">
@@ -628,44 +648,44 @@ const TripsRecordTable = () => {
             <div>
               <div className="flex gap-2 mt-2">
                 <h4 className="text-blackText text-[20px]">Vehicle Type:</h4>
-                <h4 className="text-primary text-[20px]">Bus</h4>
+                <h4 className="text-primary text-[20px]">{selectedRow?.vehicleType}</h4>
               </div>
 
               <div className="flex gap-2">
                 <h4 className="text-blackText text-[20px]">
                   Vehicle plate number:
                 </h4>
-                <h4 className="text-primary  text-[20px]">AD 234567543</h4>
+                <h4 className="text-primary  text-[20px]">{selectedRow?.vehiclePlateNumber}</h4>
               </div>
 
               <div className="flex gap-2">
                 <h4 className="text-blackText text-[20px]">Vehicle color:</h4>
-                <h4 className="text-primary text-[20px]">Blue</h4>
+                <h4 className="text-primary text-[20px]">{selectedRow?.vehicleColor}</h4>
               </div>
               <div className="flex gap-2 ">
                 <h4 className="text-blackText text-[20px]">Trip Code:</h4>
-                <h4 className="text-primary text-[20px]">345</h4>
+                <h4 className="text-primary text-[20px]">{selectedRow?.tripCode}</h4>
               </div>
             </div>
 
             <div className="mt-3">
               <div className="flex gap-2 mt-2">
                 <h4 className="text-blackText text-[20px]">Departure Park:</h4>
-                <h4 className="text-primary text-[20px]">Sagamu</h4>
+                <h4 className="text-primary text-[20px]">{selectedRow?.departurePark}, {selectedRow?.departureCity}</h4>
               </div>
 
               <div className="flex gap-2">
                 <h4 className="text-blackText text-[20px]">Departure Time:</h4>
-                <h4 className="text-primary text-[20px]">14:00 PM</h4>
+                <h4 className="text-primary text-[20px]">{selectedRow?.departureTime}</h4>
               </div>
 
               <div className="flex gap-2">
                 <h4 className="text-blackText text-[20px]">Arrival State:</h4>
-                <h4 className="text-primary text-[20px]">Abuja</h4>
+                <h4 className="text-primary text-[20px]">{selectedRow?.destinationState}</h4>
               </div>
               <div className="flex gap-2 ">
                 <h4 className="text-blackText text-[20px]">Arrival City:</h4>
-                <h4 className="text-primary text-[20px]">Lagos</h4>
+                <h4 className="text-primary text-[20px]">{selectedRow?.destinationCity}</h4>
               </div>
             </div>
           </div>
@@ -693,7 +713,7 @@ const TripsRecordTable = () => {
                 <h4 className="text-blackText text-[16px] md:text-[18px]">
                   Number of Seats Occupied
                 </h4>
-                <h4 className="text-primary text-[16px] md:text-[18px]">7</h4>
+                <h4 className="text-primary text-[16px] md:text-[18px]">{selectedRow?.bookings?.length ?? 0}</h4>
               </div>
 
               <div className=" w-full">
@@ -701,7 +721,8 @@ const TripsRecordTable = () => {
                   Fare Charged
                 </h4>
                 <h4 className="text-primary text-[16px] md:text-[18px]">
-                  2000/person
+                {/* {selectedRow?.tripCost}/person */}
+                ₦{parseFloat(selectedRow?.tripCost ?? 0).toFixed(2)}/person
                 </h4>
               </div>
             </div>
@@ -712,7 +733,11 @@ const TripsRecordTable = () => {
                   Revenue Generated
                 </h4>
                 <h4 className="text-primary text-[16px] md:text-[18px]">
-                  N14,000.00
+                ₦
+        {(
+          parseFloat(selectedRow?.tripCost ?? 0) *
+          (selectedRow?.bookings?.length ?? 0)
+        ).toFixed(2)}
                 </h4>
               </div>
 
@@ -721,7 +746,12 @@ const TripsRecordTable = () => {
                   Fleet Owner Commision 60%
                 </h4>
                 <h4 className="text-primary text-[16px] md:text-[18px]">
-                  N8,400.00
+                ₦
+        {(
+          0.6 *
+          parseFloat(selectedRow?.tripCost ?? "0") *
+          (selectedRow?.bookings?.length ?? 0)
+        ).toFixed(2)}
                 </h4>
               </div>
             </div>

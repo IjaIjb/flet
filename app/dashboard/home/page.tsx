@@ -3,19 +3,22 @@ import DashboardLayout from "@/components/Layout";
 import React, { useEffect, useState } from "react";
 import BreadcrumbsDisplay from "../BreadscrumbsDisplay";
 import Image from "next/image";
-import { useLazyVehicleControllerGetMyVehiclesQuery } from "@/store/api";
+import {
+  useLazyTripControllerGetTripsByVehicleOwnerIdQuery,
+  useLazyVehicleControllerGetMyVehiclesQuery,
+} from "@/store/api";
 import "react-responsive-modal/styles.css";
 import { Modal } from "react-responsive-modal";
 import LoadingSpinnerPage from "@/components/UI/LoadingSpinnerPage";
 import FilteredFleets from "./FilteredFleets";
 
-interface UserData {
-  id: string;
-  name: string;
-  email: string;
-  individual?: boolean;
-  // Add other fields that exist in the user data object
-}
+// interface UserData {
+//   id: string;
+//   name: string;
+//   email: string;
+//   individual?: boolean;
+//   // Add other fields that exist in the user data object
+// }
 
 interface Vehicle {
   data: {
@@ -40,7 +43,7 @@ interface ActiveVehiclesResponse {
 const Page = () => {
   const [open, setOpen] = useState(false);
 
- const [userData, setUserData] = useState<UserData | null>(null);
+  const [userData, setUserData] = useState<any>(null);
 
   useEffect(() => {
     const storedUserData = localStorage.getItem("user");
@@ -57,15 +60,25 @@ const Page = () => {
 
   console.log(userData);
 
-
   const [getActiveVehicle, { data: activeVehicles, isLoading }] =
-  useLazyVehicleControllerGetMyVehiclesQuery<ActiveVehiclesResponse>();
+    useLazyVehicleControllerGetMyVehiclesQuery<ActiveVehiclesResponse>();
+
+  const [getUserTripsById, { data: userTripsById }] =
+    useLazyTripControllerGetTripsByVehicleOwnerIdQuery<any>();
 
   console.log(activeVehicles);
   // Fetch vehicle types on component mount
   useEffect(() => {
     getActiveVehicle(); // Trigger the API call
   }, [getActiveVehicle]);
+
+  useEffect(() => {
+    if (userData) {
+      // setIsLoading(true); // Set loading state
+      getUserTripsById(userData.individual.userId).unwrap(); // Handle response or errors
+      // .finally(() => setIsLoading(false)); // Reset loading state
+    }
+  }, [userData, getUserTripsById]);
 
   useEffect(() => {
     if (isLoading) {
@@ -80,7 +93,6 @@ const Page = () => {
       const revenue = parseFloat(vehicle.totalRevenue) || 0;
       return sum + revenue;
     }, 0) || 0;
-
 
   return (
     <DashboardLayout>
@@ -188,14 +200,13 @@ const Page = () => {
                 </div>
 
                 <h4 className="text-[35px] md:text-[40px] text-[#C05406] font-[500]">
-                  0
+                  {userTripsById?.data?.length ?? 0}
                 </h4>
               </div>
             </div>
           </section>
 
           <section className="overflow-hidden overflow-x-scroll">
-        
             <div>
               <FilteredFleets />
             </div>
@@ -216,7 +227,6 @@ const Page = () => {
           <LoadingSpinnerPage />
         </div>
       </Modal>
-
     </DashboardLayout>
   );
 };

@@ -7,7 +7,7 @@ import Image from "next/image";
 // import * as Yup from "yup";
 import StatementTable from "./StatementTable";
 import {
-  useLazyTripControllerFindAllQuery,
+  useLazyTripControllerGetTripsByVehicleIdQuery,
   useLazyVehicleControllerGetVehicleByIdQuery,
 } from "@/store/api";
 import "react-responsive-modal/styles.css";
@@ -69,8 +69,23 @@ function VehicleStatement() {
         .finally(() => setIsLoading(false)); // Reset loading state
     }
   }, [vehicleId, getVehicleById]);
-  console.log(vehiclesById);
+  // console.log(vehiclesById);
 
+  const [getTripsById, { data: tripsById }] =
+    useLazyTripControllerGetTripsByVehicleIdQuery<any>();
+
+  useEffect(() => {
+    if (vehicleId) {
+      // setIsLoading(true); // Set loading state
+      getTripsById(vehicleId).unwrap(); // Handle response or errors
+      // .finally(() => setIsLoading(false)); // Reset loading state
+    }
+  }, [vehicleId, getTripsById]);
+  console.log(tripsById);
+  const totalCost = tripsById?.data?.reduce(
+    (sum, trip) => sum + parseFloat(trip.cost || 0),
+    0
+  );
   useEffect(() => {
     if (isLoading) {
       onOpenModal();
@@ -79,43 +94,43 @@ function VehicleStatement() {
     }
   }, [isLoading]);
 
-  const [getVehicleTrips, { data: vehicleTrips }] =
-    useLazyTripControllerFindAllQuery();
+  // const [getVehicleTrips, { data: vehicleTrips }] =
+  //   useLazyTripControllerFindAllQuery();
 
-  useEffect(() => {
-    if (vehiclesById) {
-      setIsLoading(true); // Set loading state
+  // useEffect(() => {
+  //   if (vehiclesById) {
+  //     setIsLoading(true); // Set loading state
 
-      // Construct the query argument for the API
-      const queryArg = {
-        description: vehiclesById.data?.trips?.description,
+  //     // Construct the query argument for the API
+  //     const queryArg = {
+  //       description: vehiclesById.data?.trips?.description,
 
-        uniqueId: vehiclesById.data?.trips?.uniqueID,
+  //       uniqueId: vehiclesById.data?.trips?.uniqueID,
 
-        driverId: vehiclesById.data?.trips?.driverId,
+  //       driverId: vehiclesById.data?.trips?.driverId,
 
-        departureId: vehiclesById.data?.trips?.departureId,
+  //       departureId: vehiclesById.data?.trips?.departureId,
 
-        destinationId: vehiclesById.data?.trips?.destinationId,
+  //       destinationId: vehiclesById.data?.trips?.destinationId,
 
-        vehicleId: vehiclesById.data?.trips?.vehicleId,
+  //       vehicleId: vehiclesById.data?.trips?.vehicleId,
 
-        // vehicleType?: vehiclesById.data?.vehicleType?.
+  //       // vehicleType?: vehiclesById.data?.vehicleType?.
 
-        // departureState?: string;
-        // destinationState?: string;
-        departureDate: vehiclesById.data?.trips?.departureDate,
-        limit: 10,
-        offset: 0,
-      };
+  //       // departureState?: string;
+  //       // destinationState?: string;
+  //       departureDate: vehiclesById.data?.trips?.departureDate,
+  //       limit: 10,
+  //       offset: 0,
+  //     };
 
-      // Make the API call with the constructed query argument
-      getVehicleTrips(queryArg)
-        .unwrap() // Handle response or errors
-        .finally(() => setIsLoading(false)); // Reset loading state
-    }
-  }, [vehiclesById, getVehicleTrips]);
-  console.log(vehicleTrips);
+  //     // Make the API call with the constructed query argument
+  //     getVehicleTrips(queryArg)
+  //       .unwrap() // Handle response or errors
+  //       .finally(() => setIsLoading(false)); // Reset loading state
+  //   }
+  // }, [vehiclesById, getVehicleTrips]);
+  // console.log(vehicleTrips);
 
   const plateNumber = vehiclesById?.data?.plateNumber;
 
@@ -135,7 +150,7 @@ function VehicleStatement() {
             <BreadcrumbsDisplay />
             <h5 className="text-[16px] md:text-[20px] pt-8 font-[400] mb-3">
               Vehicle Type:{" "}
-              <span className="text-[18px] md:text-[20px] font-[200]">
+              <span className="text-[18px] md:text-[20px] font-[300]">
                 {vehiclesById?.data?.vehicleType?.category}
               </span>
             </h5>
@@ -145,7 +160,7 @@ function VehicleStatement() {
                 Number Plate:{" "}
               </h5>
               <div className="flex gap-2 items-center">
-                <span className="text-[18px] md:text-[20px] font-[200] text-primary">
+                <span className="text-[18px] md:text-[20px] font-[300] text-primary">
                   {vehiclesById?.data?.plateNumber}
                 </span>
                 <button
@@ -158,7 +173,7 @@ function VehicleStatement() {
             </div>
             <h5 className="text-[16px] md:text-[20px] font-[400] mb-4">
               Provider Agency:{" "}
-              <span className="text-[18px] md:text-[20px] font-[200] text-primary">
+              <span className="text-[18px] md:text-[20px] font-[300] text-primary">
                 {vehiclesById?.data?.providerAgency || "Nill"}
               </span>
             </h5>
@@ -180,10 +195,7 @@ function VehicleStatement() {
                   </div>
 
                   <h4 className="text-[35px] md:text-[48px] text-[#274871] font-[500]">
-                    ₦
-                    {parseFloat(
-                      vehiclesById?.data?.totalRevenue ?? "0"
-                    ).toFixed(2)}
+                    ₦{parseFloat(totalCost ?? "0").toFixed(2)}
                   </h4>
                 </div>
 
@@ -208,7 +220,7 @@ function VehicleStatement() {
                   </div>
 
                   <h4 className="text-[35px] md:text-[48px] text-[#C05406] font-[500]">
-                    {vehiclesById?.data?.trips?.length ?? 0}
+                    {tripsById?.data?.length ?? 0}
                   </h4>
                 </div>
               </div>
