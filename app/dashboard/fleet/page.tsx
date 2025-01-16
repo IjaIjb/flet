@@ -21,6 +21,7 @@ import LoadingSpinner from "@/components/UI/LoadingSpinner";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import LoadingSpinnerPage from "@/components/UI/LoadingSpinnerPage";
+import axios from "axios";
 
 interface LoginValues {
   engineNumber: string;
@@ -125,77 +126,96 @@ const onCloseModalLoader = () => setOpenLoader(false);
       }
     }, [isVehicleTypesLoading]);
 
-  const BusSideUpload: React.FC<BusSideUploadProps> = ({
-    image,
-    setImage,
-    vehicleId,
-  }) => {
-    const [createVehicleDocument] =
-      useVehicleDocumentControllerCreateMutation();
 
-    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0];
-      if (file) {
-        const fileType = file.type.split("/")[0]; // Get the type (image, video, etc.)
-        const fileURL = URL.createObjectURL(file); // Preview URL
-        setImage(fileURL);
+const BusSideUpload: React.FC<BusSideUploadProps> = ({
+  image,
+  setImage,
+  vehicleId,
+}) => {
+  const [createVehicleDocument] = useVehicleDocumentControllerCreateMutation();
 
-        const isConfirmed = window.confirm(
-          `The uploaded file is of type "${fileType}". Do you want to save this document?`
-        );
+  // Handle file upload (either image or other types)
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const fileType = file.type.split("/")[0]; // Get the type (image, video, etc.)
+      const fileURL = URL.createObjectURL(file); // Preview URL
+      setImage(fileURL); // Set preview image (not necessary for Cloudinary, but for preview)
 
-        if (isConfirmed) {
-          try {
+      // Confirm the upload action
+      const isConfirmed = window.confirm(
+        `The uploaded file is of type "${fileType}". Do you want to save this document?`
+      );
+
+      if (isConfirmed) {
+        try {
+          // Upload the file to Cloudinary
+          const formData = new FormData();
+          formData.append("file", file);
+          formData.append("upload_preset", "urban_image"); // Use your Cloudinary upload preset
+
+          // Send the file to Cloudinary
+          const response = await axios.post(
+            "https://api.cloudinary.com/v1_1/dngyazspl/upload",
+            formData
+          );
+
+          if (response.data.secure_url) {
+            const cloudinaryUrl = response.data.secure_url;
+
+            // Construct the payload to send to your mutation
             const payload: CreateVehicleDocumentDto = {
               documentType: fileType,
-              file: fileURL, // Replace with actual file upload logic if necessary
+              file: cloudinaryUrl, // Use Cloudinary URL
               vehicleId,
               description: "side",
             };
 
-            const response = await createVehicleDocument(payload).unwrap();
+            // Call your mutation with the Cloudinary URL
+            const result = await createVehicleDocument(payload).unwrap();
             alert("Document saved successfully!");
-            console.log("Document Response:", response);
-          } catch (error: any) {
-            console.error("Error uploading document:", error);
-            alert("Failed to save document. Please try again.");
+            console.log("Document Response:", result);
           }
+        } catch (error: any) {
+          console.error("Error uploading document:", error);
+          alert("Failed to save document. Please try again.");
         }
       }
-    };
-    return (
-      <div className="flex justify-center w-full mt-2 text-center">
-        <label className="flex w-full bg-white dotted-border flex-col items-center justify-center rounded-[5px] cursor-pointer relative">
-          <div className="flex flex-col items-center justify-center h-[150px]">
-            {image ? (
-              <Image
-                className=""
-                src={image}
-                alt="image"
-                width={100}
-                height={100}
-                priority
-              />
-            ) : (
-              <div className="flex items-center gap-2">
-                <FiUpload />
-                <h4 className="text-[16px] text-[#9F9F9F]">
-                  Upload Side Bus Image
-                </h4>
-              </div>
-            )}
-          </div>
-          <input
-            id="dropzone22"
-            type="file"
-            accept="image/x-png,image/gif,image/jpeg,application/pdf,video/*"
-            className="hidden mb-2 text-sm text-[#6C757D] font-medium"
-            onChange={handleFileUpload}
-          />
-        </label>
-      </div>
-    );
+    }
   };
+
+  return (
+    <div className="flex justify-center w-full mt-2 text-center">
+      <label className="flex w-full bg-white dotted-border flex-col items-center justify-center rounded-[5px] cursor-pointer relative">
+        <div className="flex flex-col items-center justify-center h-[150px]">
+          {image ? (
+            <Image
+              className=""
+              src={image}
+              alt="image"
+              width={100}
+              height={100}
+              priority
+            />
+          ) : (
+            <div className="flex items-center gap-2">
+              <FiUpload />
+              <h4 className="text-[16px] text-[#9F9F9F]">Upload Side Bus Image</h4>
+            </div>
+          )}
+        </div>
+        <input
+          id="dropzone22"
+          type="file"
+          accept="image/x-png,image/gif,image/jpeg,application/pdf,video/*"
+          className="hidden mb-2 text-sm text-[#6C757D] font-medium"
+          onChange={handleFileUpload}
+        />
+      </label>
+    </div>
+  );
+};
+
 
   const BusFrontUpload: React.FC<BusFrontUploadProps> = ({
     image,
@@ -205,36 +225,54 @@ const onCloseModalLoader = () => setOpenLoader(false);
     const [createVehicleDocument] =
       useVehicleDocumentControllerCreateMutation();
 
-    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0];
-      if (file) {
-        const fileType = file.type.split("/")[0]; // Get the type (image, video, etc.)
-        const fileURL = URL.createObjectURL(file); // Preview URL
-        setImage(fileURL);
-
-        const isConfirmed = window.confirm(
-          `The uploaded file is of type "${fileType}". Do you want to save this document?`
-        );
-
-        if (isConfirmed) {
-          try {
-            const payload: CreateVehicleDocumentDto = {
-              documentType: fileType,
-              file: fileURL, // Replace with actual file upload logic if necessary
-              vehicleId,
-              description: "front",
-            };
-
-            const response = await createVehicleDocument(payload).unwrap();
-            alert("Document saved successfully!");
-            console.log("Document Response:", response);
-          } catch (error: any) {
-            console.error("Error uploading document:", error);
-            alert("Failed to save document. Please try again.");
+      const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+          const fileType = file.type.split("/")[0]; // Get the type (image, video, etc.)
+          const fileURL = URL.createObjectURL(file); // Preview URL
+          setImage(fileURL); // Set preview image (not necessary for Cloudinary, but for preview)
+    
+          // Confirm the upload action
+          const isConfirmed = window.confirm(
+            `The uploaded file is of type "${fileType}". Do you want to save this document?`
+          );
+    
+          if (isConfirmed) {
+            try {
+              // Upload the file to Cloudinary
+              const formData = new FormData();
+              formData.append("file", file);
+              formData.append("upload_preset", "urban_image"); // Use your Cloudinary upload preset
+    
+              // Send the file to Cloudinary
+              const response = await axios.post(
+                "https://api.cloudinary.com/v1_1/dngyazspl/upload",
+                formData
+              );
+    
+              if (response.data.secure_url) {
+                const cloudinaryUrl = response.data.secure_url;
+    
+                // Construct the payload to send to your mutation
+                const payload: CreateVehicleDocumentDto = {
+                  documentType: fileType,
+                  file: cloudinaryUrl, // Use Cloudinary URL
+                  vehicleId,
+                  description: "front",
+                };
+    
+                // Call your mutation with the Cloudinary URL
+                const result = await createVehicleDocument(payload).unwrap();
+                alert("Document saved successfully!");
+                console.log("Document Response:", result);
+              }
+            } catch (error: any) {
+              console.error("Error uploading document:", error);
+              alert("Failed to save document. Please try again.");
+            }
           }
         }
-      }
-    };
+      };
     return (
       <div className="flex justify-center w-full mt-2 text-center">
         <label className="flex w-full  bg-white dotted-border flex-col items-center justify-center rounded-[5px] cursor-pointer relative">
@@ -257,7 +295,7 @@ const onCloseModalLoader = () => setOpenLoader(false);
               <div className="flex items-center gap-2">
                 <FiUpload />
                 <h4 className="text-[16px] text-[#9F9F9F]">
-                  Upload Side bus Image
+                  Upload Front bus Image
                 </h4>
               </div>
             )}
@@ -282,36 +320,54 @@ const onCloseModalLoader = () => setOpenLoader(false);
     const [createVehicleDocument] =
       useVehicleDocumentControllerCreateMutation();
 
-    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0];
-      if (file) {
-        const fileType = file.type.split("/")[0]; // Get the type (image, video, etc.)
-        const fileURL = URL.createObjectURL(file); // Preview URL
-        setImage(fileURL);
-
-        const isConfirmed = window.confirm(
-          `The uploaded file is of type "${fileType}". Do you want to save this document?`
-        );
-
-        if (isConfirmed) {
-          try {
-            const payload: CreateVehicleDocumentDto = {
-              documentType: fileType,
-              file: fileURL, // Replace with actual file upload logic if necessary
-              vehicleId,
-              description: "sideTwo",
-            };
-
-            const response = await createVehicleDocument(payload).unwrap();
-            alert("Document saved successfully!");
-            console.log("Document Response:", response);
-          } catch (error: any) {
-            console.error("Error uploading document:", error);
-            alert("Failed to save document. Please try again.");
+      const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+          const fileType = file.type.split("/")[0]; // Get the type (image, video, etc.)
+          const fileURL = URL.createObjectURL(file); // Preview URL
+          setImage(fileURL); // Set preview image (not necessary for Cloudinary, but for preview)
+    
+          // Confirm the upload action
+          const isConfirmed = window.confirm(
+            `The uploaded file is of type "${fileType}". Do you want to save this document?`
+          );
+    
+          if (isConfirmed) {
+            try {
+              // Upload the file to Cloudinary
+              const formData = new FormData();
+              formData.append("file", file);
+              formData.append("upload_preset", "urban_image"); // Use your Cloudinary upload preset
+    
+              // Send the file to Cloudinary
+              const response = await axios.post(
+                "https://api.cloudinary.com/v1_1/dngyazspl/upload",
+                formData
+              );
+    
+              if (response.data.secure_url) {
+                const cloudinaryUrl = response.data.secure_url;
+    
+                // Construct the payload to send to your mutation
+                const payload: CreateVehicleDocumentDto = {
+                  documentType: fileType,
+                  file: cloudinaryUrl, // Use Cloudinary URL
+                  vehicleId,
+                  description: "sideTwo",
+                };
+    
+                // Call your mutation with the Cloudinary URL
+                const result = await createVehicleDocument(payload).unwrap();
+                alert("Document saved successfully!");
+                console.log("Document Response:", result);
+              }
+            } catch (error: any) {
+              console.error("Error uploading document:", error);
+              alert("Failed to save document. Please try again.");
+            }
           }
         }
-      }
-    };
+      };
     return (
       <div className="flex justify-center w-full mt-2 text-center">
         <label className="flex w-full bg-white dotted-border flex-col items-center justify-center rounded-[5px] cursor-pointer relative">
@@ -354,36 +410,54 @@ const onCloseModalLoader = () => setOpenLoader(false);
     const [createVehicleDocument] =
       useVehicleDocumentControllerCreateMutation();
 
-    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0];
-      if (file) {
-        const fileType = file.type.split("/")[0]; // Get the type (image, video, etc.)
-        const fileURL = URL.createObjectURL(file); // Preview URL
-        setImage(fileURL);
-
-        const isConfirmed = window.confirm(
-          `The uploaded file is of type "${fileType}". Do you want to save this document?`
-        );
-
-        if (isConfirmed) {
-          try {
-            const payload: CreateVehicleDocumentDto = {
-              documentType: fileType,
-              file: fileURL, // Replace with actual file upload logic if necessary
-              vehicleId,
-              description: "rear",
-            };
-
-            const response = await createVehicleDocument(payload).unwrap();
-            alert("Document saved successfully!");
-            console.log("Document Response:", response);
-          } catch (error: any) {
-            console.error("Error uploading document:", error);
-            alert("Failed to save document. Please try again.");
+      const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+          const fileType = file.type.split("/")[0]; // Get the type (image, video, etc.)
+          const fileURL = URL.createObjectURL(file); // Preview URL
+          setImage(fileURL); // Set preview image (not necessary for Cloudinary, but for preview)
+    
+          // Confirm the upload action
+          const isConfirmed = window.confirm(
+            `The uploaded file is of type "${fileType}". Do you want to save this document?`
+          );
+    
+          if (isConfirmed) {
+            try {
+              // Upload the file to Cloudinary
+              const formData = new FormData();
+              formData.append("file", file);
+              formData.append("upload_preset", "urban_image"); // Use your Cloudinary upload preset
+    
+              // Send the file to Cloudinary
+              const response = await axios.post(
+                "https://api.cloudinary.com/v1_1/dngyazspl/upload",
+                formData
+              );
+    
+              if (response.data.secure_url) {
+                const cloudinaryUrl = response.data.secure_url;
+    
+                // Construct the payload to send to your mutation
+                const payload: CreateVehicleDocumentDto = {
+                  documentType: fileType,
+                  file: cloudinaryUrl, // Use Cloudinary URL
+                  vehicleId,
+                  description: "rear",
+                };
+    
+                // Call your mutation with the Cloudinary URL
+                const result = await createVehicleDocument(payload).unwrap();
+                alert("Document saved successfully!");
+                console.log("Document Response:", result);
+              }
+            } catch (error: any) {
+              console.error("Error uploading document:", error);
+              alert("Failed to save document. Please try again.");
+            }
           }
         }
-      }
-    };
+      };
     return (
       <div className="flex justify-center w-full mt-2 text-center">
         <label className="flex w-full  bg-white dotted-border flex-col items-center justify-center rounded-[5px] cursor-pointer relative">
@@ -1151,7 +1225,7 @@ const onCloseModalLoader = () => setOpenLoader(false);
 
                     {showScreen === 2 ? (
                       <button
-                        // onClick={onSubmit}
+                        onClick={onCloseModal}
                         // disabled={!selectedOption} // Disable button if no option is selected
                         className={`py-4 w-full px-6 bg-[#036E03] text-white rounded-lg  hover:bg-green-700
       }`}

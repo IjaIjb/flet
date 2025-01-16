@@ -136,7 +136,7 @@ export default function Home() {
 
         {/* Right Section */}
         <div className="w-full h-screen scrollbar-hide lg:w-[85%] lg:overflow-y-auto">
-          <div className="lg:hidden block">
+          {/* <div className="lg:hidden block">
             <div className="w-full   relative">
               <div className="absolute h-full  object-cover w-full rounded-xl">
             
@@ -165,7 +165,7 @@ export default function Home() {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
           <div className=" bg-white px-8 ">
            <div className="sticky top-[40px] z-20 bg-white">
 
@@ -194,7 +194,7 @@ export default function Home() {
             </div>
             </div>
 
-            <div className="md:h-full h-full scrollbar-hide mt-[80px] overflow-y-scroll">{showProfileConnector()}</div>
+            <div className="md:h-full h-full scrollbar-hide mt-[70px]  overflow-y-scroll">{showProfileConnector()}</div>
 
      
           </div>

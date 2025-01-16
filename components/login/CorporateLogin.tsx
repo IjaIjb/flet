@@ -5,7 +5,7 @@ import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import * as Yup from "yup";
 import Button from "../UI/Button";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
+// import Image from "next/image";
 import { useAuthControllerLoginMutation } from "@/store/api";
 import LoadingSpinner from "../UI/LoadingSpinner";
 import { ToastContainer, toast } from "react-toastify";
@@ -173,7 +173,7 @@ const CorporateLogin = () => {
             </p>
 
             {/* NDPC Complaint Section */}
-            <div className="flex items-center justify-center gap-3 my-4">
+            {/* <div className="flex items-center justify-center gap-3 my-4">
               <div className="border-2 p-1 rounded-full border-[#ECEBEB]">
                 <div className="flex items-center px-2 gap-2">
                   <Image
@@ -188,7 +188,7 @@ const CorporateLogin = () => {
                   </h6>
                 </div>
               </div>
-            </div>
+            </div> */}
           </Form>
         )}
       </Formik>

@@ -11,6 +11,9 @@ const nextConfig: NextConfig = {
   //     },
   //   ];
   // },
+  images: {
+    domains: ['res.cloudinary.com'], // Allow images from Cloudinary
+  },
   webpack: (config, { dev }) => {
     if (dev) {
       config.devtool = false; // Disables source maps in development

@@ -50,44 +50,74 @@ const Page = () => {
   const [login] =
     useAuthControllerLoginMutation();
 
-  const ImageUpload: React.FC<ImageUploadProps> = ({ image, setImage}) => (
-    <div className="flex justify-center text-center">
-      <label className="flex w-[200px] bg-white dotted-border flex-col items-center justify-center rounded-[5px] cursor-pointer relative">
-        <div className="flex flex-col items-center justify-center h-[150px]">
-          {image ? (
-            <Image
-              className=""
-              src={image}
-              alt="Uploaded image"
-              width={100}
-              height={100}
-            />
-          ) : (
-            <Image
-              className=""
-              src="/onboarding/Icon.svg" // Replace with your default image path
-              alt="Default placeholder"
-              width={100}
-              height={100}
-            />
-          )}
-        </div>
-        <input
-          id="dropzone1"
-          type="file"
-          accept="image/x-png,image/gif,image/jpeg"
-          className="hidden mb-2 text-sm text-[#6C757D] font-medium"
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            const file = e.target.files?.[0];
-            if (file) {
-              // setFile(file); // Update the file in the parent
-              setImage(URL.createObjectURL(file)); // Set preview URL
-            }
-          }}
-        />
-      </label>
-    </div>
-  );
+  const ImageUpload: React.FC<ImageUploadProps> = ({ image, setImage }) => {
+    const [loading, setLoading] = useState(false);
+  
+    const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file) {
+        setLoading(true); // Show loading spinner or indicator
+  
+        try {
+          // Create a FormData object
+          const formData = new FormData();
+          formData.append("file", file);
+          formData.append("upload_preset", "urban_image"); // Replace with your Cloudinary preset
+  
+          // Upload to Cloudinary
+          const response = await fetch("https://api.cloudinary.com/v1_1/dngyazspl/image/upload", {
+            method: "POST",
+            body: formData,
+          });
+  
+          const result = await response.json();
+          if (result.secure_url) {
+            // Set the image URL in the state
+            setImage(result.secure_url);
+          }
+  
+          setLoading(false); // Stop loading
+        } catch (error) {
+          console.error("Error uploading image", error);
+          toast.error("Error uploading image. Please try again.");
+          setLoading(false);
+        }
+      }
+    };
+  
+    return (
+      <div className="flex justify-center text-center">
+        <label className="flex w-[110px] bg-white dotted-border flex-col items-center justify-center rounded-[5px] cursor-pointer relative">
+          <div className="flex flex-col items-center justify-center h-[70px]">
+            {image ? (
+              <Image
+                className=""
+                src={image} // This should now be the Cloudinary URL
+                alt="Uploaded image"
+                width={100}
+                height={100}
+              />
+            ) : (
+              <Image
+                className=""
+                src="/onboarding/Icon.svg" // Default placeholder image
+                alt="Default placeholder"
+                width={100}
+                height={100}
+              />
+            )}
+          </div>
+          <input
+            type="file"
+            accept="image/x-png,image/gif,image/jpeg"
+            className="hidden mb-2 text-sm text-[#6C757D] font-medium"
+            onChange={handleImageChange}
+          />
+        </label>
+        {loading && <p>Uploading...</p>}
+      </div>
+    );
+  };  
 
   const initialData = {
     companyName: "",

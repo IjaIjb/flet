@@ -13,6 +13,9 @@ import "react-toastify/dist/ReactToastify.css";
 import LoadingSpinner from "@/components/UI/LoadingSpinner";
 import { loginUserSuccess } from "@/store/redux/actions/AuthAction";
 import { useAppDispatch } from "@/store/redux/store";
+import LoadingSpinnerPage from "@/components/UI/LoadingSpinnerPage";
+import "react-responsive-modal/styles.css";
+import { Modal } from "react-responsive-modal";
 
 // Define the structure of user data
 interface UserData {
@@ -68,10 +71,12 @@ interface ImageUploadProps {
   setImage: (image: string | undefined) => void; // setImage is a function that updates the image state
 }
 const Profile = () => {
+    const [open, setOpen] = useState(false);
+  
   const [image, setImage] = useState<string | undefined>(undefined);
-  const [avatarImage, setAvatarImage] = useState<any>();
   const dispatch = useAppDispatch(); // Access `dispatch`
 
+  const [isFetching, setIsFetching] = useState<boolean>(true);
   const [userData, setUserData] = useState<UserData | null>(null);
   const [userToken, setUserToken] = useState("");
   const [update, { isLoading }] =
@@ -80,6 +85,7 @@ const Profile = () => {
   const [updateCorporate] = useUserControllerUpdateCorporateByIdMutation();
 
   useEffect(() => {
+    setIsFetching(true);
     const storedUserData = localStorage.getItem("user");
     const storedToken = localStorage.getItem("auth_token");
     if (storedUserData) {
@@ -96,9 +102,23 @@ const Profile = () => {
       setUserToken(parsedData);
       // if (parsedData.individual?.avatar) setImage(parsedData.individual.avatar);
     }
+    setIsFetching(false);
   }, []);
 
-  // console.log(userData);
+  const onOpenModal = () => {
+    // e.preventDefault();
+    setOpen(true);
+  };
+  const onCloseModal = () => setOpen(false);
+
+    useEffect(() => {
+      if (isFetching) {
+        onOpenModal();
+      } else {
+        onCloseModal();
+      }
+    }, [isFetching]);
+  console.log(userData);
 
   const initialData = {
     firstname: userData?.individual?.firstname || "",
@@ -138,48 +158,74 @@ const Profile = () => {
     companyAddress: Yup.string().required("Company address is required"),
   });
 
-  const ImageUpload: React.FC<ImageUploadProps> = ({ image, setImage }) => (
-    <div className="flex justify-center text-center">
-      <label className="flex w-[110px] bg-white dotted-border flex-col items-center justify-center rounded-[5px] cursor-pointer relative">
-        <div className="flex flex-col items-center justify-center h-[70px]">
-          {image ? (
-            <Image
-              className=""
-              src={image}
-              alt="Uploaded image"
-              width={100}
-              height={100}
-            />
-          ) : (
-            <Image
-              className=""
-              src="/onboarding/Icon.svg" // Replace with your default image path
-              alt="Default placeholder"
-              width={100}
-              height={100}
-            />
-          )}
-        </div>
-        <input
-          id="dropzone1"
-          type="file"
-          accept="image/x-png,image/gif,image/jpeg"
-          className="hidden mb-2 text-sm text-[#6C757D] font-medium"
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            const file = e.target.files?.[0];
-            if (file) {
-              const reader = new FileReader();
-              reader.onloadend = () => {
-                setImage(reader.result as string);
-                setAvatarImage(file);
-              };
-              reader.readAsDataURL(file);
-            }
-          }}
-        />
-      </label>
-    </div>
-  );
+  const ImageUpload: React.FC<ImageUploadProps> = ({ image, setImage }) => {
+    const [loading, setLoading] = useState(false);
+  
+    const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file) {
+        setLoading(true); // Show loading spinner or indicator
+  
+        try {
+          // Create a FormData object
+          const formData = new FormData();
+          formData.append("file", file);
+          formData.append("upload_preset", "urban_image"); // Replace with your Cloudinary preset
+  
+          // Upload to Cloudinary
+          const response = await fetch("https://api.cloudinary.com/v1_1/dngyazspl/image/upload", {
+            method: "POST",
+            body: formData,
+          });
+  
+          const result = await response.json();
+          if (result.secure_url) {
+            // Set the image URL in the state
+            setImage(result.secure_url);
+          }
+  
+          setLoading(false); // Stop loading
+        } catch (error) {
+          console.error("Error uploading image", error);
+          toast.error("Error uploading image. Please try again.");
+          setLoading(false);
+        }
+      }
+    };
+  
+    return (
+      <div className="flex justify-center text-center">
+        <label className="flex w-[110px] bg-white dotted-border flex-col items-center justify-center rounded-[5px] cursor-pointer relative">
+          <div className="flex flex-col items-center justify-center h-[70px]">
+            {image ? (
+              <Image
+                className=""
+                src={image} // This should now be the Cloudinary URL
+                alt="Uploaded image"
+                width={100}
+                height={100}
+              />
+            ) : (
+              <Image
+                className=""
+                src="/onboarding/Icon.svg" // Default placeholder image
+                alt="Default placeholder"
+                width={100}
+                height={100}
+              />
+            )}
+          </div>
+          <input
+            type="file"
+            accept="image/x-png,image/gif,image/jpeg"
+            className="hidden mb-2 text-sm text-[#6C757D] font-medium"
+            onChange={handleImageChange}
+          />
+        </label>
+        {loading && <p>Uploading...</p>}
+      </div>
+    );
+  };  
   // if (!userData) return <div></div>;
   // console.log(userData)
   // const onSubmit = async (values: any) => {
@@ -217,44 +263,37 @@ const Profile = () => {
       toast.error("User ID is missing. Please reload and try again.");
       return;
     }
-
-    // Create a FormData object
-    const formData = new FormData();
-
-    // Append other fields dynamically
-    Object.entries(values).forEach(([key, value]) => {
-      if (key !== "role" && key !== "userType" && key !== "userCategory") {
-        formData.append(key, value as string | Blob);
-      }
-    });
-
-    // Append individual fields to FormData
-    formData.append("id", userData.individual.id);
-    formData.append("role", values.role as "USER");
-    formData.append("userType", values.userType as "FLEET_PARTNERS");
-    formData.append("userCategory", values.userCategory as "PASSENGERS");
-
-    // Append avatar image if available
+  
+    // Prepare the payload as a regular JSON object
+    const payload: any = {
+      id: userData.individual.id,
+      role: values.role as "USER",
+      // userType: values.userType as "FLEET_PARTNERS",
+      // userCategory: values.userCategory as "PASSENGERS",
+      ...values, // Spread other values dynamically
+    };
+  
+    // Include the avatar image if available (ensure the image is in a proper format if needed)
     if (image) {
-      formData.append("avatar", avatarImage);
+      payload.avatar = image;
     }
-
+  
     try {
-      // Make the API call with the FormData
+      // Make the API call with the payload (as JSON)
       const response = await update({
         id: userData.individual.id,
-        updateIndividualDto: formData as any,
+        updateIndividualDto: payload, // Send as JSON instead of FormData
       }).unwrap();
-
+  
       if (response) {
         toast.success("Profile updated successfully!");
-
+  
         // Update user data in local storage and global state
         const updatedUserData: UserData = {
           ...userData,
           individual: { ...userData.individual, ...values },
         };
-
+  
         // Dispatch updated user data to global store
         dispatch(
           loginUserSuccess({
@@ -262,10 +301,10 @@ const Profile = () => {
             user: updatedUserData,
           })
         );
-
+  
         // Update local storage with the updated user data
         localStorage.setItem("user", JSON.stringify(updatedUserData));
-
+  
         // Update the state with new user data
         setUserData(updatedUserData);
       }
@@ -274,6 +313,7 @@ const Profile = () => {
       toast.error("Unexpected error. Please try again.");
     }
   };
+  
 
   const onSubmitCorporate = async (values: CorporateFormValues) => {
     if (!userData?.corporateBody?.id) {
@@ -319,9 +359,10 @@ const Profile = () => {
       toast.error("Unexpected error. Please try again.");
     }
   };
-
+ 
   return (
     <div>
+        {isLoading ? null : (
       <div className="border-[#D9D9D9] border rounded-[10px] px-5 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -401,7 +442,7 @@ const Profile = () => {
                       <Field
                         className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
                         name="phone"
-                        type="number"
+                        type="text"
                         id="phone"
                         placeholder=""
                       />
@@ -463,7 +504,7 @@ const Profile = () => {
               )}
             </Formik>
           </div>
-        ) : (
+        ) : userData?.corporateBody ? (
           <div>
             <Formik
               enableReinitialize // Allow Formik to update when initialValues changes
@@ -521,7 +562,7 @@ const Profile = () => {
                       <Field
                         className="mt-2 block w-full h-12 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
                         name="phone"
-                        type="number"
+                        type="text"
                         id="phone"
                         placeholder=""
                       />
@@ -583,8 +624,22 @@ const Profile = () => {
               )}
             </Formik>
           </div>
-        )}
+        ) : null}
       </div>
+        )}
+      <Modal
+        classNames={{
+          modal: "rounded-[10px] overflow-visible relative",
+        }}
+        open={open}
+        onClose={onCloseModal}
+        showCloseIcon={false} // Hides the close button
+        center
+      >
+        <div className="px-2 md:px-5 w-[100px] h-[100px] flex justify-center items-center text-center">
+          <LoadingSpinnerPage />
+        </div>
+      </Modal>
       <ToastContainer
         position="top-center"
         autoClose={2000}
