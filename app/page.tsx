@@ -56,19 +56,19 @@ export default function Home() {
 
   return (
     <div className="w-full">
-      <div className="grid lg:grid-cols-2 gap-14 w-full h-full ">
+      <div className="grid lg:grid-cols-2 gap-14 items-center w-full h-screen ">
         {/* Left Section */}
         <div className="w-full z-10 h-screen lg:block hidden relative">
           <div className="absolute h-screen z-10 object-cover w-full rounded-xl">
             {/* <img
               className="h-full z-10 object-cover w-full"
-              src="/onboarding/transport-concept-parked-vehicles 1.svg"
+              src="/onboarding/urbanFleetRegBg.jpg"
               alt=""
             /> */}
 
             <Image
               className="h-full z-10 object-cover w-full"
-              src="/onboarding/transport-concept-parked-vehicles 1.svg"
+              src="/onboarding/urbanFleetRegBg.jpg"
               alt="Descriptive alt text"
               layout="fill"
               // objectFit="cover"
@@ -135,7 +135,7 @@ export default function Home() {
         </div>
 
         {/* Right Section */}
-        <div className="w-full h-screen scrollbar-hide lg:w-[85%] lg:overflow-y-auto">
+        <div className="w-full  scrollbar-hide lg:w-[85%] ">
           {/* <div className="lg:hidden block">
             <div className="w-full   relative">
               <div className="absolute h-full  object-cover w-full rounded-xl">
@@ -143,7 +143,7 @@ export default function Home() {
 
                 <Image
                   className="h-full object-cover w-full"
-                  src="/onboarding/transport-concept-parked-vehicles 1.svg"
+                  src="/onboarding/urbanFleetRegBg.jpg"
                   alt="Descriptive alt text"
                   layout="fill"
                   // objectFit="cover"
@@ -194,7 +194,7 @@ export default function Home() {
             </div>
             </div>
 
-            <div className="md:h-full h-full scrollbar-hide mt-[70px]  overflow-y-scroll">{showProfileConnector()}</div>
+            <div className="md:h-full h-full scrollbar-hide mt-[30px]  overflow-y-scroll">{showProfileConnector()}</div>
 
      
           </div>

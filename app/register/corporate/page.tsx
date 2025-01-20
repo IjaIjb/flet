@@ -220,7 +220,7 @@ const Page = () => {
           <div className="absolute h-screen z-10 object-cover w-full rounded-xl">
             <Image
               className="h-full z-10 object-cover w-full"
-              src="/onboarding/transport-concept-parked-vehicles 1.svg"
+              src="/onboarding/urbanFleetRegBg.jpg"
               alt="Descriptive alt text"
               layout="fill"
               // objectFit="cover"
@@ -289,7 +289,7 @@ const Page = () => {
               <div className="absolute h-full z-10 object-cover w-full rounded-xl">
                 <Image
                   className="h-full  object-cover w-full"
-                  src="/onboarding/transport-concept-parked-vehicles 1.svg"
+                  src="/onboarding/urbanFleetRegBg.jpg"
                   alt="Descriptive alt text"
                   layout="fill"
                   objectFit="cover"

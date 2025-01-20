@@ -638,6 +638,12 @@ const injectedRtkApi = api.injectEndpoints({
         body: queryArg,
       }),
     }),
+    bookingControllerFindAllBookingsByUserUnpaid: build.query<
+      BookingControllerFindAllBookingsByUserUnpaidApiResponse,
+      BookingControllerFindAllBookingsByUserUnpaidApiArg
+    >({
+      query: () => ({ url: `/bookings/user/unpaid` }),
+    }),
     bookingControllerFindBookingById: build.query<
       BookingControllerFindBookingByIdApiResponse,
       BookingControllerFindBookingByIdApiArg
@@ -1601,13 +1607,27 @@ const injectedRtkApi = api.injectEndpoints({
       TransactionControllerCreateApiResponse,
       TransactionControllerCreateApiArg
     >({
-      query: (queryArg) => ({ url: `/transaction`, method: "POST" }),
+      query: (queryArg) => ({
+        url: `/transaction`,
+        method: "POST",
+        body: queryArg.createTransactionDto,
+      }),
     }),
     transactionControllerFindAll: build.query<
       TransactionControllerFindAllApiResponse,
       TransactionControllerFindAllApiArg
     >({
       query: () => ({ url: `/transaction` }),
+    }),
+    transactionControllerUpdateTransaction: build.mutation<
+      TransactionControllerUpdateTransactionApiResponse,
+      TransactionControllerUpdateTransactionApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/transaction/${queryArg.id}`,
+        method: "PUT",
+        body: queryArg.updateTransactionDto,
+      }),
     }),
     transactionControllerFindById: build.query<
       TransactionControllerFindByIdApiResponse,
@@ -1632,6 +1652,44 @@ const injectedRtkApi = api.injectEndpoints({
       TransactionControllerCheckUniqueIdApiArg
     >({
       query: (queryArg) => ({ url: `/transaction/check-unique/${queryArg}` }),
+    }),
+    paystackNotificationsControllerSaveNotification: build.mutation<
+      PaystackNotificationsControllerSaveNotificationApiResponse,
+      PaystackNotificationsControllerSaveNotificationApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/paystack-notifications`,
+        method: "POST",
+        body: queryArg,
+      }),
+    }),
+    paystackNotificationsControllerFindAll: build.query<
+      PaystackNotificationsControllerFindAllApiResponse,
+      PaystackNotificationsControllerFindAllApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/paystack-notifications`,
+        params: { offset: queryArg.offset, limit: queryArg.limit },
+      }),
+    }),
+    paystackNotificationsControllerFindById: build.query<
+      PaystackNotificationsControllerFindByIdApiResponse,
+      PaystackNotificationsControllerFindByIdApiArg
+    >({
+      query: (queryArg) => ({ url: `/paystack-notifications/${queryArg}` }),
+    }),
+    paystackNotificationsControllerSearch: build.query<
+      PaystackNotificationsControllerSearchApiResponse,
+      PaystackNotificationsControllerSearchApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/paystack-notifications/search`,
+        params: {
+          amount: queryArg.amount,
+          status: queryArg.status,
+          reference: queryArg.reference,
+        },
+      }),
     }),
     appControllerGetHello: build.query<
       AppControllerGetHelloApiResponse,
@@ -1984,6 +2042,9 @@ export type BookingControllerCreateBookingUnregisteredDtoApiResponse =
   /** status 201 Booking successfully created */ BookingResponseDto;
 export type BookingControllerCreateBookingUnregisteredDtoApiArg =
   CreateBookingUnregisteredDto;
+export type BookingControllerFindAllBookingsByUserUnpaidApiResponse =
+  /** status 200 Bookings retrieved successfully */ BookingArrayResponseDto[];
+export type BookingControllerFindAllBookingsByUserUnpaidApiArg = void;
 export type BookingControllerFindBookingByIdApiResponse =
   /** status 200 Booking retrieved successfully */ BookingResponseDto;
 export type BookingControllerFindBookingByIdApiArg = /** Booking ID */ string;
@@ -2460,10 +2521,21 @@ export type UrbanCardControllerRemoveApiResponse =
 export type UrbanCardControllerRemoveApiArg = string;
 export type TransactionControllerCreateApiResponse =
   /** status 201 Transactions created successfully */ TransactionResponseDto;
-export type TransactionControllerCreateApiArg = /** ID of the booking */ string;
+export type TransactionControllerCreateApiArg = {
+  /** ID of the booking */
+  bookingId: any;
+  createTransactionDto: CreateTransactionDto;
+};
 export type TransactionControllerFindAllApiResponse =
   /** status 200 Fuel agencies retrieved successfully */ TransactionArrayResponseDto;
 export type TransactionControllerFindAllApiArg = void;
+export type TransactionControllerUpdateTransactionApiResponse =
+  /** status 200 Transaction updated successfully */ TransactionResponseDto;
+export type TransactionControllerUpdateTransactionApiArg = {
+  /** Transaction ID */
+  id: string;
+  updateTransactionDto: UpdateTransactionDto;
+};
 export type TransactionControllerFindByIdApiResponse =
   /** status 200 Transactions retrieved successfully */ TransactionResponseDto;
 export type TransactionControllerFindByIdApiArg =
@@ -2479,6 +2551,23 @@ export type TransactionControllerCheckUniqueIdApiResponse =
   /** status 200 Unique ID existence checked successfully */ TransactionResponseDto;
 export type TransactionControllerCheckUniqueIdApiArg =
   /** Unique ID to check */ string;
+export type PaystackNotificationsControllerSaveNotificationApiResponse =
+  unknown;
+export type PaystackNotificationsControllerSaveNotificationApiArg = Object;
+export type PaystackNotificationsControllerFindAllApiResponse = unknown;
+export type PaystackNotificationsControllerFindAllApiArg = {
+  offset?: number;
+  limit?: number;
+};
+export type PaystackNotificationsControllerFindByIdApiResponse = unknown;
+export type PaystackNotificationsControllerFindByIdApiArg =
+  /** The ID of the notification */ string;
+export type PaystackNotificationsControllerSearchApiResponse = unknown;
+export type PaystackNotificationsControllerSearchApiArg = {
+  amount?: number;
+  status?: string;
+  reference?: string;
+};
 export type AppControllerGetHelloApiResponse = unknown;
 export type AppControllerGetHelloApiArg = void;
 export type User = {
@@ -3441,6 +3530,22 @@ export type UpdateTripDto = {
   uniqueID?: string;
   cost?: number;
 };
+export type Transaction = {
+  id: string;
+  description: string;
+  amount: number;
+  uniqueID: string;
+  status: string;
+  /** The date when the user was created */
+  createdAt: string;
+  /** The date when the user was last updated */
+  updatedAt: string;
+  userId: string;
+  /** The user who owns this resource */
+  user: User;
+  /** Bookings linked to this transaction */
+  bookings: Booking[];
+};
 export type Booking = {
   id: string;
   /** extra detail of trip */
@@ -3454,6 +3559,7 @@ export type Booking = {
   uniqueID: string;
   userId: string;
   tripId: string;
+  transactionId: string;
   /** The date when the document was created */
   createdAt: string;
   /** The date when the document was last updated */
@@ -3462,6 +3568,8 @@ export type Booking = {
   user: User;
   /** Instance of the Trip */
   trip: Trip;
+  /** Instance of the Transaction */
+  transaction: Transaction;
 };
 export type BookingResponseDto = {
   status: number;
@@ -4370,28 +4478,15 @@ export type UpdateUrbanCardDto = {
   title?: string;
   file?: string;
 };
-export type Transaction = {
-  id: string;
-  description: string;
-  amount: number;
-  uniqueID: string;
-  status: string;
-  /** The date when the user was created */
-  createdAt: string;
-  /** The date when the user was last updated */
-  updatedAt: string;
-  userId: string;
-  bookingId: string;
-  /** The user who owns this resource */
-  user: User;
-  /** Booking linked to this transaction */
-  booking: Booking;
-};
 export type TransactionResponseDto = {
   status: number;
   error?: string;
   message?: string;
   data: Transaction;
+};
+export type CreateTransactionDto = {
+  /** bookingId */
+  bookingId: string;
 };
 export type TransactionArrayResponseDto = {
   status: number;
@@ -4399,6 +4494,11 @@ export type TransactionArrayResponseDto = {
   message?: string;
   data: Transaction[];
 };
+export type UpdateTransactionDto = {
+  /** bookingId */
+  bookingId: string;
+};
+export type Object = {};
 export const {
   useAuthControllerLoginMutation,
   useAuthControllerVerifyEmailQuery,
@@ -4504,6 +4604,8 @@ export const {
   useBookingControllerFindAllBookingsQuery,
   useLazyBookingControllerFindAllBookingsQuery,
   useBookingControllerCreateBookingUnregisteredDtoMutation,
+  useBookingControllerFindAllBookingsByUserUnpaidQuery,
+  useLazyBookingControllerFindAllBookingsByUserUnpaidQuery,
   useBookingControllerFindBookingByIdQuery,
   useLazyBookingControllerFindBookingByIdQuery,
   useBookingControllerUpdateBookingMutation,
@@ -4676,6 +4778,7 @@ export const {
   useTransactionControllerCreateMutation,
   useTransactionControllerFindAllQuery,
   useLazyTransactionControllerFindAllQuery,
+  useTransactionControllerUpdateTransactionMutation,
   useTransactionControllerFindByIdQuery,
   useLazyTransactionControllerFindByIdQuery,
   useTransactionControllerFindMeQuery,
@@ -4684,6 +4787,13 @@ export const {
   useLazyTransactionControllerFindByQueryQuery,
   useTransactionControllerCheckUniqueIdQuery,
   useLazyTransactionControllerCheckUniqueIdQuery,
+  usePaystackNotificationsControllerSaveNotificationMutation,
+  usePaystackNotificationsControllerFindAllQuery,
+  useLazyPaystackNotificationsControllerFindAllQuery,
+  usePaystackNotificationsControllerFindByIdQuery,
+  useLazyPaystackNotificationsControllerFindByIdQuery,
+  usePaystackNotificationsControllerSearchQuery,
+  useLazyPaystackNotificationsControllerSearchQuery,
   useAppControllerGetHelloQuery,
   useLazyAppControllerGetHelloQuery,
 } = injectedRtkApi;

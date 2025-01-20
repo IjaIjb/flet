@@ -26,7 +26,7 @@ const RegisterPage = () => {
           <div className="absolute h-screen z-10 object-cover w-full rounded-xl">
             {/* <img
               className="h-full z-10 object-cover w-full"
-              src="/onboarding/transport-concept-parked-vehicles 1.svg"
+              src="/onboarding/urbanFleetRegBg.jpg"
               alt=""
             /> */}
 
@@ -34,7 +34,7 @@ const RegisterPage = () => {
 
   <Image
      className="h-full z-10 object-cover w-full"
-                  src="/onboarding/transport-concept-parked-vehicles 1.svg"
+                  src="/onboarding/urbanFleetRegBg.jpg"
     alt="Descriptive alt text"
     layout="fill"
     // objectFit="cover"
@@ -104,13 +104,13 @@ const RegisterPage = () => {
               <div className="absolute h-full object-cover w-full rounded-xl">
                 {/* <img
                   className="h-full z-10 object-cover w-full"
-                  src="/onboarding/transport-concept-parked-vehicles 1.svg"
+                  src="/onboarding/urbanFleetRegBg.jpg"
                   alt=""
                 /> */}
 
   <Image
      className="h-full  object-cover w-full"
-                  src="/onboarding/transport-concept-parked-vehicles 1.svg"
+                  src="/onboarding/urbanFleetRegBg.jpg"
     alt="Descriptive alt text"
     layout="fill"
     objectFit="cover"
