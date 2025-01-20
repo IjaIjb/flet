@@ -28,7 +28,8 @@ const IndividualLogin = () => {
   const initialData = {
     email: "",
     password: "",
-    // remember: false,
+    remember: localStorage.getItem("remember") === "true" ? true : false,
+
   };
 
   const validation = Yup.object({
@@ -85,7 +86,7 @@ const IndividualLogin = () => {
         validationSchema={validation}
         onSubmit={onSubmit}
       >
-        {({}) => (
+        {({ values, setFieldValue}) => (
           <Form className="w-full flex flex-col gap-4">
             {/* Email Field */}
             <div>
@@ -140,8 +141,21 @@ const IndividualLogin = () => {
                     name="remember"
                     id="remember"
                     // checked={values.remember}
-                    // onChange={() => setFieldValue("remember", !values.remember)}
-                  />
+                    onChange={(e: any) => {
+                      setFieldValue("remember", !values.remember);
+
+                      if (!values.remember) {
+                        localStorage.setItem("remember", "true");
+                        localStorage.setItem(
+                          "username",
+                          `${values.email}`
+                        );
+                      } else {
+                        localStorage.setItem("remember", "");
+                        localStorage.setItem("username", ``);
+                      }
+                    }} 
+                    />
                   <label
                     className="text-[15px] font-normal text-[#958F8F]"
                     htmlFor="remember"

@@ -527,7 +527,7 @@ const Page = () => {
                                 name="confirmPassword"
                                 id="confirmPassword"
                                 type={
-                                  !confirmPassword ? "confirmPassword" : "text"
+                                  !confirmPassword ? "password" : "text"
                                 }
                                 placeholder=""
                               />
