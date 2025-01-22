@@ -1,6 +1,6 @@
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import * as Yup from "yup";
 import Button from "../UI/Button";
@@ -22,12 +22,21 @@ const CorporateLogin = () => {
   const [login, { isLoading, isError, error }] =
     useAuthControllerLoginMutation();
 
-  const initialData = {
-    email: "",
-    password: "",
-    remember: localStorage.getItem("remember") === "true" ? true : false,
+ // State to store initial data
+ const [initialData, setInitialData] = useState({
+  email: "",
+  password: "",
+  remember: false,
+});
 
-  };
+// Access localStorage on the client side
+useEffect(() => {
+  const remember = localStorage.getItem("remember") === "true";
+  setInitialData((prevState) => ({
+    ...prevState,
+    remember,
+  }));
+}, []);
 
   const validation = Yup.object({
     email: Yup.string().email("Invalid email address").required("Required"),
@@ -79,6 +88,7 @@ const CorporateLogin = () => {
 
       <Formik
         initialValues={initialData}
+        enableReinitialize // Ensure the initial values update when `initialData` changes
         validationSchema={validation}
         onSubmit={onSubmit}
       >
@@ -137,20 +147,17 @@ const CorporateLogin = () => {
                     name="remember"
                     id="remember"
                     // checked={values.remember}
-                    onChange={(e: any) => {
+                    onChange={() => {
                       setFieldValue("remember", !values.remember);
 
                       if (!values.remember) {
                         localStorage.setItem("remember", "true");
-                        localStorage.setItem(
-                          "username",
-                          `${values.email}`
-                        );
+                        localStorage.setItem("username", `${values.email}`);
                       } else {
-                        localStorage.setItem("remember", "");
-                        localStorage.setItem("username", ``);
+                        localStorage.removeItem("remember");
+                        localStorage.removeItem("username");
                       }
-                    }} 
+                    }}
                     />
                   <label
                     className="text-[15px] font-normal text-[#958F8F]"
