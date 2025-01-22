@@ -357,7 +357,7 @@ const Page = () => {
               {showScreen === 1 ? (
                 <div className="flex flex-col">
                   <h5 className="text-[#121212] text-[26px] md:text-[34px] lg:text-[40px] font-[800]">
-                    Sign up as Corporate Organization
+                    Sign up as Corporate Partner
                   </h5>
                   {/* <h3 className="text-[#1A1A1A] text-[15px] lg:text-[18px] font-[300]">
      Register in three easy steps
