@@ -65,7 +65,7 @@ const RegisterIndividual = () => {
   // const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [confirmPassword, setShowConfirmPassword] = useState(false);
-  const [showScreen, setShowScreen] = useState(1);
+  const [showScreen, setShowScreen] = useState(2);
   const [showBusArchitecture, setBusAchitecture] = useState(false);
 
   const [signup, { isLoading, }] =

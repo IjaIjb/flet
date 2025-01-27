@@ -207,9 +207,13 @@ const Page = () => {
           </section>
 
           <section className="overflow-hidden overflow-x-scroll">
-            <div>
+            <div className="">
               <FilteredFleets />
             </div>
+
+            {/* <div className="block sm:hidden">
+              <FilteredFleetsMobile />
+            </div> */}
           </section>
         </div>
       )}

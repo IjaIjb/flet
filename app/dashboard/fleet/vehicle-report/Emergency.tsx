@@ -307,7 +307,9 @@ function Emergency() {
       </h4>
     </div> */}
       {isLoading ? null : (
-        <div>
+          <>
+          {/* Table for Desktop */}
+ <div className="hidden md:block">
           {data?.length > 0 ? (
             <MaterialTable
               title=""
@@ -361,6 +363,61 @@ function Emergency() {
             </div>
           )}
         </div>
+
+            {/* Card View for Mobile */}
+    <div className="block md:hidden">
+      {data.length > 0 ? (
+          data.map((row) => (
+            <div
+              key={row.id}
+              className="flex flex-col gap-2 bg-white border-2 rounded-lg shadow-xl hover:shadow-2xl p-4 mb-4"
+            >
+              <div className=" flex flex-col gap-[1px]">
+                <div className="text-[14px]">
+                  <strong>Title:</strong> {row.title}
+                </div>
+                <div className="text-[14px]">
+                  <strong>Description:</strong> {row.description}
+                </div>
+                <div className="text-[14px]">
+                  <strong>Cost:</strong> {row.cost}
+                </div>
+                <div className="text-[14px]">
+                  <strong>Date:</strong> {row.maintenanceDate}
+                </div>
+              </div>
+              {/* Actions */}
+              <div className="flex flex-col gap-2 mt-2">
+                {/* <button
+                  onClick={() => handleAction("report", row.id)}
+                  className="bg-[#274871] text-white px-3 py-1 rounded-md text-sm"
+                >
+                  {" "}
+                  Vehicle Report
+                </button> */}
+                <button
+                  onClick={() => handleVehicleReportDetails(row?.id)}
+                  className="bg-primary text-white px-3 py-1 rounded-md text-sm"
+                >
+                 View
+                </button>
+                {/* <button
+                  onClick={() => handleAction("documents", row.id)}
+                  className="bg-[#C05406] text-white px-3 py-1 rounded-md text-sm"
+                >
+                  See Documents
+                </button> */}
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="py-10 text-center text-gray-500">
+            No data available
+          </div>
+        )}
+
+      </div>
+      </>
       )}
       <Modal
         classNames={{

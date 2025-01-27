@@ -522,14 +522,14 @@ console.log(selectedRow)
       </div> */}
       <div className="flex flex-col    gap-2">
         <div className="grid md:grid-cols-12 items-center gap-4">
-          <div className="col-span-5">
+          <div className="md:col-span-5">
             <div></div>
             </div>
           {/* <div></div> */}
           <div className="col-span-7">
-            <div className="mb-5 flex gap-6 w-full">
+            <div className="mb-5 md:flex gap-6 w-full">
               <select
-                className="block h-12 w-full border text-[14px] font-[300] px-3 rounded-md focus:outline-primary"
+                className="block h-12 w-full border md:mb-0 mb-2 text-[14px] font-[300] px-3 rounded-md focus:outline-primary"
                 value={vehicleType}
                 onChange={(e) => setVehicleType(e.target.value)}
               >
@@ -550,7 +550,7 @@ console.log(selectedRow)
 
                 <input
                   type="date"
-                  className="block w-full text-[14px] font-[300] h-12 border px-3 rounded-md focus:outline-primary"
+                  className="block w-full text-[14px] md:mb-0 mb-2 font-[300] h-12 border px-3 rounded-md focus:outline-primary"
                   value={dateFrom}
                   onChange={(e) => setDateFrom(e.target.value)}
                 />
@@ -564,7 +564,7 @@ console.log(selectedRow)
                 </label> */}
                 <input
                   type="date"
-                  className="block w-full text-[14px] font-[300] h-12 border px-3 rounded-md focus:outline-primary"
+                  className="block w-full text-[14px] md:mb-0 mb-2 font-[300] h-12 border px-3 rounded-md focus:outline-primary"
                   value={dateTo}
                   onChange={(e) => setDateTo(e.target.value)}
                 />
@@ -573,6 +573,9 @@ console.log(selectedRow)
           </div>
         </div>
       </div>
+
+            {/* Table for Desktop */}
+            <div className="hidden md:block">
       {filteredData?.length > 0 ? (
         <MaterialTable
           title=""
@@ -625,6 +628,70 @@ console.log(selectedRow)
           </div>
         </div>
       )}
+</div>
+
+    {/* Card View for Mobile */}
+    <div className="block md:hidden">
+        {filteredData.length > 0 ? (
+          filteredData.map((row:any) => (
+            <div
+              key={row.id}
+              className="flex flex-col gap-2 bg-white border-2 rounded-lg shadow-xl hover:shadow-2xl p-4 mb-4"
+            >
+              <div className=" flex flex-col gap-[1px]">
+                <div className="text-[14px]">
+                  <strong>Dest. Park:</strong> {row.destinationPark}
+                </div>
+                <div className="text-[14px]">
+                  <strong>Dest. State:</strong> {row.destinationState}
+                </div>
+                <div className="text-[14px]">
+                  <strong>Trip Code:</strong> {row.tripCode}
+                </div>
+                <div className="text-[14px]">
+                  <strong>Date:</strong> {row.departureDate} {row.departureTime}
+                </div>
+                <div className="text-[14px]">
+                  <strong>Vehicle Type:</strong> {row.vehicleType}
+                </div>
+
+                <div className="text-[14px]">
+                  <strong>Fare:</strong> {row.tripCost}
+                </div>
+                <div className="text-[14px]">
+                  <strong>Trip Status:</strong> {row.tripStatus}
+                </div>
+              </div>
+              {/* Actions */}
+              <div className="flex flex-col gap-2 mt-2">
+                {/* <button
+                  onClick={() => handleAction("report", row.id)}
+                  className="bg-[#274871] text-white px-3 py-1 rounded-md text-sm"
+                >
+                  {" "}
+                  Vehicle Report
+                </button> */}
+                <button
+                  onClick={() => handleDetails(row)}
+                  className="bg-primary text-white px-3 py-1 rounded-md text-sm"
+                >
+                  See Statement
+                </button>
+                {/* <button
+                  onClick={() => handleAction("documents", row.id)}
+                  className="bg-[#C05406] text-white px-3 py-1 rounded-md text-sm"
+                >
+                  See Documents
+                </button> */}
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="py-10 text-center text-gray-500">
+            No data available
+          </div>
+        )}
+      </div>
       <Modal
         classNames={{
           modal: "rounded-[10px] overflow-hidden relative",

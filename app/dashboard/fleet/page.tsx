@@ -1225,7 +1225,10 @@ const BusSideUpload: React.FC<BusSideUploadProps> = ({
 
                     {showScreen === 2 ? (
                       <button
-                        onClick={onCloseModal}
+                      onClick={() => {
+                        onCloseModal(); // Close the modal
+                        window.location.reload(); // Reload the page
+                      }}
                         // disabled={!selectedOption} // Disable button if no option is selected
                         className={`py-4 w-full px-6 bg-[#036E03] text-white rounded-lg  hover:bg-green-700
       }`}

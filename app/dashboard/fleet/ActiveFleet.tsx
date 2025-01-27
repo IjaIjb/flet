@@ -15,6 +15,17 @@ import {
 import { useLazyVehicleControllerGetMyVehiclesQuery } from "@/store/api";
 import Image from "next/image";
 
+interface UserData {
+  individual?: {
+    firstname: string;
+    avatar: string;
+  };
+  corporateBody?: {
+    companyName: string;
+    avatar: string;
+  };
+  status?: string;
+}
 // Define the structure of a row in the data
 interface Row {
   id: string; // Add the `id` field
@@ -36,7 +47,14 @@ interface Column {
 
 function ActiveFleet() {
   const router = useRouter();
+  const [userData, setUserData] = useState<UserData | null>(null);
 
+  useEffect(() => {
+    const storedUserData = localStorage.getItem("user");
+    if (storedUserData) {
+      setUserData(JSON.parse(storedUserData));
+    }
+  }, []);
   const [dropdownIndex, setDropdownIndex] = useState<number | null>(null);
   const [getActiveVehicle, { data: activeVehicles }] =
     useLazyVehicleControllerGetMyVehiclesQuery();
@@ -47,23 +65,25 @@ function ActiveFleet() {
         .map((vehicle: any) => {
           const rawDate = vehicle.registrationDate;
           const formattedDate = rawDate
-            ? new Date(rawDate).toLocaleString("en-GB", {
-                year: "numeric",
-                month: "2-digit",
-                day: "2-digit",
-                hour: "2-digit",
-                minute: "2-digit",
-                second: "2-digit",
-              }).replace(",", "") // Format with date and time (e.g., 2025-01-07 12:34:56)
+            ? new Date(rawDate)
+                .toLocaleString("en-GB", {
+                  year: "numeric",
+                  month: "2-digit",
+                  day: "2-digit",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  second: "2-digit",
+                })
+                .replace(",", "") // Format with date and time (e.g., 2025-01-07 12:34:56)
             : "N/A";
-        return {
-          id: vehicle?.id || "N/A",
-          vehicle_plate_no: vehicle.plateNumber || "N/A",
-          vehicle_type: vehicle.vehicleType?.category || "N/A",
-          engine_no: vehicle.engineNumber || "N/A",
-          provider_agency: vehicle.providerAgency || "N/A",
-          date: formattedDate || "N/A",
-        };
+          return {
+            id: vehicle?.id || "N/A",
+            vehicle_plate_no: vehicle.plateNumber || "N/A",
+            vehicle_type: vehicle.vehicleType?.category || "N/A",
+            engine_no: vehicle.engineNumber || "N/A",
+            provider_agency: vehicle.providerAgency || "N/A",
+            date: formattedDate || "N/A",
+          };
         })
     : [];
 
@@ -181,22 +201,27 @@ function ActiveFleet() {
             {dropdownIndex === index && (
               <div className="absolute right-0 mt-2 w-48 bg-white border rounded-md shadow-lg z-10">
                 <ul className="py-1">
-                  <li>
-                    <div
-                      onClick={() => handleVehicleStatement(rowData.id)} // Pass vehicle id
-                      className="px-4 py-2 text-sm text-primary hover:bg-[#9F9F9F33] text-center cursor-pointer"
-                    >
-                      See Statement
-                    </div>
-                  </li>
-                  <li>
-                    <div
-                      onClick={() => handleVehicleReport(rowData?.id)}
-                      className="px-4 py-2 text-sm text-primary hover:bg-[#9F9F9F33] text-center cursor-pointer"
-                    >
-                      Vehicle Report
-                    </div>
-                  </li>
+                  {userData?.status === "ACTIVE" && (
+                    <>
+                      <li>
+                        <div
+                          onClick={() => handleVehicleStatement(rowData.id)} // Pass vehicle id
+                          className="px-4 py-2 text-sm text-primary hover:bg-[#9F9F9F33] text-center cursor-pointer"
+                        >
+                          See Statement
+                        </div>
+                      </li>
+                      <li>
+                        <div
+                          onClick={() => handleVehicleReport(rowData?.id)}
+                          className="px-4 py-2 text-sm text-primary hover:bg-[#9F9F9F33] text-center cursor-pointer"
+                        >
+                          Vehicle Report
+                        </div>
+                      </li>
+                    </>
+                  )}
+
                   <li>
                     <div
                       onClick={() => handleVehicleDocuments(rowData?.id)}
@@ -306,61 +331,141 @@ function ActiveFleet() {
   icons.Edit.displayName = "EditIcon";
   icons.Search.displayName = "SearchIcon";
   icons.Save.displayName = "SaveIcon";
+
+  const handleAction = (action: string, vehicleId: string) => {
+    localStorage.setItem("vehicleId", vehicleId);
+    switch (action) {
+      case "statement":
+        router.push("fleet/vehicle-statement");
+        break;
+      case "report":
+        router.push("fleet/vehicle-report");
+        break;
+      case "documents":
+        router.push("fleet/vehicle-documents");
+        break;
+      default:
+        break;
+    }
+  };
+
   return (
     <div>
-    
-      {data?.length > 0 ? (
-        <MaterialTable
-          title=""
-          columns={columns}
-          data={data}
-          icons={icons}
-          options={{
-            search: true,
-            paging: true,
-            sorting: true,
-            exportAllData: true, // Exports all rows, not just the visible ones
-            rowStyle: {
-              fontWeight: 300,
-              fontSize: "14px",
-              alignItems: "center",
-            },
-            headerStyle: {
-              color: "#036E03",
-              // fontWeight: 600,
-              fontSize: "14px",
-              backgroundColor: "#F9FAFB",
-              border: 0,
-              borderBottom: "1px solid #E8E9ED",
-            },
-            tableLayout: "fixed",
-          }}
-          actions={[
-            {
-              icon: () => <Save />, // Use a function to render the Save icon
-              tooltip: "Export to CSV",
-              isFreeAction: true,
-              onClick: () => exportToCsv(),
-            },
-          ]}
-        />
-      ) : (
-        <div className="py-10">
-          <div className="flex justify-center">
-            <Image
-              className=""
-              src="/dashboard/stars.svg"
-              alt="image"
-              width={40}
-              height={40}
-              priority
-            />
+      {/* Table for Desktop */}
+      <div className="hidden md:block">
+        {data?.length > 0 ? (
+          <MaterialTable
+            title=""
+            columns={columns}
+            data={data}
+            icons={icons}
+            options={{
+              search: true,
+              paging: true,
+              sorting: true,
+              exportAllData: true, // Exports all rows, not just the visible ones
+              rowStyle: {
+                fontWeight: 300,
+                fontSize: "14px",
+                alignItems: "center",
+              },
+              headerStyle: {
+                color: "#036E03",
+                // fontWeight: 600,
+                fontSize: "14px",
+                backgroundColor: "#F9FAFB",
+                border: 0,
+                borderBottom: "1px solid #E8E9ED",
+              },
+              tableLayout: "fixed",
+            }}
+            actions={[
+              {
+                icon: () => <Save />, // Use a function to render the Save icon
+                tooltip: "Export to CSV",
+                isFreeAction: true,
+                onClick: () => exportToCsv(),
+              },
+            ]}
+          />
+        ) : (
+          <div className="py-10">
+            <div className="flex justify-center">
+              <Image
+                className=""
+                src="/dashboard/stars.svg"
+                alt="image"
+                width={40}
+                height={40}
+                priority
+              />
+            </div>
+            <div className="flex justify-center pt-4 text-[#141313] text-[20px] font-[400]">
+              Sorry, No information yet, Add fleet to start
+            </div>
           </div>
-          <div className="flex justify-center pt-4 text-[#141313] text-[20px] font-[400]">
-            Sorry, No information yet, Add fleet to start
+        )}
+      </div>
+
+      {/* Card View for Mobile */}
+      <div className="block md:hidden">
+        {data.length > 0 ? (
+          data.map((row) => (
+            <div
+              key={row.id}
+              className="flex flex-col gap-2 w-full bg-white border-2 rounded-lg shadow-xl hover:shadow-2xl p-4 mb-4"
+            >
+              <div className=" flex flex-col gap-[1px]">
+                <div className="text-[14px]">
+                  <strong>Plate No:</strong> {row.vehicle_plate_no}
+                </div>
+                <div className="text-[14px]">
+                  <strong>Type:</strong> {row.vehicle_type}
+                </div>
+                <div className="text-[14px]">
+                  <strong>Engine No:</strong> {row.engine_no}
+                </div>
+                <div className="text-[14px]">
+                  <strong>Agency:</strong> {row.provider_agency}
+                </div>
+                <div className="text-[14px]">
+                  <strong>Date:</strong> {row.date}
+                </div>
+              </div>
+              {/* Actions */}
+              <div className="flex w-full gap-2 mt-2">
+              {userData?.status === "ACTIVE" && (
+                <>
+                <button
+                  onClick={() => handleAction("report", row.id)}
+                  className="bg-[#274871] w-full text-white px-3 py-2 rounded-md text-[11px]"
+                >
+                  {" "}
+                  Vehicle Report
+                </button>
+                <button
+                  onClick={() => handleAction("statement", row.id)}
+                  className="bg-primary w-full text-white px-3 py-2 rounded-md text-[11px]"
+                >
+                  See Statement
+                </button>
+                </>
+              )}
+                <button
+                  onClick={() => handleAction("documents", row.id)}
+                  className="bg-[#C05406] w-full text-white px-3 py-2 rounded-md text-[11px]"
+                >
+                  See Documents
+                </button>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="py-10 text-center text-gray-500">
+            No data available
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

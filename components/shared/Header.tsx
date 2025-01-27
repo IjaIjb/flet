@@ -142,7 +142,7 @@ const Header = () => {
             <IoIosInformationCircle className="w-5 h-5 text-primary" />
            
               <h5 className="text-primary text-[14px] font-light">
-                Account is has been Verified
+                Account has been Verified
               </h5>
             </div>
           </div>
@@ -272,7 +272,7 @@ const Header = () => {
  <IoIosInformationCircle className="w-5 h-5 text-primary" />
 
    <h5 className="text-primary text-[14px] font-light">
-     Account is yet to be Approved
+     Account has been Verified
    </h5>
  </div>
 </div>
@@ -308,33 +308,36 @@ const Header = () => {
                 modal: "rounded-[10px] overflow-visible relative",
               }}
               open={open} onClose={onCloseModal} center>
-              <div className="w-[400px] flex justify-center px-4 pb-2">
+              <div className="sm:w-[400px] flex justify-center px-4 pb-2">
             
                 <div>
-                  <h4 className="text-primary text-[15px] text-center max-w-[350px] font-[600] mt-5 md:text-[18px] mb-4">
-               Are you sure you want to log out?
+                  <h4 className="text-[#FF4848] text-center max-w-[250px] font-[600] mt-5 text-[18px] mb-2">
+               Are you sure you want to log Out?
                   </h4>
-               
 
-               <div className="flex gap-5">
-                        
-               <button
-                        onClick={onCloseModal}
-                        // disabled={!selectedOption} // Disable button if no option is selected
-                        className={`py-2 w-full px-6 bg-gray-300  rounded-lg  
-        }`}
-                      >
-                   Cancel
-                      </button>
+<div className="flex justify-center mb-4">
+                  <h5 className="text-[15px] text-center">Please confirm this action</h5>
+                  </div>
 
+               <div className="flex flex-col gap-3">
                <button
                         onClick={handleLogout}
                         // disabled={!selectedOption} // Disable button if no option is selected
-                        className={`py-2 w-full px-6 bg-[#FF4848] text-white rounded-lg  hover:bg-red-700
+                        className={`py-2 w-full px-6 bg-primary text-white rounded-lg  hover:primary/[60%]
         }`}
                       >
-                       Logout
+Proceed
+                      </button>    
+               <button
+                        onClick={onCloseModal}
+                        // disabled={!selectedOption} // Disable button if no option is selected
+                        className={`py-2 w-full px-6 border border-primary rounded-lg  
+        }`}
+                      >
+             No
                       </button>
+
+     
                </div>
                 </div>
              

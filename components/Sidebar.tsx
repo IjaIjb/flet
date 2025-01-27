@@ -4,6 +4,19 @@ import Link from "next/link";
 import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
 import { usePathname } from "next/navigation"; // The useRouter hook can be used in client-side components
 import Image from "next/image";
+import { useEffect, useState } from "react";
+
+interface UserData {
+  individual?: {
+    firstname: string;
+    avatar: string;
+  };
+  corporateBody?: {
+    companyName: string;
+    avatar: string;
+  };
+  status?: string;
+}
 
 type Props = {
   toggle: () => void;
@@ -16,6 +29,19 @@ const SidebarPage = (props: Props) => {
   const pathnames = pathname.split("/").filter((x) => x);
   // const [showUser, setShowUser] = useState(false);
 
+      const [userData, setUserData] = useState<UserData | null>(null);
+     
+    
+      useEffect(() => {
+      
+            const storedUserData = localStorage.getItem("user");
+            if (storedUserData) {
+              setUserData(JSON.parse(storedUserData));
+            }
+       
+       
+      }, []);
+    
   // const drawerToggle = (section: string) => {
   //   section === "user" ? setShowUser((prev: any) => !prev) : setShowUser(false);
   // };
@@ -117,38 +143,66 @@ const SidebarPage = (props: Props) => {
         </div>
 
         <div className="">
-          <div>
-            <Link href={"/dashboard/manage-trips"} className="relative gap-1  ">
-              <div
-                className={`${
-                  ["dashboard", "manage-trips"].every((ai) =>
-                    pathnames.includes(ai)
-                  )
-                    ? "bg-[#FFFFFF] text-[#1A1A1A]"
-                    : "bg-[#9F9F9F33] text-white"
-                } gap-x-3 flex items-center px-6  rounded-[15px] py-[20px] `}
-              >
-                <Image
-                  aria-hidden
-                  src={
-                    ["dashboard", "manage-trips"].every((ai) =>
-                      pathnames.includes(ai)
-                    )
-                      ? "/dashboard/Line_fill.svg"
-                      : "/dashboard/Line_fillWhite.svg"
-                  }
-                  alt="Window icon"
-                  width={16}
-                  height={16}
-                />
-                <h5 className="text-[16px] font-[500]  ">Trips</h5>
-              </div>
-            </Link>
-          </div>
+  <div>
+    {userData?.status !== "ACTIVE" ? (
+      <div
+        className={`bg-[#9F9F9F33] text-white gap-x-3 flex items-center px-6 rounded-[15px] py-[20px] pointer-events-none opacity-50`}
+      >
+        <Image
+          aria-hidden
+          src="/dashboard/Line_fillWhite.svg"
+          alt="Window icon"
+          width={16}
+          height={16}
+        />
+        <h5 className="text-[16px] font-[500]">Trips</h5>
+      </div>
+    ) : (
+      <Link href={"/dashboard/manage-trips"} className="relative gap-1">
+        <div
+          className={`${
+            ["dashboard", "manage-trips"].every((ai) => pathnames.includes(ai))
+              ? "bg-[#FFFFFF] text-[#1A1A1A]"
+              : "bg-[#9F9F9F33] text-white"
+          } gap-x-3 flex items-center px-6 rounded-[15px] py-[20px]`}
+        >
+          <Image
+            aria-hidden
+            src={
+              ["dashboard", "manage-trips"].every((ai) =>
+                pathnames.includes(ai)
+              )
+                ? "/dashboard/Line_fill.svg"
+                : "/dashboard/Line_fillWhite.svg"
+            }
+            alt="Window icon"
+            width={16}
+            height={16}
+          />
+          <h5 className="text-[16px] font-[500]">Trips</h5>
         </div>
+      </Link>
+    )}
+  </div>
+</div>
+
 
         <div className="">
           <div>
+          {userData?.status !== "ACTIVE" ? (
+      <div
+        className={`bg-[#9F9F9F33] text-white gap-x-3 flex items-center px-6 rounded-[15px] py-[20px] pointer-events-none opacity-50`}
+      >
+        <Image
+          aria-hidden
+          src="/dashboard/gear-altWhite.svg"
+          alt="Window icon"
+          width={16}
+          height={16}
+        />
+                        <h5 className="text-[16px] font-[500]  ">Notifications</h5>
+
+      </div> ) : (
             <Link href={"/dashboard/notifications"} className="relative gap-1  ">
               <div
                 className={`${
@@ -175,6 +229,7 @@ const SidebarPage = (props: Props) => {
                 <h5 className="text-[16px] font-[500]  ">Notifications</h5>
               </div>
             </Link>
+            )}
           </div>
         </div>
 

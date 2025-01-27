@@ -17,6 +17,7 @@ import { useLazyVehicleControllerGetAllVehiclesQuery } from "@/store/api";
 
 // Define the structure of a row in the data
 interface Row {
+  id: string; // Add the `id` field
   vehicle_plate_no: string;
   vehicle_type: string;
   engine_no: string;
@@ -40,33 +41,33 @@ function InActiveFleet() {
   const [getInctiveVehicle, { data: activeVehicles }] =
     useLazyVehicleControllerGetAllVehiclesQuery();
 
-    const data: Row[] = Array.isArray(activeVehicles?.data) // Check if it's an array
+  const data: Row[] = Array.isArray(activeVehicles?.data) // Check if it's an array
     ? activeVehicles.data
         .filter((vehicle: any) => vehicle.status === "INACTIVE") // Filter for active vehicles
         .map((vehicle: any) => {
           const rawDate = vehicle.registrationDate;
           const formattedDate = rawDate
-            ? new Date(rawDate).toLocaleString("en-GB", {
-                year: "numeric",
-                month: "2-digit",
-                day: "2-digit",
-                hour: "2-digit",
-                minute: "2-digit",
-                second: "2-digit",
-              }).replace(",", "") // Format with date and time (e.g., 2025-01-07 12:34:56)
+            ? new Date(rawDate)
+                .toLocaleString("en-GB", {
+                  year: "numeric",
+                  month: "2-digit",
+                  day: "2-digit",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  second: "2-digit",
+                })
+                .replace(",", "") // Format with date and time (e.g., 2025-01-07 12:34:56)
             : "N/A";
-        return {
-          id: vehicle?.id || "N/A",
-          vehicle_plate_no: vehicle.plateNumber || "N/A",
-          vehicle_type: vehicle.vehicleType?.category || "N/A",
-          engine_no: vehicle.engineNumber || "N/A",
-          provider_agency: vehicle.providerAgency || "N/A",
-          date: formattedDate || "N/A",
-        };
+          return {
+            id: vehicle?.id || "N/A",
+            vehicle_plate_no: vehicle.plateNumber || "N/A",
+            vehicle_type: vehicle.vehicleType?.category || "N/A",
+            engine_no: vehicle.engineNumber || "N/A",
+            provider_agency: vehicle.providerAgency || "N/A",
+            date: formattedDate || "N/A",
+          };
         })
     : [];
-
-
 
   // Fetch vehicle types on component mount
   useEffect(() => {
@@ -76,13 +77,13 @@ function InActiveFleet() {
     setDropdownIndex(dropdownIndex === index ? null : index); // Toggle dropdown visibility
   };
 
-  const handleVehicleReport = () => {
-    router.push("/dashboard/fleet/vehicle-report");
-  };
+  // const handleVehicleReport = () => {
+  //   router.push("/dashboard/fleet/vehicle-report");
+  // };
 
-  const handleVehicleStatement = () => {
-    router.push("/dashboard/fleet/vehicle-statement");
-  };
+  // const handleVehicleStatement = () => {
+  //   router.push("/dashboard/fleet/vehicle-statement");
+  // };
 
   const handleVehicleDocuments = () => {
     router.push("fleet/vehicle-documents");
@@ -172,7 +173,7 @@ function InActiveFleet() {
             {dropdownIndex === index && (
               <div className="absolute right-0 mt-2 w-48 bg-white border rounded-md shadow-lg z-10">
                 <ul className="py-1">
-                  <li>
+                  {/* <li>
                     <div
                       onClick={handleVehicleStatement}
                       className="px-4 py-2 text-sm text-primary hover:bg-[#9F9F9F33] text-center cursor-pointer"
@@ -187,7 +188,7 @@ function InActiveFleet() {
                     >
                       Vehicle Report
                     </div>
-                  </li>
+                  </li> */}
                   <li>
                     <div
                       onClick={handleVehicleDocuments}
@@ -204,65 +205,6 @@ function InActiveFleet() {
       },
     },
   ];
-
-  // const data: Row[] = [
-  //   {
-  //     vehicle_plate_no: "95795003749",
-  //     vehicle_type: "Sedan",
-  //     engine_no: "63748749kk",
-  //     provider_agency: "GIG",
-  //     date: "21/05/2024",
-  //   },
-  //   {
-  //     vehicle_plate_no: "95763859556",
-  //     vehicle_type: "Bus",
-  //     engine_no: "89jrjf9v9e",
-  //     provider_agency: "GIG",
-  //     date: "21/05/2024",
-  //   },
-  //   {
-  //     vehicle_plate_no: "2345665433",
-  //     vehicle_type: "Car",
-  //     engine_no: "6372892djk",
-  //     provider_agency: "GIG",
-  //     date: "21/05/2024",
-  //   },
-  //   {
-  //     vehicle_plate_no: "45676543",
-  //     vehicle_type: "toyota",
-  //     engine_no: "42556783nd",
-  //     provider_agency: "GIG",
-  //     date: "21/05/2024",
-  //   },
-  //   {
-  //     vehicle_plate_no: "3456543",
-  //     vehicle_type: "camry",
-  //     engine_no: "974865hdi",
-  //     provider_agency: "GIG",
-  //     date: "21/05/2024",
-  //   },
-  //   {
-  //     vehicle_plate_no: "23456765",
-  //     vehicle_type: "lorry",
-  //     engine_no: "36728394kd",
-  //     provider_agency: "GIG",
-  //     date: "21/05/2024",
-  //   },
-  //   {
-  //     vehicle_plate_no: "4567654",
-  //     vehicle_type: "lambo",
-  //     engine_no: "825378dcj",
-  //     provider_agency: "GIG",
-  //     date: "21/05/2024",
-  //   },
-  //   {
-  //     vehicle_plate_no: "234565432",
-  //     vehicle_type: "cybertruck",
-  //     engine_no: "37rufj99e",
-  //     provider_agency: "GIG",
-  //     date: "21/05/2024",
-  //   },
-  // ];
 
   // Define icons
   const icons = {
@@ -298,150 +240,134 @@ function InActiveFleet() {
   icons.Search.displayName = "SearchIcon";
   icons.Save.displayName = "SaveIcon";
 
+  const handleAction = (action: string, vehicleId: string) => {
+    localStorage.setItem("vehicleId", vehicleId);
+    switch (action) {
+      case "statement":
+        router.push("fleet/vehicle-statement");
+        break;
+      case "report":
+        router.push("fleet/vehicle-report");
+        break;
+      case "documents":
+        router.push("fleet/vehicle-documents");
+        break;
+      default:
+        break;
+    }
+  };
   return (
     <>
-      {/* <div className="overflow-hidden overflow-x-scroll">
-      <table className="w-full text-[18px] text-center  ">
-        <thead className="text-[18px] text-primary bg-gray-50 ">
-          <tr>
-            <th scope="col" className="px-6 py-3">
-              S/N
-            </th>
-            <th scope="col" className="px-6 py-3">
-              Vehicle Plate No
-            </th>
-            <th scope="col" className="px-6 py-3">
-              Vehicle Type
-            </th>
-            <th scope="col" className="px-6 py-3">
-              Engine Number
-            </th>
-            <th scope="col" className="px-6 py-3">
-              Provider Agency
-            </th>
-
-            <th scope="col" className="px-6 py-3">
-              Enrolment Date
-            </th>
-            <th scope="col" className="px-6 py-3">
-              Action
-            </th>
-
-          </tr>
-        </thead>
-
-        <tbody>
-          {data.map((datas, index) => (
-            <tr
-              key={index}
-              className={`bg-white ${
-                index % 2 === 0 ? "" : "bg-[#D9D9D930]/[19%]"
-              }`} // Apply bg-gray-200 to even rows
+      {/* Table for Desktop */}
+      <div className="hidden md:block">
+        {data?.length > 0 ? (
+          <MaterialTable
+            title=""
+            columns={columns}
+            data={data}
+            icons={icons}
+            options={{
+              search: true,
+              paging: true,
+              sorting: true,
+              exportAllData: true, // Exports all rows, not just the visible ones
+              rowStyle: {
+                fontWeight: 300,
+                fontSize: "14px",
+                alignItems: "center",
+              },
+              headerStyle: {
+                color: "#036E03",
+                // fontWeight: 600,
+                fontSize: "14px",
+                backgroundColor: "#F9FAFB",
+                border: 0,
+                borderBottom: "1px solid #E8E9ED",
+              },
+              tableLayout: "fixed",
+            }}
+            actions={[
+              {
+                icon: () => <Save />, // Use a function to render the Save icon
+                tooltip: "Export to CSV",
+                isFreeAction: true,
+                onClick: () => exportToCsv(),
+              },
+            ]}
+          />
+        ) : (
+          <div className="py-10">
+            <div className="flex justify-center">
+              <Image
+                className=""
+                src="/dashboard/stars.svg"
+                alt="image"
+                width={40}
+                height={40}
+                priority
+              />
+            </div>
+            <div className="flex justify-center pt-4 text-[#141313] text-[20px] font-[400]">
+              Sorry, No information yet, Add Fleet to start
+            </div>
+          </div>
+        )}
+      </div>
+      {/* Card View for Mobile */}
+      <div className="block md:hidden">
+        {data.length > 0 ? (
+          data.map((row) => (
+            <div
+              key={row.id}
+              className="flex flex-col gap-2 w-full bg-white border-2 rounded-lg shadow-xl hover:shadow-2xl p-4 mb-4"
             >
-              <td className="px-6 py-4">{index + 1}</td>
-
-              <td className="px-6 py-4">{datas?.vehicle_plate_no}</td>
-              <td className="px-6 py-4">{datas?.vehicle_type}</td>
-              <td className="px-6 py-4">{datas?.engine_no}</td>
-              <td className="px-6 py-4">{datas?.provider_agency}</td>
-              <td className="px-6 py-4">{datas?.date}</td>
-              <td className="px-6 py-4">
-                <div className="relative">
-                <div className="flex justify-center">
-                  <SlOptions
-                    className="cursor-pointer"
-                    onClick={() => toggleDropdown(index)}
-                  />
-                  </div>
-                  {dropdownIndex === index && (
-                    <div className="absolute right-0 mt-2 w-48 bg-white border rounded-md shadow-lg z-10">
-                      <ul className="py-1">
-                        <li>
-                          <div
-                            onClick={handleVehicleStatement}
-                            className="px-4 py-2 text-sm text-primary hover:bg-[#9F9F9F33] text-center cursor-pointer"
-                          >
-                            See Statement
-                          </div>
-                        </li>
-                        <li>
-                          <div
-                            onClick={handleVehicleReport}
-                            className="px-4 py-2 text-sm text-primary hover:bg-[#9F9F9F33] text-center cursor-pointer"
-                          >
-                            Vehicle Report
-                          </div>
-                        </li>
-                        <li className="px-4 py-2 text-sm text-primary hover:bg-[#9F9F9F33] text-center cursor-pointer">
-                          See Documents
-                        </li>
-                      </ul>
-                    </div>
-                  )}
+              <div className=" flex flex-col gap-[1px]">
+                <div className="text-[14px]">
+                  <strong>Plate No:</strong> {row.vehicle_plate_no}
                 </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      <h4 className="text-primary underline text-center text-sm pt-4">
-        View All
-      </h4>
-    </div> */}
-
-      {data?.length > 0 ? (
-        <MaterialTable
-          title=""
-          columns={columns}
-          data={data}
-          icons={icons}
-          options={{
-            search: true,
-            paging: true,
-            sorting: true,
-            exportAllData: true, // Exports all rows, not just the visible ones
-            rowStyle: {
-              fontWeight: 300,
-              fontSize: "14px",
-              alignItems: "center",
-            },
-            headerStyle: {
-              color: "#036E03",
-              // fontWeight: 600,
-              fontSize: "14px",
-              backgroundColor: "#F9FAFB",
-              border: 0,
-              borderBottom: "1px solid #E8E9ED",
-            },
-            tableLayout: "fixed",
-          }}
-          actions={[
-            {
-              icon: () => <Save />, // Use a function to render the Save icon
-              tooltip: "Export to CSV",
-              isFreeAction: true,
-              onClick: () => exportToCsv(),
-            },
-          ]}
-        />
-      ) : (
-        <div className="py-10">
-          <div className="flex justify-center">
-            <Image
-              className=""
-              src="/dashboard/stars.svg"
-              alt="image"
-              width={40}
-              height={40}
-              priority
-            />
+                <div className="text-[14px]">
+                  <strong>Type:</strong> {row.vehicle_type}
+                </div>
+                <div className="text-[14px]">
+                  <strong>Engine No:</strong> {row.engine_no}
+                </div>
+                <div className="text-[14px]">
+                  <strong>Agency:</strong> {row.provider_agency}
+                </div>
+                <div className="text-[14px]">
+                  <strong>Date:</strong> {row.date}
+                </div>
+              </div>
+              {/* Actions */}
+              <div className="flex w-full gap-2 mt-2">
+                {/* <button
+                  onClick={() => handleAction("report", row.id)}
+                  className="bg-[#274871] w-full text-white px-3 py-2 rounded-md text-[11px]"
+                >
+              
+                  Vehicle Report
+                </button>
+                <button
+                  onClick={() => handleAction("statement", row.id)}
+                  className="bg-primary w-full text-white px-3 py-2 rounded-md text-[11px]"
+                >
+                  See Statement
+                </button> */}
+                <button
+                  onClick={() => handleAction("documents", row.id)}
+                  className="bg-[#C05406] w-full text-white px-3 py-2 rounded-md text-[11px]"
+                >
+                  See Documents
+                </button>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="py-10 text-center text-gray-500">
+            No data available
           </div>
-          <div className="flex justify-center pt-4 text-[#141313] text-[20px] font-[400]">
-            Sorry, No information yet, Add Fleet to start
-          </div>
-        </div>
-      )}
+        )}
+      </div>
     </>
   );
 }

@@ -1,3 +1,4 @@
+"use client"; // Add this for client components in the Next.js app directory
 import DashboardLayout from "@/components/Layout";
 import React from "react";
 import BreadcrumbsDisplay from "../BreadscrumbsDisplay";
@@ -6,6 +7,7 @@ import ResetPassword from "./ResetPassword";
 import { MdOutlinePhoneInTalk } from "react-icons/md";
 import { BsChatRightText } from "react-icons/bs";
 import NotificationSettings from "./NotificationSettings";
+import Link from "next/link";
 
 const Settingspage = () => {
   return (
@@ -27,12 +29,12 @@ const Settingspage = () => {
           <div className="flex flex-col gap-6">
             <ResetPassword />
             <NotificationSettings />
-            <div className="border-[#D9D9D9] border rounded-[10px] px-5 py-4">
+            <Link href="/dashboard/settings/terms-and-conditions" className="border-[#D9D9D9] border rounded-[10px] px-5 py-4">
               <div className="flex items-center gap-2">
                 <BsChatRightText className="text-primary w-6 h-6" />
                 <h5 className="text-primary  md:text-[20px] text-[18px]">Terms And Condition</h5>
               </div>
-            </div>
+            </Link>
           </div>
         </div>
       </div>

@@ -84,7 +84,7 @@ const FilteredFleets = () => {
         })
     : [];
 
-  console.log(activeVehicles);
+  // console.log(activeVehicles);
   const toggleDropdown = (index: number) => {
     setDropdownIndex(dropdownIndex === index ? null : index); // Toggle dropdown visibility
   };
@@ -284,6 +284,22 @@ const FilteredFleets = () => {
   icons.Search.displayName = "SearchIcon";
   icons.Save.displayName = "SaveIcon";
 
+  const handleAction = (action: string, vehicleId: string) => {
+    localStorage.setItem("vehicleId", vehicleId);
+    switch (action) {
+      case "statement":
+        router.push("fleet/vehicle-statement");
+        break;
+      case "report":
+        router.push("fleet/vehicle-report");
+        break;
+      case "documents":
+        router.push("fleet/vehicle-documents");
+        break;
+      default:
+        break;
+    }
+  };
   return (
     <div>
       <div className="flex flex-col    gap-2">
@@ -295,7 +311,7 @@ const FilteredFleets = () => {
           <div className="col-span-7">
             <div className="mb-5 md:flex gap-6">
               <select
-                className="block h-12 border w-full text-[14px] font-[300] px-3 rounded-md focus:outline-primary"
+                className="block h-12 border md:mb-0 mb-2 w-full text-[14px] font-[300] px-3 rounded-md focus:outline-primary"
                 value={vehicleType}
                 onChange={(e) => setVehicleType(e.target.value)}
               >
@@ -308,13 +324,13 @@ const FilteredFleets = () => {
               </select>
               <input
                 type="date"
-                className="block w-full text-[14px] font-[300] h-12 border px-3 rounded-md focus:outline-primary"
+                className="block w-full text-[14px] md:mb-0 mb-2 font-[300] h-12 border px-3 rounded-md focus:outline-primary"
                 value={dateFrom}
                 onChange={(e) => setDateFrom(e.target.value)}
               />
               <input
                 type="date"
-                className="block w-full text-[14px] font-[300] h-12 border px-3 rounded-md focus:outline-primary"
+                className="block w-full text-[14px] md:mb-0 mb-2 font-[300] h-12 border px-3 rounded-md focus:outline-primary"
                 value={dateTo}
                 onChange={(e) => setDateTo(e.target.value)}
               />
@@ -322,58 +338,118 @@ const FilteredFleets = () => {
           </div>
         </div>
       </div>
-      {filteredData?.length > 0 ? (
-        <MaterialTable
-          title=""
-          columns={columns}
-          data={filteredData}
-          icons={icons}
-          options={{
-            search: true,
-            paging: true,
-            sorting: true,
-            exportAllData: true, // Exports all rows, not just the visible ones
-            rowStyle: {
-              fontWeight: 300,
-              fontSize: "14px",
-              alignItems: "center",
-            },
-            headerStyle: {
-              color: "#036E03",
-              // fontWeight: 600,
-              fontSize: "14px",
-              backgroundColor: "#F9FAFB",
-              border: 0,
-              borderBottom: "1px solid #E8E9ED",
-            },
-            tableLayout: "fixed",
-          }}
-          actions={[
-            {
-              icon: () => <Save />, // Use a function to render the Save icon
-              tooltip: "Export to CSV",
-              isFreeAction: true,
-              onClick: () => exportToCsv(),
-            },
-          ]}
-        />
-      ) : (
-        <div className="py-10">
-          <div className="flex justify-center">
-            <Image
-              className=""
-              src="/dashboard/stars.svg"
-              alt="image"
-              width={40}
-              height={40}
-              priority
-            />
+
+      {/* Table for Desktop */}
+      <div className="hidden md:block">
+        {filteredData?.length > 0 ? (
+          <MaterialTable
+            title=""
+            columns={columns}
+            data={filteredData}
+            icons={icons}
+            options={{
+              search: true,
+              paging: true,
+              sorting: true,
+              exportAllData: true, // Exports all rows, not just the visible ones
+              rowStyle: {
+                fontWeight: 300,
+                fontSize: "14px",
+                alignItems: "center",
+              },
+              headerStyle: {
+                color: "#036E03",
+                // fontWeight: 600,
+                fontSize: "14px",
+                backgroundColor: "#F9FAFB",
+                border: 0,
+                borderBottom: "1px solid #E8E9ED",
+              },
+              tableLayout: "fixed",
+            }}
+            actions={[
+              {
+                icon: () => <Save />, // Use a function to render the Save icon
+                tooltip: "Export to CSV",
+                isFreeAction: true,
+                onClick: () => exportToCsv(),
+              },
+            ]}
+          />
+        ) : (
+          <div className="py-10">
+            <div className="flex justify-center">
+              <Image
+                className=""
+                src="/dashboard/stars.svg"
+                alt="image"
+                width={40}
+                height={40}
+                priority
+              />
+            </div>
+            <div className="flex justify-center pt-4 text-[#141313] text-[20px] font-[400]">
+              Sorry, No information yet, Add fleet to start
+            </div>
           </div>
-          <div className="flex justify-center pt-4 text-[#141313] text-[20px] font-[400]">
-            Sorry, No information yet, Add fleet to start
+        )}
+      </div>
+
+      {/* Card View for Mobile */}
+      <div className="block md:hidden">
+        {filteredData.length > 0 ? (
+          filteredData.map((row) => (
+            <div
+              key={row.id}
+              className="flex justify-between items-center bg-white border-2 rounded-lg shadow-xl hover:shadow-2xl p-4 mb-4"
+            >
+              <div className=" flex flex-col gap-[1px]">
+                <div className="text-[14px]">
+                  <strong>Plate No:</strong> {row.vehicle_plate_no}
+                </div>
+                <div className="text-[14px]">
+                  <strong>Type:</strong> {row.vehicle_type}
+                </div>
+                <div className="text-[14px]">
+                  <strong>Engine No:</strong> {row.engine_no}
+                </div>
+                <div className="text-[14px]">
+                  <strong>Agency:</strong> {row.provider_agency}
+                </div>
+                <div className="text-[14px]">
+                  <strong>Date:</strong> {row.date}
+                </div>
+              </div>
+              {/* Actions */}
+              <div className="flex flex-col gap-2 mt-2">
+                <button
+                  onClick={() => handleAction("report", row.id)}
+                  className="bg-[#274871] text-white px-3 py-1 rounded-md text-sm"
+                >
+                  {" "}
+                  Vehicle Report
+                </button>
+                <button
+                  onClick={() => handleAction("statement", row.id)}
+                  className="bg-primary text-white px-3 py-1 rounded-md text-sm"
+                >
+                  See Statement
+                </button>
+                <button
+                  onClick={() => handleAction("documents", row.id)}
+                  className="bg-[#C05406] text-white px-3 py-1 rounded-md text-sm"
+                >
+                  See Documents
+                </button>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="py-10 text-center text-gray-500">
+            No data available
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };

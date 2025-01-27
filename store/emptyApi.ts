@@ -16,7 +16,7 @@ const baseQuery = fetchBaseQuery({
     const token =
       (getState() as RootState)?.auth?.authToken ||
       localStorage.getItem("auth_token");
-      console.log("Token in headers:", token);
+      // console.log("Token in headers:", token);
     if (token) {
       headers.set("Authorization", `Bearer ${token}`);
     }

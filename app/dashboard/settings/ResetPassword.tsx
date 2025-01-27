@@ -1,7 +1,7 @@
 "use client"; // Add this for client components in the Next.js app directory
-import { useAuthControllerResetPasswordMutation } from "@/store/api";
+import { useAuthControllerRequestPasswordResetMutation } from "@/store/api";
 import { ErrorMessage, Field, Form, Formik } from "formik";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AiFillLock, AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import * as Yup from "yup";
 import { ToastContainer, toast } from "react-toastify";
@@ -12,7 +12,16 @@ const ResetPassword = () => {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const [resetPassword, { isLoading }] = useAuthControllerResetPasswordMutation();
+    const [userData, setUserData] = useState<any>(null);
+  
+    useEffect(() => {
+      const storedUserData = localStorage.getItem("user");
+      if (storedUserData) {
+        setUserData(JSON.parse(storedUserData));
+      }
+    }, []);
+    
+  const [resetPassword, { isLoading }] = useAuthControllerRequestPasswordResetMutation();
 
   const initialData = {
     currentPassword: "",
@@ -38,7 +47,7 @@ const ResetPassword = () => {
 
   const onSubmit = async (values: typeof initialData, { resetForm }: any) => {
     try {
-      const { newPassword } = values;
+      // const { newPassword } = values;
   
       // Retrieve the token from localStorage
       const token = localStorage.getItem("auth_token");
@@ -48,8 +57,7 @@ const ResetPassword = () => {
       }
   
       const payload = {
-        token, // Use the token from localStorage
-        resetPasswordValidateDto: { newPassword },
+        email: userData?.email,
       };
   
       await resetPassword(payload).unwrap();
