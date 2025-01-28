@@ -13,7 +13,7 @@ import {
   Save,
 } from "@mui/icons-material";
 import Image from "next/image";
-import { useLazyVehicleControllerGetAllVehiclesQuery } from "@/store/api";
+import { useLazyVehicleControllerGetMyVehiclesQuery } from "@/store/api";
 
 // Define the structure of a row in the data
 interface Row {
@@ -39,7 +39,7 @@ function InActiveFleet() {
 
   const [dropdownIndex, setDropdownIndex] = useState<number | null>(null);
   const [getInctiveVehicle, { data: activeVehicles }] =
-    useLazyVehicleControllerGetAllVehiclesQuery();
+  useLazyVehicleControllerGetMyVehiclesQuery();
 
   const data: Row[] = Array.isArray(activeVehicles?.data) // Check if it's an array
     ? activeVehicles.data
